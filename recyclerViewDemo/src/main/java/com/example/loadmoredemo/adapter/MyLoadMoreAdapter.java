@@ -1,4 +1,4 @@
-package com.example.loadmoredemo;
+package com.example.loadmoredemo.adapter;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.loadmoredemo.listener.OnItemClickListener;
+import com.example.loadmoredemo.listener.OnLoadMoreListener;
+import com.example.loadmoredemo.R;
 
 /**
  * Created by Administrator on 2016/8/10.

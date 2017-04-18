@@ -1,4 +1,4 @@
-package com.example.loadmoredemo;
+package com.example.loadmoredemo.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.loadmoredemo.listener.OnLoadMoreListener;
+import com.example.loadmoredemo.R;
 
 import java.util.List;
 

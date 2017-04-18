@@ -9,6 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.loadmoredemo.adapter.MyAdapter;
+import com.example.loadmoredemo.listener.OnItemClickListener;
+import com.example.loadmoredemo.listener.OnLoadMoreListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
