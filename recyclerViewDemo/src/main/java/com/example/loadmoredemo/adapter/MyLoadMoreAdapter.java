@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.loadmoredemo.listener.OnItemClickListener;
-import com.example.loadmoredemo.listener.OnLoadMoreListener;
+import com.example.loadmoredemo.interfaces.OnItemClickListener;
+import com.example.loadmoredemo.interfaces.OnLoadMoreListener;
 import com.example.loadmoredemo.R;
 
 /**

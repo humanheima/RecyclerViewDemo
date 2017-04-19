@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.loadmoredemo.listener.OnLoadMoreListener;
+import com.example.loadmoredemo.interfaces.OnLoadMoreListener;
 import com.example.loadmoredemo.R;
 
 import java.util.List;

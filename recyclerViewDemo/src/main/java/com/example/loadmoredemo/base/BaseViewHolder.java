@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.loadmoredemo.listener.OnItemClickListener;
+import com.example.loadmoredemo.interfaces.OnItemClickListener;
 
 /**
  * Created by dumingwei on 2017/4/19.
@@ -17,6 +17,7 @@ import com.example.loadmoredemo.listener.OnItemClickListener;
 public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     private SparseArray<View> mViews;
+
     private View itemView;
     private Context context;
 
