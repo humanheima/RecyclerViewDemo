@@ -1,5 +1,7 @@
-package com.example.loadmoredemo;
+package com.example.loadmoredemo.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.example.loadmoredemo.R;
 import com.example.loadmoredemo.Util.DiffCallBack;
 import com.example.loadmoredemo.adapter.DiffAdapter;
 import com.example.loadmoredemo.model.TestBean;
@@ -31,6 +34,11 @@ public class DiffUtilActivity extends AppCompatActivity {
             adapter.setmDatas(mDatas);
         }
     };
+
+    public static void launch(Context context) {
+        Intent starter = new Intent(context, DiffUtilActivity.class);
+        context.startActivity(starter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

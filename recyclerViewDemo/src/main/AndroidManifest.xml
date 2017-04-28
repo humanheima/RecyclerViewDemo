@@ -8,11 +8,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.PullRefreshLoadMoreActivity">
         </activity>
-        <activity android:name=".DiffUtilActivity">
+        <activity android:name=".activity.DiffUtilActivity">
         </activity>
-        <activity android:name=".BaseRecyclerViewAdapterActivity">
+        <activity android:name=".activity.BaseRecyclerViewAdapterActivity">
+        </activity>
+        <activity android:name=".activity.SlideDeleteActivity">
+        </activity>
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

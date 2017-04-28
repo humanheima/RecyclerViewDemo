@@ -1,5 +1,7 @@
-package com.example.loadmoredemo;
+package com.example.loadmoredemo.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.loadmoredemo.R;
 import com.example.loadmoredemo.adapter.MyAdapter;
 import com.example.loadmoredemo.interfaces.OnItemClickListener;
 import com.example.loadmoredemo.interfaces.OnLoadMoreListener;
@@ -20,7 +23,7 @@ import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class PullRefreshLoadMoreActivity extends AppCompatActivity {
 
     MyAdapter adapter;
     List<String> dataList = new ArrayList<>();
@@ -28,10 +31,15 @@ public class MainActivity extends AppCompatActivity {
     int page = 1;
     PtrClassicFrameLayout ptrFrameLayout;//下拉刷新控件
 
+    public static void launch(Context context) {
+        Intent starter = new Intent(context, PullRefreshLoadMoreActivity.class);
+        context.startActivity(starter);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_pull_refresh_loadmore);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ptrFrameLayout = (PtrClassicFrameLayout) findViewById(R.id.myPtrFrameLayout);
@@ -85,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    Toast.makeText(MainActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PullRefreshLoadMoreActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
                 }
             });
             recyclerView.setAdapter(adapter);

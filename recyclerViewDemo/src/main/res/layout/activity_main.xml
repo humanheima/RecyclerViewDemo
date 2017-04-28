@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <in.srain.cube.views.ptr.PtrClassicFrameLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/myPtrFrameLayout"
+    <Button
+        android:id="@+id/btn_base"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        cube_ptr:ptr_duration_to_close="300"
-        cube_ptr:ptr_duration_to_close_header="2000"
-        cube_ptr:ptr_keep_header_when_refresh="true"
-        cube_ptr:ptr_pull_to_fresh="false"
-        cube_ptr:ptr_ratio_of_header_height_to_refresh="1.2"
-        cube_ptr:ptr_resistance="1.7">
+        android:text="BaseRecyclerViewAdapter"
+        android:textAllCaps="false"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView" />
+    <Button
+        android:id="@+id/btn_diffutil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DiffUtil"
+        android:textAllCaps="false"/>
 
-    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
-</RelativeLayout>
+    <Button
+        android:id="@+id/btn_pull_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="下拉刷新上拉加载"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btn_slide_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="侧滑删除"
+        android:textAllCaps="false"/>
+</LinearLayout>

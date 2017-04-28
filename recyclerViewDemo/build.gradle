@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.loadmoredemo"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -25,5 +25,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'in.srain.cube:ultra-ptr:1.0.11'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile 'com.hm.slidedeletelayout:slidedeletelayout:1.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

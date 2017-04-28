@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">LoadMoreDemo</string>
+    <string name="app_name">RecyclerView</string>
+    <string name="delete">删除</string>
 </resources>
