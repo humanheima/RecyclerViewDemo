@@ -2,7 +2,6 @@ package com.example.loadmoredemo.base;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.loadmoredemo.interfaces.ItemTypeCallBack;
@@ -15,13 +14,11 @@ import java.util.List;
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> implements ItemTypeCallBack<T> {
 
     protected Context context;
-    protected List<T> datas;
-    protected LayoutInflater inflater;
+    private List<T> datas;
 
     public BaseAdapter(Context context, List<T> datas) {
         this.context = context;
         this.datas = datas;
-        inflater = LayoutInflater.from(context);
     }
 
     @Override

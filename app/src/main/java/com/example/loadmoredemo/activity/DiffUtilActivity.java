@@ -54,19 +54,24 @@ public class DiffUtilActivity extends AppCompatActivity {
 
     public void refresh(View view) {
         newDatas = new ArrayList<>();
-        for (TestBean bean : mDatas) {
+        newDatas.add(new TestBean("ahahhh", "测试", R.drawable.pic_5));
+        newDatas.add(new TestBean("dumingwei2", "Java", R.drawable.pic_2));
+        newDatas.add(new TestBean("weisiboluke", "Android", R.drawable.pic));
+        newDatas.add(new TestBean("dumingwei4", "产品", R.drawable.pic_4));
+        newDatas.add(new TestBean("dumingwei3", "背锅", R.drawable.pic_3));
+        /*for (TestBean bean : mDatas) {
             try {
                 newDatas.add(bean.clone());//clone一遍旧数据 ，模拟刷新操作
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
         }
-        newDatas.add(new TestBean("赵子龙", "帅", R.drawable.pic_6));//模拟新增数据
+        //newDatas.add(new TestBean("赵子龙", "帅", R.drawable.pic_6));//模拟新增数据
         newDatas.get(0).setDesc("Android+");
-        newDatas.get(0).setPicture(R.drawable.pic_7);//模拟修改数据
-        TestBean testBean = newDatas.get(1);//模拟数据位移
-        newDatas.remove(testBean);
-        newDatas.add(testBean);
+        newDatas.get(0).setPicture(R.drawable.pic_7);//模拟修改数据*/
+        //TestBean testBean = newDatas.get(1);//模拟数据位移
+        //newDatas.remove(testBean);
+        //newDatas.add(testBean);
         new Thread(new Runnable() {
             @Override
             public void run() {
