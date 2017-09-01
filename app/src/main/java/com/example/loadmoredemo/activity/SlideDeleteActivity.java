@@ -45,7 +45,7 @@ public class SlideDeleteActivity extends BaseActivity {
             }
 
             @Override
-            public void bindViewHolder(BaseViewHolder holder, TestBean testBean) {
+            public void bindViewHolder(BaseViewHolder holder, TestBean testBean,int position) {
 
                 holder.setTextViewText(R.id.tv1, testBean.getDesc());
                 holder.setTextViewText(R.id.tv2, testBean.getName());

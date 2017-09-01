@@ -47,7 +47,7 @@ public class BaseRecyclerViewAdapterActivity extends BaseActivity {
             }
 
             @Override
-            public void bindViewHolder(BaseViewHolder holder, TestBean testBean) {
+            public void bindViewHolder(BaseViewHolder holder, TestBean testBean,int position) {
                 if (holder.getItemViewType() == R.layout.item_diff) {
                     holder.setTextViewText(R.id.tv1, testBean.getName());
                     holder.setTextViewText(R.id.tv2, testBean.getDesc());

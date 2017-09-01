@@ -36,4 +36,9 @@ public class MainActivity extends AppCompatActivity {
     public void onBtnSlideDeleteClicked() {
         SlideDeleteActivity.launch(this);
     }
+
+    @OnClick(R.id.btn_test_edittext)
+    public void onBtnTestEdittextClicked() {
+        TestEditTextActivity.launch(this);
+    }
 }

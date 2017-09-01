@@ -33,7 +33,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        bindViewHolder(holder, datas.get(position));
+        bindViewHolder(holder, datas.get(position),position);
     }
 
     @Override
@@ -41,5 +41,5 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         return datas.size();
     }
 
-    public abstract void bindViewHolder(BaseViewHolder holder, T t);
+    public abstract void bindViewHolder(BaseViewHolder holder, T t,int position);
 }
