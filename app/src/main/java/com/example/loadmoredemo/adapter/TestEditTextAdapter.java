@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,21 +45,12 @@ public class TestEditTextAdapter extends RecyclerView.Adapter<TestEditTextAdapte
     @Override
     public TestEditTextAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_test_edittext, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(final TestEditTextAdapter.ViewHolder holder, final int position) {
-        final Goods goods = goodsList.get(position);
-        holder.textGoodsName.setText(goods.getName());
-        holder.editGoodsPrice.setTag(goodsList.indexOf(goods));
-        if (holder.editGoodsPrice.getTag() == (Integer)goodsList.indexOf(goods)) {
-            holder.editGoodsPrice.setText(format.format(goods.getPrice()));
-        }
+        final ViewHolder holder = new ViewHolder(view);
         holder.editGoodsPrice.addTextChangedListener(new TextWatcherAdapter() {
             @Override
             public void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
+                Log.e("afterTextChanged", s.toString());
                 String priceStr = s.toString();
                 if (TextUtils.isEmpty(priceStr)) {
                     priceStr = "0.00";
@@ -68,11 +60,20 @@ public class TestEditTextAdapter extends RecyclerView.Adapter<TestEditTextAdapte
                     priceStr = "0.00";
                     holder.editGoodsPrice.setText(priceStr);
                 }
-                if (holder.editGoodsPrice.getTag() == (Integer)goodsList.indexOf(goods)) {
-                    onPriceChangeListener.change(position, Double.valueOf(holder.editGoodsPrice.getText().toString()));
+                if (onPriceChangeListener != null) {
+                    onPriceChangeListener.change(holder.getAdapterPosition(), Double.valueOf(holder.editGoodsPrice.getText().toString()));
                 }
             }
         });
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(final TestEditTextAdapter.ViewHolder holder, final int position) {
+        final Goods goods = goodsList.get(position);
+        holder.textGoodsName.setText(goods.getName());
+        holder.editGoodsPrice.setText(new DecimalFormat("#0.00").format(goods.getPrice()));
+
     }
 
     @Override

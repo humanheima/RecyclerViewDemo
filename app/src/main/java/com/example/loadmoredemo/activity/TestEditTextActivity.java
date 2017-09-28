@@ -54,7 +54,9 @@ public class TestEditTextActivity extends AppCompatActivity {
         adapter.setOnPriceChangeListener(new TestEditTextAdapter.OnPriceChangeListener() {
             @Override
             public void change(int position, double price) {
-                goodsList.get(position).setPrice(price);
+                Goods goods = goodsList.get(position);
+                goods.setPrice(price);
+                goodsList.set(position, goods);
             }
         });
         rvGoodsList.setAdapter(adapter);
