@@ -41,4 +41,9 @@ public class MainActivity extends AppCompatActivity {
     public void onBtnTestEdittextClicked() {
         TestEditTextActivity.launch(this);
     }
+
+    @OnClick(R.id.btn_test_checkBoxInRv)
+    public void testCheckBoxInRv() {
+        RvCheckBoxActivity.launch(this);
+    }
 }

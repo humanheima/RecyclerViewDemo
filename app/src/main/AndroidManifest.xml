@@ -27,6 +27,8 @@
             android:name=".activity.TestEditTextActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
+        <activity android:name=".activity.RvCheckBoxActivity">
+        </activity>
     </application>
 
 </manifest>
