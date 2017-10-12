@@ -20,18 +20,16 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;
 
     private View itemView;
-    private Context context;
 
-    public BaseViewHolder(Context context, View itemView) {
+    protected BaseViewHolder(View itemView) {
         super(itemView);
-        this.context = context;
         this.itemView = itemView;
         mViews = new SparseArray<>();
     }
 
     public static BaseViewHolder get(Context context, ViewGroup parent, int layoutId) {
         View itemView = LayoutInflater.from(context).inflate(layoutId, parent, false);
-        BaseViewHolder holder = new BaseViewHolder(context, itemView);
+        BaseViewHolder holder = new BaseViewHolder(itemView);
         return holder;
     }
 
@@ -57,8 +55,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public BaseViewHolder setVisible(int viewId, int visibility) {
+        getView(viewId).setVisibility(visibility);
+        return this;
+    }
+
+
     public BaseViewHolder setEditTextText(int viewId, String text) {
         EditText editText = getView(viewId);
+        editText.setVisibility(View.VISIBLE);
         editText.setText(text);
         return this;
     }

@@ -46,4 +46,5 @@ public class MainActivity extends AppCompatActivity {
     public void testCheckBoxInRv() {
         RvCheckBoxActivity.launch(this);
     }
+
 }

@@ -48,4 +48,11 @@
         android:layout_height="wrap_content"
         android:text="测试CheckBox在RecyclerView中是否乱序"
         android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btn_test_generic_adapter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试RecyclerView泛型BaseAdapter"
+        android:textAllCaps="false"/>
 </LinearLayout>

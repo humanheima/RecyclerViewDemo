@@ -14,16 +14,16 @@ import java.util.List;
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> implements ItemTypeCallBack<T> {
 
     protected Context context;
-    private List<T> datas;
+    private List<T> data;
 
-    public BaseAdapter(Context context, List<T> datas) {
+    public BaseAdapter(Context context, List<T> data) {
         this.context = context;
-        this.datas = datas;
+        this.data = data;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return getHolderType(position, datas.get(position));
+        return getHolderType(position, data.get(position));
     }
 
     @Override
@@ -33,12 +33,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        bindViewHolder(holder, datas.get(position),position);
+        bindViewHolder(holder, data.get(position),position);
     }
 
     @Override
     public int getItemCount() {
-        return datas.size();
+        return data.size();
     }
 
     public abstract void bindViewHolder(BaseViewHolder holder, T t,int position);

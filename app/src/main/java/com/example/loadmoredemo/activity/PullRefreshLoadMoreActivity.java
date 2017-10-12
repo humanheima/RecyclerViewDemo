@@ -9,11 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.loadmoredemo.R;
-import com.example.loadmoredemo.adapter.MyAdapter;
-import com.example.loadmoredemo.interfaces.OnItemClickListener;
+import com.example.loadmoredemo.adapter.MyLoadMoreAdapter;
+import com.example.loadmoredemo.base.BaseViewHolder;
 import com.example.loadmoredemo.interfaces.OnLoadMoreListener;
 
 import java.util.ArrayList;
@@ -25,11 +24,11 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 
 public class PullRefreshLoadMoreActivity extends AppCompatActivity {
 
-    MyAdapter adapter;
-    List<String> dataList = new ArrayList<>();
-    RecyclerView recyclerView;
-    int page = 1;
-    PtrClassicFrameLayout ptrFrameLayout;//下拉刷新控件
+    private MyLoadMoreAdapter<String> adapter;
+    private List<String> data;
+    private RecyclerView recyclerView;
+    private int page = 1;
+    private PtrClassicFrameLayout ptrFrameLayout;//下拉刷新控件
 
     public static void launch(Context context) {
         Intent starter = new Intent(context, PullRefreshLoadMoreActivity.class);
@@ -40,6 +39,7 @@ public class PullRefreshLoadMoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pull_refresh_loadmore);
+        data = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ptrFrameLayout = (PtrClassicFrameLayout) findViewById(R.id.myPtrFrameLayout);
@@ -76,9 +76,9 @@ public class PullRefreshLoadMoreActivity extends AppCompatActivity {
      * 给recyclerView设置适配器
      */
     public void setAdapter() {
-        Log.e("tag", "size" + dataList.size());
+        Log.e("tag", "size" + data.size());
         if (adapter == null) {
-            adapter = new MyAdapter(recyclerView, dataList, new OnLoadMoreListener() {
+            adapter = new MyLoadMoreAdapter<String>(data, recyclerView, new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     //每次上拉加载更多之前要把page++
@@ -89,13 +89,33 @@ public class PullRefreshLoadMoreActivity extends AppCompatActivity {
                     }
                     getData();
                 }
-            });
-            adapter.setOnItemClickListener(new OnItemClickListener() {
+            }) {
                 @Override
-                public void onItemClick(View view, int position) {
-                    Toast.makeText(PullRefreshLoadMoreActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
+                public int getDataSize() {
+                    return data == null ? 0 : data.size();
                 }
-            });
+
+                @Override
+                protected void bindViewHolder(BaseViewHolder holder, String s, int position) {
+                    holder.setTextViewText(R.id.textView, s);
+                }
+
+                @Override
+                protected void bindFootView(BaseViewHolder holder) {
+                    if (adapter.isLoadAll()) {
+                        holder.setVisible(R.id.footer_view_load_now, View.INVISIBLE);
+                        holder.setVisible(R.id.footer_view_load_all, View.VISIBLE);
+                    } else {
+                        holder.setVisible(R.id.footer_view_load_now, View.VISIBLE);
+                        holder.setVisible(R.id.footer_view_load_all, View.INVISIBLE);
+                    }
+                }
+
+                @Override
+                public int getHolderType(int position, String s) {
+                    return R.layout.item;
+                }
+            };
             recyclerView.setAdapter(adapter);
         }
         //更新适配器
@@ -111,9 +131,9 @@ public class PullRefreshLoadMoreActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (page == 1) {
-                    dataList.clear();
+                    data.clear();
                     for (int i = 0; i < 25; i++) {
-                        dataList.add("string" + i);
+                        data.add("string" + i);
                     }
                     setAdapter();
                 } else {
@@ -123,14 +143,12 @@ public class PullRefreshLoadMoreActivity extends AppCompatActivity {
                         }
                     } else {
                         for (int i = 22; i < 33; i++) {
-                            dataList.add("string" + i);
+                            data.add("string" + i);
                         }
                         setAdapter();
                     }
                 }
             }
         }, 2000);
-
-
     }
 }
