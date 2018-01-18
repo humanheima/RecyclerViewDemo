@@ -1,1 +1,1 @@
-include ':app', ':carouselLib', ':bannerlibrary'
+include ':app', ':bannerlibrary'
