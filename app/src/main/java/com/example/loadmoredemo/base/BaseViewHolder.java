@@ -19,11 +19,8 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     private SparseArray<View> mViews;
 
-    private View itemView;
-
     protected BaseViewHolder(View itemView) {
         super(itemView);
-        this.itemView = itemView;
         mViews = new SparseArray<>();
     }
 

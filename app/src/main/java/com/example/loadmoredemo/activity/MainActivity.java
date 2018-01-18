@@ -3,6 +3,7 @@ package com.example.loadmoredemo.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
+import android.view.View;
 
 import com.example.loadmoredemo.R;
 
@@ -57,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.btn_test_checkBoxInRv)
     public void testCheckBoxInRv() {
         RvCheckBoxActivity.launch(this);
+    }
+
+    void launchHeadFootActivity(View view){
+        HeadFootActivity.launch(this);
     }
 
 }
