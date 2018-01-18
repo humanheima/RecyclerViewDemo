@@ -15,9 +15,18 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    compileSdkVersion = 25
+    buildToolsVersion = '25.0.0'
+    minSdkVersion = 15
+    targetSdkVersion = 24
+    supprotVersion = "25.3.1"
 }

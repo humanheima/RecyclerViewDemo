@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="carousel_default_indicator_width">5dp</dimen>
+    <dimen name="carousel_default_indicator_height">5dp</dimen>
+    <dimen name="carousel_default_indicator_padding">8dp</dimen>
+    <dimen name="carousel_default_indicator_margin_bottom">16dp</dimen>
+</resources>

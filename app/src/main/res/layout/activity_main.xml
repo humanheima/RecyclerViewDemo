@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,54 +9,62 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="测试 RecyclerView 每个item的倒计时"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_base"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="BaseRecyclerViewAdapter"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_diffutil"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="DiffUtil"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_pull_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="下拉刷新上拉加载"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_slide_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="侧滑删除"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_test_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="测试EditText在RecyclerView中是否乱序"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_test_checkBoxInRv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="测试CheckBox在RecyclerView中是否乱序"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_test_generic_adapter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="测试RecyclerView泛型BaseAdapter"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="launchHeadFootActivity"
+        android:text="@string/add_headview_footview"
+        android:textAllCaps="false" />
+
 </LinearLayout>
