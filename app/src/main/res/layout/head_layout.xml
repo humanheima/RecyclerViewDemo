@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.brotherd.bannerlibrary.SimpleBanner
+    <com.hm.banner.HmBanner
         android:id="@+id/simple_banner"
         android:layout_width="match_parent"
         android:layout_height="200dp" />

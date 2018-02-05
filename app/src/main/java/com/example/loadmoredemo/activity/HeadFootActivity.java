@@ -8,8 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
-import com.brotherd.bannerlibrary.SimpleBanner;
-import com.brotherd.bannerlibrary.inter.OnBannerClickListener;
+import com.bumptech.glide.Glide;
 import com.example.loadmoredemo.R;
 import com.example.loadmoredemo.Util.GlideImageLoader;
 import com.example.loadmoredemo.Util.Images;
@@ -20,6 +19,8 @@ import com.example.loadmoredemo.base.BaseViewHolder;
 import com.example.loadmoredemo.databinding.ActivityHeadFootBinding;
 import com.example.loadmoredemo.interfaces.OnItemClickListener;
 import com.example.loadmoredemo.model.TestBean;
+import com.hm.banner.HmBanner;
+import com.hm.banner.inter.OnBannerClickListener;
 
 import org.cchao.carousel.CarouselView;
 
@@ -34,7 +35,7 @@ public class HeadFootActivity extends BaseActivity {
     private BaseAdapter<TestBean> adapter;
     private List<String> multiTitles;
     private List<String> multiImgs;
-    private SimpleBanner banner;
+    private HmBanner banner;
     private CarouselView carouselView;
 
     public static void launch(Context context) {
@@ -80,7 +81,7 @@ public class HeadFootActivity extends BaseActivity {
     }
 
     private void initCarouselBanner(View headView1) {
-        carouselView= ((CarouselView) headView1.findViewById(R.id.carouselView));
+        carouselView = headView1.findViewById(R.id.carouselView);
         List<String> data = new ArrayList<>();
         data.add(Images.imageThumbUrls[0]);
         data.add(Images.imageThumbUrls[1]);
@@ -95,7 +96,7 @@ public class HeadFootActivity extends BaseActivity {
     }
 
     private void initBanner(View view) {
-        banner = (SimpleBanner) view.findViewById(R.id.simple_banner);
+        banner = view.findViewById(R.id.simple_banner);
         multiTitles = new ArrayList<>();
         multiImgs = new ArrayList<>();
         multiTitles.add("当春乃发生");
@@ -110,6 +111,7 @@ public class HeadFootActivity extends BaseActivity {
                 Toast.makeText(HeadFootActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
             }
         });
+
         banner.setImages(multiImgs)
                 .setImageLoader(new GlideImageLoader())
                 .setTitles(multiTitles)
