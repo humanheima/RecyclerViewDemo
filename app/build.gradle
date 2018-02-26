@@ -5,7 +5,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.example.loadmoredemo"
+        applicationId "com.hm.demo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -35,10 +35,10 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-    implementation ('com.github.shucc:Carousel:v1.9') {
+    implementation('com.github.shucc:Carousel:v1.9') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
-    implementation ('com.hm.kof97:hmbanner:1.0'){
+    implementation('com.hm.kof97:hmbanner:1.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'support-v4'
     }
