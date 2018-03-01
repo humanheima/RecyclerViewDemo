@@ -2,34 +2,25 @@ package com.hm.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.hm.demo.R;
 import com.hm.demo.adapter.TestEditTextAdapter;
+import com.hm.demo.base.BaseActivity;
+import com.hm.demo.databinding.ActivityTestEditTextBinding;
 import com.hm.demo.model.Goods;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * 测试EditText在RecyclerView中是否乱序
  */
-public class TestEditTextActivity extends AppCompatActivity {
+public class TestEditTextActivity extends BaseActivity<ActivityTestEditTextBinding> {
 
     private final String TAG = getClass().getSimpleName();
+
     private List<Goods> goodsList;
-    @BindView(R.id.rv_goods_list)
-    RecyclerView rvGoodsList;
-
-    private LinearLayoutManager linearLayoutManager;
-
-    private TestEditTextAdapter adapter;
 
     public static void launch(Context context) {
         Intent starter = new Intent(context, TestEditTextActivity.class);
@@ -37,10 +28,12 @@ public class TestEditTextActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_edit_text);
-        ButterKnife.bind(this);
+    protected int bindLayout() {
+        return R.layout.activity_test_edit_text;
+    }
+
+    @Override
+    protected void initData() {
         goodsList = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
             Goods goods = new Goods();
@@ -48,9 +41,8 @@ public class TestEditTextActivity extends AppCompatActivity {
             goods.setPrice(i);
             goodsList.add(goods);
         }
-        linearLayoutManager = new LinearLayoutManager(this);
-        rvGoodsList.setLayoutManager(linearLayoutManager);
-        adapter = new TestEditTextAdapter(this, goodsList);
+        viewBind.rvGoodsList.setLayoutManager(new LinearLayoutManager(this));
+        TestEditTextAdapter adapter = new TestEditTextAdapter(this, goodsList);
         adapter.setOnPriceChangeListener(new TestEditTextAdapter.OnPriceChangeListener() {
             @Override
             public void change(int position, double price) {
@@ -59,6 +51,6 @@ public class TestEditTextActivity extends AppCompatActivity {
                 goodsList.set(position, goods);
             }
         });
-        rvGoodsList.setAdapter(adapter);
+        viewBind.rvGoodsList.setAdapter(adapter);
     }
 }
