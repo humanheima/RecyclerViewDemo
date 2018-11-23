@@ -74,4 +74,8 @@ public class MainActivity extends AppCompatActivity {
         HeadFootActivity.launch(this);
     }
 
+    void launchPopwindow(View view) {
+        RecyclerViewPopWindowActivity.launch(this);
+    }
+
 }

@@ -2,11 +2,8 @@ package com.hm.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,7 +14,7 @@ import com.hm.demo.base.BaseViewHolder;
 import com.hm.demo.databinding.ActivityDividingLineBinding;
 import com.hm.demo.interfaces.OnItemClickListener;
 import com.hm.demo.model.TestBean;
-import com.hm.demo.widget.DividerGridItemDecoration;
+import com.hm.demo.widget.LinearLayoutItemDecoration;
 
 public class DividingLineActivity extends BaseActivity<ActivityDividingLineBinding> {
 
@@ -34,8 +31,10 @@ public class DividingLineActivity extends BaseActivity<ActivityDividingLineBindi
     @Override
     protected void initData() {
         RecyclerView rv = viewBind.rv;
-        rv.setLayoutManager(new GridLayoutManager(this, 4));
-        rv.addItemDecoration(new DividerGridItemDecoration(this));
+        //rv.setLayoutManager(new GridLayoutManager(this, 4));
+        //rv.addItemDecoration(new DividerGridItemDecoration(this));
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.addItemDecoration(new LinearLayoutItemDecoration(this, LinearLayoutItemDecoration.VERTICAL_LIST));
         rv.setAdapter(new BaseAdapter<TestBean>(this, getTestData()) {
 
             @Override

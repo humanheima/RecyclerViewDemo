@@ -75,4 +75,12 @@
         android:text="@string/add_headview_footview"
         android:textAllCaps="false" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="launchPopwindow"
+        android:text="popwindow"
+
+        android:textAllCaps="false" />
+
 </LinearLayout>
