@@ -14,6 +14,7 @@ import com.hm.demo.R;
 import com.hm.demo.adapter.MyLoadMoreAdapter;
 import com.hm.demo.base.BaseViewHolder;
 import com.hm.demo.interfaces.OnLoadMoreListener;
+import com.hm.demo.widget.TimeLineItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class PullRefreshLoadMoreActivity extends AppCompatActivity {
         data = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new TimeLineItemDecoration());
         ptrFrameLayout = findViewById(R.id.myPtrFrameLayout);
         ptrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
             //检查是否可以刷新

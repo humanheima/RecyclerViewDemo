@@ -2,6 +2,7 @@ package com.hm.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,6 +17,9 @@ import com.hm.demo.interfaces.OnItemClickListener;
 import com.hm.demo.model.TestBean;
 
 public class BaseRecyclerViewAdapterActivity extends BaseActivity<ActivityBaseRecyclerviewAdapterBinding> {
+
+
+    private static final String TAG = "BaseRecyclerViewAdapter";
 
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;

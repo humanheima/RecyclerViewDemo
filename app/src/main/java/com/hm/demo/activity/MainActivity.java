@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_dividing_line:
                 DividingLineActivity.launch(this);
                 break;
+            case R.id.btn_time_line:
+                RecyclerViewTimeLineActivity.launch(this);
+                break;
             default:
                 break;
         }
