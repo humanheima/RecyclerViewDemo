@@ -86,9 +86,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="launchPopwindow"
-        android:text="popwindow"
-
+        android:onClick="testLayout"
+        android:text="testLayout"
         android:textAllCaps="false" />
 
 </LinearLayout>
