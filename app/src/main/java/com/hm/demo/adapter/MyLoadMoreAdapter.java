@@ -40,23 +40,64 @@ public abstract class MyLoadMoreAdapter<T> extends RecyclerView.Adapter<BaseView
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    totalItemCount = linearLayoutManager.getItemCount();
-                    lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                    if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)
-                            && dy > 0 && !isLoadAll) {
-                        loading = true;
-                        loadMorePos = getItemCount() - 1;
-                        notifyItemInserted(getItemCount() - 1);
-                        if (onLoadMoreListener != null) {
-                            onLoadMoreListener.onLoadMore();
+
+                    /*if (linearLayoutManager.getOrientation() == RecyclerView.VERTICAL) {
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                        if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)
+                                && dy > 0 && !isLoadAll) {
+                            loading = true;
+                            loadMorePos = getItemCount() - 1;
+                            notifyItemInserted(getItemCount() - 1);
+                            if (onLoadMoreListener != null) {
+                                onLoadMoreListener.onLoadMore();
+                            }
+                        }
+                    } else if (linearLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) {
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                        if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)
+                                && dx > 0 && !isLoadAll) {
+                            loading = true;
+                            loadMorePos = getItemCount() - 1;
+                            notifyItemInserted(getItemCount() - 1);
+                            if (onLoadMoreListener != null) {
+                                onLoadMoreListener.onLoadMore();
+                            }
+                        }
+                    }*/
+
+                }
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    if (linearLayoutManager.getOrientation() == RecyclerView.VERTICAL) {
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                        if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isLoadAll) {
+                            loading = true;
+                            //loadMorePos = getItemCount() - 1;
+                            //notifyItemInserted(getItemCount() - 1);
+                            if (onLoadMoreListener != null) {
+                                onLoadMoreListener.onLoadMore();
+                            }
+                        }
+                    } else if (linearLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) {
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                        if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold) && !isLoadAll) {
+                            loading = true;
+                            //loadMorePos = getItemCount() - 1;
+                            //notifyItemInserted(getItemCount() - 1);
+                            if (onLoadMoreListener != null) {
+                                onLoadMoreListener.onLoadMore();
+                            }
                         }
                     }
                 }
             });
-        } else {
-            //其他的layoutManger
         }
-
     }
 
     public final void reset() {
@@ -107,10 +148,10 @@ public abstract class MyLoadMoreAdapter<T> extends RecyclerView.Adapter<BaseView
 
     @Override
     public int getItemCount() {
-        if (loading) {
+       /* if (loading) {
             //如果正在加载更多 返回List.size()+1
             return getDataSize() + 1;
-        }
+        }*/
         return getDataSize();
     }
 
@@ -124,7 +165,7 @@ public abstract class MyLoadMoreAdapter<T> extends RecyclerView.Adapter<BaseView
         if (position < getDataSize()) {
             bindViewHolder(holder, data.get(position), position);
         } else {
-            bindFootView(holder);
+            //bindFootView(holder);
         }
     }
 

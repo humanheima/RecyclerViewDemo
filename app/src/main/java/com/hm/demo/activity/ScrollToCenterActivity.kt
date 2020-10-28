@@ -1,0 +1,75 @@
+package com.hm.demo.activity
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
+import android.widget.Toast
+import com.hm.demo.R
+import com.hm.demo.base.BaseAdapter
+import com.hm.demo.base.BaseViewHolder
+import com.hm.demo.model.TestBean
+import com.hm.demo.widget.CenterLayoutManager
+import kotlinx.android.synthetic.main.activity_scroll_to_center.*
+import java.util.*
+
+/**
+ * Created by dumingwei on 2020/10/28
+ *
+ * Desc: 将RecyclerView的某个item滑动到RecyclerView的中间
+ */
+class ScrollToCenterActivity : AppCompatActivity() {
+
+    private val TAG: String = "ScrollToCenterActivity"
+
+    companion object {
+
+        fun launch(context: Context) {
+            val intent = Intent(context, ScrollToCenterActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
+
+    private val centerLayoutManager = CenterLayoutManager(this)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_scroll_to_center)
+
+        rv.layoutManager = centerLayoutManager
+
+        rv.adapter = object : BaseAdapter<TestBean>(this, getTestData()) {
+
+            override fun getHolderType(position: Int, testBean: TestBean): Int {
+                return R.layout.item_scroll_to_center
+            }
+
+            override fun bindViewHolder(holder: BaseViewHolder, testBean: TestBean, position: Int) {
+                holder.setTextViewText(R.id.tv1, testBean.name)
+                holder.setImageViewResource(R.id.iv, testBean.picture)
+                holder.setOnItemClickListener(R.id.iv) { view, position ->
+                    Toast.makeText(this@ScrollToCenterActivity, "onItemClick position=$position", Toast.LENGTH_SHORT).show()
+                    centerLayoutManager.smoothScrollToPosition(rv, RecyclerView.State(),position)
+                }
+            }
+        }
+    }
+
+    private fun getTestData(): List<TestBean>? {
+        val mDatas: MutableList<TestBean> = ArrayList()
+        mDatas.add(TestBean("dumingwei1", "Android", R.drawable.pic))
+        mDatas.add(TestBean("dumingwei2", "Java", R.drawable.pic_2))
+        mDatas.add(TestBean("dumingwei3", "beiguo", R.drawable.pic_3))
+        mDatas.add(TestBean("dumingwei4", "产品", R.drawable.pic_4))
+        mDatas.add(TestBean("dumingwei10", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei5", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei6", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei7", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei8", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei20", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei20", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("dumingwei20", "最后一个", R.drawable.pic_5))
+        return mDatas
+    }
+}

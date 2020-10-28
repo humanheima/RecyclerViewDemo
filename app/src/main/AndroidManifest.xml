@@ -10,7 +10,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LayoutActivity"></activity>
+        <activity android:name=".activity.ScrollToCenterActivity"></activity>
+        <activity android:name=".activity.FloatItemActivity" />
+        <activity android:name=".activity.LayoutActivity" />
         <activity android:name=".activity.RecyclerViewTimeLineActivity" />
         <activity android:name=".activity.PullRefreshLoadMoreActivity" />
         <activity android:name=".activity.DiffUtilActivity" />
@@ -31,6 +33,7 @@
         <activity android:name=".activity.HeadFootActivity" />
         <activity android:name=".activity.DividingLineActivity" />
         <activity android:name=".activity.RecyclerViewPopWindowActivity" />
+        <activity android:name=".activity.HorizontalLoadMoreActivity" />
     </application>
 
 </manifest>

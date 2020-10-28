@@ -1,5 +1,8 @@
 package com.hm.demo.activity
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.SparseArray
@@ -7,6 +10,11 @@ import android.view.View
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.hm.demo.R
+
+inline fun <reified T : Activity> Context.startAct() {
+    val intent = Intent(this, T::class.java)
+    startActivity(intent)
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,10 +32,15 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+
+            R.id.btn_scroll_to_center -> ScrollToCenterActivity.launch(this)
+
+            R.id.btn_float_item -> FloatItemActivity.launch(this)
             R.id.btn_dividing_line -> DividingLineActivity.launch(this)
             R.id.btn_time_line -> RecyclerViewTimeLineActivity.launch(this)
-            else -> {
-            }
+            R.id.btnDiffUtil -> DiffUtilActivity.launch(this)
+            R.id.btn_pull_refresh -> PullRefreshLoadMoreActivity.launch(this)
+            R.id.btn_horizontal_load_more -> HorizontalLoadMoreActivity.launch(this)
         }
     }
 
@@ -39,16 +52,6 @@ class MainActivity : AppCompatActivity() {
     @OnClick(R.id.btn_base)
     fun onBtnBaseClicked() {
         BaseRecyclerViewAdapterActivity.launch(this)
-    }
-
-    @OnClick(R.id.btn_diffutil)
-    fun onBtnDiffutilClicked() {
-        DiffUtilActivity.launch(this)
-    }
-
-    @OnClick(R.id.btn_pull_refresh)
-    fun onBtnPullRefreshClicked() {
-        PullRefreshLoadMoreActivity.launch(this)
     }
 
     @OnClick(R.id.btn_slide_delete)

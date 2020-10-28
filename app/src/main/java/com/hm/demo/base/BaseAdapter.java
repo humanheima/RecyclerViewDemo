@@ -1,6 +1,7 @@
 package com.hm.demo.base;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -49,7 +50,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         if (headView != null && position == 0) {
             return HEAD_TYPE;
         }
-        if (footerView != null && position >= getItemCount()) {
+        if (footerView != null && position >= getItemCount() - 1) {
             return FOOT_TYPE;
         }
         if (headView == null) {
@@ -110,8 +111,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             return;
         }
         footerView = view;
-        footerView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,
-                RecyclerView.LayoutParams.WRAP_CONTENT));
+        footerView.setLayoutParams(new RecyclerView.LayoutParams(240,
+                240));
         notifyItemInserted(getItemCount());
     }
 
@@ -126,7 +127,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
      * 设置网格布局footView占据一整行
      */
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
@@ -144,12 +145,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
      * 设置瀑布流布局footView占据一整行
      */
     @Override
-    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         int lastItemPosition = holder.getAdapterPosition();
         if (getItemViewType(lastItemPosition) == FOOT_TYPE) {
             ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
-            if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+            if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
                 StaggeredGridLayoutManager.LayoutParams p = ((StaggeredGridLayoutManager.LayoutParams) lp);
                 p.setFullSpan(true);
             }

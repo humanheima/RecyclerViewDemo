@@ -25,6 +25,7 @@ public class DiffUtilActivity extends AppCompatActivity {
     private RecyclerView mRv;
     private DiffAdapter adapter;
     private List<TestBean> newDatas;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -45,11 +46,10 @@ public class DiffUtilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diff_util);
         initData();
-        mRv = (RecyclerView) findViewById(R.id.recycler_view);
+        mRv = findViewById(R.id.recycler_view);
         mRv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new DiffAdapter(mDatas, this);
         mRv.setAdapter(adapter);
-
     }
 
     public void refresh(View view) {
@@ -91,5 +91,7 @@ public class DiffUtilActivity extends AppCompatActivity {
         mDatas.add(new TestBean("dumingwei3", "背锅", R.drawable.pic_3));
         mDatas.add(new TestBean("dumingwei4", "产品", R.drawable.pic_4));
         mDatas.add(new TestBean("dumingwei5", "测试", R.drawable.pic_5));
+        mDatas.add(new TestBean("dumingwei6", "测试", R.drawable.pic_5));
+        mDatas.add(new TestBean("dumingwei7", "飞狐外传", R.drawable.pic_6));
     }
 }
