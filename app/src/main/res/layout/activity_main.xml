@@ -9,6 +9,14 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btn_test_notify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="测试RecyclerView局部刷新"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btn_scroll_to_center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,6 +107,7 @@
             android:id="@+id/btn_test_checkBoxInRv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="click"
             android:text="测试CheckBox在RecyclerView中是否乱序"
             android:textAllCaps="false" />
 

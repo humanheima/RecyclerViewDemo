@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     fun click(view: View) {
         when (view.id) {
 
+            R.id.btn_test_notify -> RvNotifyTestActivity.launch(this)
+
             R.id.btn_scroll_to_center -> ScrollToCenterActivity.launch(this)
 
             R.id.btn_float_item -> FloatItemActivity.launch(this)
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             R.id.btnDiffUtil -> DiffUtilActivity.launch(this)
             R.id.btn_pull_refresh -> PullRefreshLoadMoreActivity.launch(this)
             R.id.btn_horizontal_load_more -> HorizontalLoadMoreActivity.launch(this)
+            R.id.btn_test_checkBoxInRv -> RvCheckBoxActivity.launch(this)
         }
     }
 
@@ -62,11 +65,6 @@ class MainActivity : AppCompatActivity() {
     @OnClick(R.id.btn_test_edittext)
     fun onBtnTestEdittextClicked() {
         TestEditTextActivity.launch(this)
-    }
-
-    @OnClick(R.id.btn_test_checkBoxInRv)
-    fun testCheckBoxInRv() {
-        RvCheckBoxActivity.launch(this)
     }
 
     fun launchHeadFootActivity(view: View) {

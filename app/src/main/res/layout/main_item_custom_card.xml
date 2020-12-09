@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="8dp"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:paddingLeft="12dp">
+
+    <RelativeLayout
+        android:id="@+id/main_rl_custom_image"
+        android:layout_width="105dp"
+        android:layout_height="70dp">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="#00000000"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/main_custom_card_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#977d61" />
+
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/mainTvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            tools:text="陪伴你美好生活的music" />
+
+        <ImageView
+            android:id="@+id/main_custom_card_tag"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/bg_check" />
+
+    </RelativeLayout>
+
+</LinearLayout>
