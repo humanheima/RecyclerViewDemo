@@ -12,9 +12,6 @@ import com.hm.demo.model.CountDownModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by dumingwei on 2017/10/20.
  */
@@ -48,7 +45,7 @@ public class CountDownAdapter extends RecyclerView.Adapter<CountDownAdapter.Coun
         return data == null ? 0 : data.size();
     }
 
-    public void notifyData(){
+    public void notifyData() {
         for (int i = 0; i < holderList.size(); i++) {
             holderList.get(i).textTime.setText(data.get(holderList.get(i).position).getTime());
         }
@@ -57,7 +54,6 @@ public class CountDownAdapter extends RecyclerView.Adapter<CountDownAdapter.Coun
     static class CountDownHolder extends RecyclerView.ViewHolder {
 
         private int position;
-        @BindView(R.id.text_time)
         TextView textTime;
 
         public void setPosition(int position) {
@@ -66,7 +62,8 @@ public class CountDownAdapter extends RecyclerView.Adapter<CountDownAdapter.Coun
 
         public CountDownHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            textTime = itemView.findViewById(R.id.text_time);
+
         }
     }
 

@@ -19,9 +19,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * 测试RecyclerView中每个item 倒计时的功能
  * 1. 用一个线程，在run()方法中每隔一秒改变所有的data ，并通过Handler发送消息
@@ -32,7 +29,6 @@ import butterknife.ButterKnife;
 public class RvCountDownActivity extends AppCompatActivity {
 
     private static final String TAG = "RvCountDownActivity";
-    @BindView(R.id.rv)
     RecyclerView rv;
     public static final int WHAT = 1;
     private CountDownAdapter adapter;
@@ -50,7 +46,7 @@ public class RvCountDownActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rv_count_down);
         handler = new MyHandler(this);
-        ButterKnife.bind(this);
+        rv = findViewById(R.id.rv);
         List<CountDownModel> data = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             CountDownModel model = new CountDownModel();

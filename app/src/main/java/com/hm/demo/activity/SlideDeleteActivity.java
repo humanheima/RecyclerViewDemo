@@ -18,9 +18,6 @@ import com.hm.demo.model.TestBean;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class SlideDeleteActivity extends BaseActivity<ActivitySlideDeleteBinding> {
 
     RecyclerView recyclerView;

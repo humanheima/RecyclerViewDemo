@@ -18,9 +18,6 @@ import com.hm.demo.model.Goods;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by dumingwei on 2017/9/1.
  */
@@ -82,14 +79,13 @@ public class TestEditTextAdapter extends RecyclerView.Adapter<TestEditTextAdapte
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.text_goods_name)
         TextView textGoodsName;
-        @BindView(R.id.edit_goods_price)
         EditText editGoodsPrice;
 
         ViewHolder(View view) {
             super(view);
-            ButterKnife.bind(this, view);
+            textGoodsName = view.findViewById(R.id.text_goods_name);
+            editGoodsPrice = view.findViewById(R.id.edit_goods_price);
         }
     }
 

@@ -7,11 +7,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
-import com.hm.demo.R
 import com.hm.demo.Util.ScreenUtil
 import com.hm.demo.adapter.InterestCardAdapter
+import com.hm.demo.databinding.ActivityRvNotifyTestBinding
 import com.hm.demo.model.NewInterestCardModel
-import kotlinx.android.synthetic.main.activity_rv_notify_test.*
 
 /**
  * Created by dumingwei on 2020/12/9
@@ -29,6 +28,8 @@ class RvNotifyTestActivity : AppCompatActivity() {
 
     private var itemWidth = 0
 
+    private lateinit var binding: ActivityRvNotifyTestBinding
+
     companion object {
 
         fun launch(context: Context) {
@@ -42,7 +43,9 @@ class RvNotifyTestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_rv_notify_test)
+        binding = ActivityRvNotifyTestBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         itemWidth = (ScreenUtil.getScreenWidth(this) - ScreenUtil.dpToPx(this, 30)) / 3
 
@@ -139,10 +142,14 @@ class RvNotifyTestActivity : AppCompatActivity() {
                 }
             }
         }
-        rv.adapter = mInterestAdapter
-        rv.layoutManager = GridLayoutManager(this, 3)
+        binding.rv.adapter = mInterestAdapter
+        binding.rv.layoutManager = GridLayoutManager(this, 3)
         val defaultItemAnimator = DefaultItemAnimator()
-        rv.itemAnimator = defaultItemAnimator
+        defaultItemAnimator.addDuration = 500
+        defaultItemAnimator.moveDuration = 500
+        defaultItemAnimator.removeDuration = 500
+        defaultItemAnimator.changeDuration = 500
+        binding.rv.itemAnimator = defaultItemAnimator
     }
 
 }

@@ -26,8 +26,6 @@ import com.hm.demo.model.TestBean;
 
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
  * 点击RecyclerView的每个item出现popwindow
  */
@@ -39,7 +37,6 @@ public class RecyclerViewPopWindowActivity extends BaseActivity {
 
     private List<TestBean> testData;
     private MyPopWindow popWindow;
-    @BindView(R.id.rv_popwindow)
     RecyclerView rv;
     private TextView tvDelete;
 

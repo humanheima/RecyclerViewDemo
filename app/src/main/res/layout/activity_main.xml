@@ -132,6 +132,14 @@
             android:text="testLayout"
             android:textAllCaps="false" />
 
+        <Button
+            android:id="@+id/btnTestPopWindowInRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="launchPopWindow"
+            android:text="testLayout"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
 </ScrollView>

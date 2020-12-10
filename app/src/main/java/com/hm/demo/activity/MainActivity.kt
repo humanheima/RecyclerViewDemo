@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.SparseArray
 import android.view.View
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.hm.demo.R
 
 inline fun <reified T : Activity> Context.startAct() {
@@ -23,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
         sparseArray = SparseArray(3)
         sparseArray!!.put(1, "first")
         sparseArray!!.put(2, "second")
@@ -32,6 +29,10 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+
+            R.id.btn_base -> BaseRecyclerViewAdapterActivity.launch(this)
+            R.id.btn_slide_delete -> SlideDeleteActivity.launch(this)
+            R.id.btn_test_edittext -> TestEditTextActivity.launch(this)
 
             R.id.btn_test_notify -> RvNotifyTestActivity.launch(this)
 
@@ -44,34 +45,15 @@ class MainActivity : AppCompatActivity() {
             R.id.btn_pull_refresh -> PullRefreshLoadMoreActivity.launch(this)
             R.id.btn_horizontal_load_more -> HorizontalLoadMoreActivity.launch(this)
             R.id.btn_test_checkBoxInRv -> RvCheckBoxActivity.launch(this)
+            R.id.btn_recycler_view_countdown -> RvCountDownActivity.launch(this)
         }
-    }
-
-    @OnClick(R.id.btn_recycler_view_countdown)
-    fun countDown() {
-        RvCountDownActivity.launch(this)
-    }
-
-    @OnClick(R.id.btn_base)
-    fun onBtnBaseClicked() {
-        BaseRecyclerViewAdapterActivity.launch(this)
-    }
-
-    @OnClick(R.id.btn_slide_delete)
-    fun onBtnSlideDeleteClicked() {
-        SlideDeleteActivity.launch(this)
-    }
-
-    @OnClick(R.id.btn_test_edittext)
-    fun onBtnTestEdittextClicked() {
-        TestEditTextActivity.launch(this)
     }
 
     fun launchHeadFootActivity(view: View) {
         HeadFootActivity.launch(this)
     }
 
-    fun launchPopwindow(view: View) {
+    fun launchPopWindow(view: View) {
         RecyclerViewPopWindowActivity.launch(this)
     }
 

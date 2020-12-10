@@ -13,9 +13,6 @@ import com.hm.demo.model.CheckBoxModel;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by dumingwei on 2017/10/10.
  */
@@ -72,15 +69,13 @@ public class CheckBoxAdapter extends RecyclerView.Adapter<CheckBoxAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.text_description)
         TextView textDescription;
-        @BindView(R.id.img_check_box)
         ImageView imgCheckBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
-
+            textDescription = itemView.findViewById(R.id.text_description);
+            imgCheckBox = itemView.findViewById(R.id.img_check_box);
         }
     }
 
