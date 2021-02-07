@@ -1,7 +1,7 @@
 package com.hm.demo.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,17 +17,17 @@ import kotlinx.android.synthetic.main.item_diff.view.*
 class FloatItemAdapter(
         val context: Context,
         val dataList: List<TestBean>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     val normalType = 100
     val floatType = 200
 
-    class NormalVH(view: View) : RecyclerView.ViewHolder(view) {
+    class NormalVH(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
 
     }
 
-    class FloatVH(view: View) : RecyclerView.ViewHolder(view) {
+    class FloatVH(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     }
 
@@ -38,7 +38,7 @@ class FloatItemAdapter(
         return normalType
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         if (viewType == floatType) {
             val view = LayoutInflater.from(context).inflate(R.layout.view_float_layout, parent, false)
             return FloatVH(view)
@@ -52,7 +52,7 @@ class FloatItemAdapter(
         return dataList.size
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         val data = dataList[position]
         if (holder is NormalVH) {
             holder.itemView.tv1.text = data.name

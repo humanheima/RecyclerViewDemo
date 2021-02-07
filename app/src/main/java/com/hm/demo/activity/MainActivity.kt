@@ -4,9 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.SparseArray
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
 
 inline fun <reified T : Activity> Context.startAct() {
@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
             R.id.btn_base -> BaseRecyclerViewAdapterActivity.launch(this)
             R.id.btn_slide_delete -> SlideDeleteActivity.launch(this)
             R.id.btn_test_edittext -> TestEditTextActivity.launch(this)
-
-            R.id.btn_test_notify -> RvLocalRefreshActivity.launch(this)
 
             R.id.btn_scroll_to_center -> ScrollToCenterActivity.launch(this)
 

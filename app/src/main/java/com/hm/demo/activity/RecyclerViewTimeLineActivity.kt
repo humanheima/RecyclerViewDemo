@@ -3,8 +3,8 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Toast
 import com.hm.demo.R
 import com.hm.demo.base.BaseAdapter
@@ -34,7 +34,7 @@ open class RecyclerViewTimeLineActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recycler_view_time_line)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.addItemDecoration(LinearLayoutItemDecoration(this, LinearLayoutItemDecoration.VERTICAL_LIST))
         recyclerView.addItemDecoration(TimeLineItemDecoration())
         recyclerView.adapter = object : BaseAdapter<TestBean>(this, getTestData()) {

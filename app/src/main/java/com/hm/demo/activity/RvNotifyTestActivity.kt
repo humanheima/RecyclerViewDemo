@@ -3,9 +3,9 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import android.util.Log
 import com.hm.demo.Util.ScreenUtil
 import com.hm.demo.adapter.InterestCardAdapter
@@ -143,8 +143,8 @@ class RvNotifyTestActivity : AppCompatActivity() {
             }
         }
         binding.rv.adapter = mInterestAdapter
-        binding.rv.layoutManager = GridLayoutManager(this, 3)
-        val defaultItemAnimator = DefaultItemAnimator()
+        binding.rv.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 3)
+        val defaultItemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         defaultItemAnimator.addDuration = 500
         defaultItemAnimator.moveDuration = 500
         defaultItemAnimator.removeDuration = 500

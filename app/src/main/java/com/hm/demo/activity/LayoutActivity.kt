@@ -3,8 +3,8 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.Toast
@@ -59,7 +59,7 @@ class LayoutActivity : BaseRecyclerViewAdapterActivity() {
             }
         }
 
-        rvLayout.layoutManager = GridLayoutManager(this, 3, LinearLayoutManager.HORIZONTAL, false)
+        rvLayout.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 3, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
 
         adapter?.addFootView(footView)
         rvLayout.adapter = adapter
