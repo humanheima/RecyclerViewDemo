@@ -16,18 +16,17 @@ import kotlinx.android.synthetic.main.item_diff.view.*
  */
 class FloatItemAdapter(
         val context: Context,
-        val dataList: List<TestBean>
-) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+        val dataList: List<TestBean>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val normalType = 100
     val floatType = 200
 
-    class NormalVH(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    class NormalVH(view: View) : RecyclerView.ViewHolder(view) {
 
 
     }
 
-    class FloatVH(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    class FloatVH(view: View) :RecyclerView.ViewHolder(view) {
 
     }
 
