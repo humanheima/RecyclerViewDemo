@@ -3,8 +3,8 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import android.widget.Toast
 import com.hm.demo.R
 import com.hm.demo.base.BaseAdapter
@@ -50,7 +50,7 @@ class ScrollToCenterActivity : AppCompatActivity() {
                 holder.setImageViewResource(R.id.iv, testBean.picture)
                 holder.setOnItemClickListener(R.id.iv) { view, position ->
                     Toast.makeText(this@ScrollToCenterActivity, "onItemClick position=$position", Toast.LENGTH_SHORT).show()
-                    centerLayoutManager.smoothScrollToPosition(rv, RecyclerView.State(),position)
+                    centerLayoutManager.smoothScrollToPosition(rv, androidx.recyclerview.widget.RecyclerView.State(),position)
                 }
             }
         }

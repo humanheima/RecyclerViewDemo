@@ -2,9 +2,12 @@ package com.hm.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -37,6 +40,14 @@ public class BaseRecyclerViewAdapterActivity extends BaseActivity<ActivityBaseRe
     @Override
     protected void initData() {
         recyclerView = viewBind.recyclerView;
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged: newState = " + newState);
+            }
+        });
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(new BaseAdapter<TestBean>(this, getTestData()) {

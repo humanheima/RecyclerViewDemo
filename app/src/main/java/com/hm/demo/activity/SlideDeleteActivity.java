@@ -3,8 +3,8 @@ package com.hm.demo.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,9 +17,6 @@ import com.hm.demo.interfaces.OnItemClickListener;
 import com.hm.demo.model.TestBean;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class SlideDeleteActivity extends BaseActivity<ActivitySlideDeleteBinding> {
 

@@ -2,8 +2,8 @@ package com.hm.demo.adapter
 
 import android.content.Context
 import android.graphics.Color
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +22,7 @@ class InterestCardAdapter(
         val context: Context,
         val mInterestImageViewWith: Int,
         val interestList: ArrayList<NewInterestCardModel>
-) : RecyclerView.Adapter<InterestCardAdapter.VH>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<InterestCardAdapter.VH>() {
 
     var onSelectedInterface: OnSelectedInterface? = null
 
@@ -61,7 +61,7 @@ class InterestCardAdapter(
         }
     }
 
-    class VH(mItemView: View) : RecyclerView.ViewHolder(mItemView) {
+    class VH(mItemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(mItemView) {
         val rlCustomImage: RelativeLayout = itemView.findViewById(R.id.main_rl_custom_image)
         val ivCustomCardCover: ImageView = itemView.findViewById(R.id.main_custom_card_cover)
         val tvName: TextView = itemView.findViewById(R.id.mainTvName)

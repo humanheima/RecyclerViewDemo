@@ -3,10 +3,8 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
 import com.hm.demo.adapter.FloatItemAdapter
 import com.hm.demo.model.TestBean
@@ -28,7 +26,7 @@ class FloatItemActivity : AppCompatActivity() {
         }
     }
 
-    private val linearLayoutManager = LinearLayoutManager(this)
+    private val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +34,8 @@ class FloatItemActivity : AppCompatActivity() {
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.adapter = FloatItemAdapter(this, getTestData())
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+        recyclerView.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(rv, dx, dy)
                 val firstVisibleItemPos = linearLayoutManager.findFirstVisibleItemPosition()
                 if (firstVisibleItemPos >= 2) {
@@ -47,9 +45,6 @@ class FloatItemActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
         })
     }
 

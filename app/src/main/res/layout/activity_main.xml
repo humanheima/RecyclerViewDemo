@@ -9,14 +9,6 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btn_test_notify"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试RecyclerView局部刷新"
-            android:textAllCaps="false" />
-
-        <Button
             android:id="@+id/btn_scroll_to_center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -129,6 +121,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="testLayout"
+            android:text="testLayout"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnTestPopWindowInRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="launchPopWindow"
             android:text="testLayout"
             android:textAllCaps="false" />
 

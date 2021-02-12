@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,6 @@ import com.hm.demo.model.TestBean;
 
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
  * 点击RecyclerView的每个item出现popwindow
  */
@@ -39,7 +36,6 @@ public class RecyclerViewPopWindowActivity extends BaseActivity {
 
     private List<TestBean> testData;
     private MyPopWindow popWindow;
-    @BindView(R.id.rv_popwindow)
     RecyclerView rv;
     private TextView tvDelete;
 
