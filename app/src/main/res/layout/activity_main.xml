@@ -9,6 +9,14 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btn_center_item_decoration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="测试GirdLayoutManager使用中间对称的decoration"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btn_scroll_to_center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

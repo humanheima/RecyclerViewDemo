@@ -10,6 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.GridCenterDividerTestActivity"></activity>
         <activity android:name=".activity.ScrollToCenterActivity" />
         <activity android:name=".activity.FloatItemActivity" />
         <activity android:name=".activity.LayoutActivity" />
