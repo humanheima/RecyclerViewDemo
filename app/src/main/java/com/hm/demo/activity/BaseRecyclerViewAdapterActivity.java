@@ -2,14 +2,13 @@ package com.hm.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.hm.demo.R;
 import com.hm.demo.base.BaseActivity;
@@ -46,6 +45,11 @@ public class BaseRecyclerViewAdapterActivity extends BaseActivity<ActivityBaseRe
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 Log.d(TAG, "onScrollStateChanged: newState = " + newState);
+                //对于竖直方向上来说，负数，检查手指从上往下滑动
+                Log.d(TAG, "recyclerView.canScrollVertically(-1) = " + recyclerView.canScrollVertically(-1));
+
+                //对于竖直方向上来说，正数，检查手指从下向上滑动
+                Log.d(TAG, "recyclerView.canScrollVertically(1) = " + recyclerView.canScrollVertically(1));
             }
         });
         linearLayoutManager = new LinearLayoutManager(this);
