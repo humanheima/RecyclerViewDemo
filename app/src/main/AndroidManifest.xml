@@ -35,6 +35,8 @@
         <activity android:name=".activity.DividingLineActivity" />
         <activity android:name=".activity.RecyclerViewPopWindowActivity" />
         <activity android:name=".activity.HorizontalLoadMoreActivity" />
+        <activity android:name=".activity.StaggeredGridLayoutManagerActivity" />
+
     </application>
 
 </manifest>

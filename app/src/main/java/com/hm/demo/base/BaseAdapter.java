@@ -1,13 +1,14 @@
 package com.hm.demo.base;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.hm.demo.interfaces.ItemTypeCallBack;
 
@@ -21,21 +22,21 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     private static final int HEAD_TYPE = 101;
     private static final int FOOT_TYPE = 102;
     protected Context context;
-    private List<T> data;
+    protected List<T> dataList;
 
-    private View headView;
-    private View footerView;
+    protected View headView;
+    protected View footerView;
 
     private String TAG = "BaseAdapter";
 
-    public BaseAdapter(Context context, List<T> data) {
+    public BaseAdapter(Context context, List<T> dataList) {
         this.context = context;
-        this.data = data;
+        this.dataList = dataList;
     }
 
     @Override
     public int getItemCount() {
-        int count = data.size();
+        int count = dataList.size();
         if (headView != null) {
             count++;
         }
@@ -54,9 +55,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             return FOOT_TYPE;
         }
         if (headView == null) {
-            return getHolderType(position, data.get(position));
+            return getHolderType(position, dataList.get(position));
         } else {
-            return getHolderType(position - 1, data.get(position - 1));
+            return getHolderType(position - 1, dataList.get(position - 1));
         }
     }
 
@@ -76,8 +77,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         if (headView != null) {
             position = position - 1;
         }
-        if (position < data.size() && !(holder instanceof SpecialViewHolder)) {
-            bindViewHolder(((BaseViewHolder) holder), data.get(position), position);
+        if (position < dataList.size() && !(holder instanceof SpecialViewHolder)) {
+            bindViewHolder(((BaseViewHolder) holder), dataList.get(position), position);
         }
     }
 
@@ -157,7 +158,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    static class SpecialViewHolder extends RecyclerView.ViewHolder {
+    public static class SpecialViewHolder extends RecyclerView.ViewHolder {
 
         public SpecialViewHolder(View itemView) {
             super(itemView);

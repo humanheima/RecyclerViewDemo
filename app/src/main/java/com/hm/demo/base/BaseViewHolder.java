@@ -1,7 +1,6 @@
 package com.hm.demo.base;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.hm.demo.interfaces.OnItemClickListener;
 
@@ -49,6 +50,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     public BaseViewHolder setTextViewText(int viewId, String text) {
         TextView textView = getView(viewId);
         textView.setText(text);
+        return this;
+    }
+
+    public BaseViewHolder setViewBg(int viewId, int color) {
+        View view = getView(viewId);
+        view.setBackgroundColor(color);
         return this;
     }
 

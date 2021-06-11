@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+            R.id.btn_test_staggered_layout -> StaggeredGridLayoutManagerActivity.launch(this)
 
             R.id.btn_center_item_decoration -> GridCenterDividerTestActivity.launch(this)
             R.id.btn_base -> BaseRecyclerViewAdapterActivity.launch(this)

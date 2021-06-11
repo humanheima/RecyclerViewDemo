@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.hm.demo.R;
 import com.hm.demo.base.BaseActivity;
@@ -52,6 +53,8 @@ public class BaseRecyclerViewAdapterActivity extends BaseActivity<ActivityBaseRe
                 Log.d(TAG, "recyclerView.canScrollVertically(1) = " + recyclerView.canScrollVertically(1));
             }
         });
+
+
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(new BaseAdapter<TestBean>(this, getTestData()) {
