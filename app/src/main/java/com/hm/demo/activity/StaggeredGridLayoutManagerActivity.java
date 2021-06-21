@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -32,7 +33,7 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
     private static final String TAG = "StaggeredGridLayoutMana";
 
     private AutoScrollRecyclerView recyclerView;
-    private StaggeredGridLayoutManager linearLayoutManager;
+    //private StaggeredGridLayoutManager linearLayoutManager;
 
     public static void launch(Context context) {
         Intent starter = new Intent(context, StaggeredGridLayoutManagerActivity.class);
@@ -61,7 +62,7 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
             }
         });
 
-        linearLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(new InfiniteAdapter(this, getTestData()));
 
@@ -78,7 +79,7 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
         List<TestBean> mDatas = new ArrayList<>();
         mDatas.add(new TestBean("dumingwei1", "Android", R.drawable.pic));
         mDatas.add(new TestBean("dumingwei1", "Java", R.drawable.pic_2));
-        mDatas.add(new TestBean("dumingwei1", "beiguo", R.drawable.pic_3));
+        mDatas.add(new TestBean("dumingwei1", "艰难", R.drawable.pic_3));
         mDatas.add(new TestBean("dumingwei1", "产品", R.drawable.pic_4));
         mDatas.add(new TestBean("dumingwei1", "测试", R.drawable.pic_5));
         mDatas.add(new TestBean("dumingwei1", "测试", R.drawable.pic_5));
@@ -107,6 +108,7 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
         @Override
         public int getItemCount() {
             return Integer.MAX_VALUE;
+            //return dataList.size();
         }
 
         @Override
@@ -142,7 +144,7 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
                 public void onItemClick(View view, int position) {
                     int realSize = dataList.size();
                     int index = position % realSize;
-                    String name = dataList.get(index).getName();
+                    String name = dataList.get(index).getDesc();
                     Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
                 }
             });

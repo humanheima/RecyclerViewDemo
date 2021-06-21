@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AndroidStudioProjects.RecyclerViewDemo.iml" filepath="$PROJECT_DIR$/.idea/modules/AndroidStudioProjects.RecyclerViewDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/RecyclerViewDemo.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/RecyclerViewDemo.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/layoutmanager/RecyclerViewDemo.layoutmanager.iml" filepath="$PROJECT_DIR$/.idea/modules/layoutmanager/RecyclerViewDemo.layoutmanager.iml" />
     </modules>
   </component>
 </project>

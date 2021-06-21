@@ -34,6 +34,14 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         this.dataList = dataList;
     }
 
+    public void setDataList(List<T> dataList) {
+        this.dataList = dataList;
+    }
+
+    public List<T> getDataList() {
+        return dataList;
+    }
+
     @Override
     public int getItemCount() {
         int count = dataList.size();
