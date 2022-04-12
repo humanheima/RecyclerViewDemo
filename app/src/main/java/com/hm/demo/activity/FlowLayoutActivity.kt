@@ -11,7 +11,7 @@ import com.hm.demo.R
 import com.hm.demo.base.BaseAdapter
 import com.hm.demo.base.BaseViewHolder
 import com.hm.demo.model.TestBean
-import com.mcxtzhang.layoutmanager.flow.FlowLayoutManagerCopy
+import com.mcxtzhang.layoutmanager.flow.HorizontalFlowLayoutManager
 import java.util.*
 
 class FlowLayoutActivity : AppCompatActivity() {
@@ -33,7 +33,7 @@ class FlowLayoutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flow_layout)
         rvUseFlowLayout = findViewById(R.id.rvUseFlowLayout)
-        rvUseFlowLayout.layoutManager = FlowLayoutManagerCopy()
+        rvUseFlowLayout.layoutManager = HorizontalFlowLayoutManager(RecyclerView.HORIZONTAL, 3)
         mAdapter = InfiniteAdapter(this, getTestData())
         rvUseFlowLayout.adapter = mAdapter
 
@@ -59,17 +59,18 @@ class FlowLayoutActivity : AppCompatActivity() {
     fun getTestData(): List<TestBean> {
         val mDatas: MutableList<TestBean> = ArrayList()
         mDatas.add(TestBean("dumingwei1", "Android", R.drawable.pic))
-        mDatas.add(TestBean("杜兰特", "Java", R.drawable.pic_2))
-        mDatas.add(TestBean("扬尼斯阿德托昆博", "艰难", R.drawable.pic_3))
-        mDatas.add(TestBean("詹姆斯", "产品", R.drawable.pic_4))
-        mDatas.add(TestBean("哈登", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("欧文", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("格里芬", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("乔治", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("莱昂纳德", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("曼恩", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("布克", "测试", R.drawable.pic_5))
-        mDatas.add(TestBean("保罗", "最后一个", R.drawable.pic_5))
+        mDatas.add(TestBean("杜兰特2", "Java", R.drawable.pic_2))
+        mDatas.add(TestBean("扬尼斯阿德托昆博3", "艰难", R.drawable.pic_3))
+        mDatas.add(TestBean("詹姆斯4", "产品", R.drawable.pic_4))
+        mDatas.add(TestBean("哈登5", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("欧文6", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("格里芬7", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("乔治8", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("莱昂纳德9", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("曼恩10", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("布克11", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("保罗12", "最后一个", R.drawable.pic_5))
+
         return mDatas
     }
 
@@ -88,6 +89,7 @@ class FlowLayoutActivity : AppCompatActivity() {
         override fun getItemCount(): Int {
             //return Int.MAX_VALUE
             return (dataList.size * 10)
+            //return dataList.size
         }
 
         override fun getItemViewType(position: Int): Int {

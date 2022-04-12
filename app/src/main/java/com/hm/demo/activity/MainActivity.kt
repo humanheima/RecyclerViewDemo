@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+            R.id.btn_test_recycler_theory -> RecyclerTheoryActivity.launch(this)
             R.id.btn_test_flow_layout -> FlowLayoutActivity.launch(this)
             R.id.btn_test_staggered_layout -> StaggeredGridLayoutManagerActivity.launch(this)
 
