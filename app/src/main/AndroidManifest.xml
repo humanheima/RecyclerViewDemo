@@ -38,6 +38,9 @@
         <activity android:name=".activity.RecyclerViewPopWindowActivity" />
         <activity android:name=".activity.HorizontalLoadMoreActivity" />
         <activity android:name=".activity.StaggeredGridLayoutManagerActivity" />
+
+        <activity android:name=".activity.ScrollToPositionActivity" />
+
     </application>
 
 </manifest>

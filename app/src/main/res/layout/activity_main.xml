@@ -1,171 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btn_test_recycler_theory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试回收复用原理"
-            android:textAllCaps="false" />
+            android:orientation="vertical">
 
         <Button
-            android:id="@+id/btn_test_flow_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试FlowLayoutManager"
-            android:textAllCaps="false"
-            tools:visibility="visible" />
+                android:id="@+id/btn_scroll_to_position"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="将某个item滑动到RecyclerView的顶部"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_test_staggered_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试StaggeredLayoutManager"
-            android:textAllCaps="false"
-            tools:visibility="visible" />
+                android:id="@+id/btn_test_recycler_theory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试回收复用原理"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_center_item_decoration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试GirdLayoutManager使用中间对称的decoration"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_test_flow_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试FlowLayoutManager"
+                android:textAllCaps="false"
+                tools:visibility="visible" />
 
         <Button
-            android:id="@+id/btn_scroll_to_center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="将某个item滑动到RecyclerView的中间"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_test_staggered_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试StaggeredLayoutManager"
+                android:textAllCaps="false"
+                tools:visibility="visible" />
 
         <Button
-            android:id="@+id/btn_horizontal_load_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="横向滑动加载更多的RecyclerView"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_center_item_decoration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试GirdLayoutManager使用中间对称的decoration"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_float_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="悬浮某个item"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_scroll_to_center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="将某个item滑动到RecyclerView的中间"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_time_line"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="使用ItemDecoration实现时间线"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_horizontal_load_more"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="横向滑动加载更多的RecyclerView"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_dividing_line"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试RecyclerView分割线"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_float_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="悬浮某个item"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_recycler_view_countdown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试 RecyclerView 每个item的倒计时"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_time_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="使用ItemDecoration实现时间线"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_base"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="BaseRecyclerViewAdapter"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_dividing_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试RecyclerView分割线"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btnDiffUtil"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试DiffUtil功能"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_recycler_view_countdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试 RecyclerView 每个item的倒计时"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_pull_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="下拉刷新上拉加载"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_base"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="BaseRecyclerViewAdapter"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_slide_delete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="侧滑删除"
-            android:textAllCaps="false" />
+                android:id="@+id/btnDiffUtil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试DiffUtil功能"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_test_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="测试EditText在RecyclerView中是否乱序"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_pull_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="下拉刷新上拉加载"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_test_checkBoxInRv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="测试CheckBox在RecyclerView中是否乱序"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_slide_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="侧滑删除"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_test_generic_adapter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="测试RecyclerView泛型BaseAdapter"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_test_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试EditText在RecyclerView中是否乱序"
+                android:textAllCaps="false" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="launchHeadFootActivity"
-            android:text="@string/add_headview_footview"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_test_checkBoxInRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试CheckBox在RecyclerView中是否乱序"
+                android:textAllCaps="false" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="testLayout"
-            android:text="testLayout"
-            android:textAllCaps="false" />
+                android:id="@+id/btn_test_generic_adapter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试RecyclerView泛型BaseAdapter"
+                android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btnTestPopWindowInRV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="launchPopWindow"
-            android:text="testLayout"
-            android:textAllCaps="false" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="launchHeadFootActivity"
+                android:text="@string/add_headview_footview"
+                android:textAllCaps="false" />
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="testLayout"
+                android:text="testLayout"
+                android:textAllCaps="false" />
+
+        <Button
+                android:id="@+id/btnTestPopWindowInRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="launchPopWindow"
+                android:text="testLayout"
+                android:textAllCaps="false" />
 
     </LinearLayout>
 
