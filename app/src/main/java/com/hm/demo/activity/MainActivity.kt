@@ -30,6 +30,11 @@ class MainActivity : AppCompatActivity() {
     fun click(view: View) {
         when (view.id) {
 
+            R.id.btn_test_computing_a_layout_or_scrolling ->
+                RvIsComputingALayoutOrScrollingActivity.launch(
+                    this
+                )
+
             R.id.btn_scroll_to_position -> ScrollToPositionActivity.launch(this)
 
             R.id.btn_test_recycler_theory -> RecyclerTheoryActivity.launch(this)
@@ -63,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun testLayout(view: View) {
-        LayoutActivity.launch(this)
+        LayoutManagerActivity.launch(this)
     }
 
 }

@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hm.demo">
+        package="com.hm.demo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activity.RecyclerTheoryActivity"></activity>
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+        <activity
+                android:name=".activity.RvIsComputingALayoutOrScrollingActivity"
+                android:exported="false" />
+        <activity android:name=".activity.RecyclerTheoryActivity" />
         <activity android:name=".activity.FlowLayoutActivity" />
         <activity android:name=".activity.GridCenterDividerTestActivity" />
         <activity android:name=".activity.ScrollToCenterActivity" />
         <activity android:name=".activity.FloatItemActivity" />
-        <activity android:name=".activity.LayoutActivity" />
+        <activity android:name=".activity.LayoutManagerActivity" />
         <activity android:name=".activity.RecyclerViewTimeLineActivity" />
         <activity android:name=".activity.PullRefreshLoadMoreActivity" />
         <activity android:name=".activity.DiffUtilActivity" />
@@ -29,8 +32,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.TestEditTextActivity"
-            android:windowSoftInputMode="stateHidden" />
+                android:name=".activity.TestEditTextActivity"
+                android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.RvCheckBoxActivity" />
         <activity android:name=".activity.RvCountDownActivity" />
         <activity android:name=".activity.HeadFootActivity" />
@@ -38,9 +41,7 @@
         <activity android:name=".activity.RecyclerViewPopWindowActivity" />
         <activity android:name=".activity.HorizontalLoadMoreActivity" />
         <activity android:name=".activity.StaggeredGridLayoutManagerActivity" />
-
         <activity android:name=".activity.ScrollToPositionActivity" />
-
     </application>
 
 </manifest>

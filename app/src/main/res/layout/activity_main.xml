@@ -10,6 +10,21 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/btn_test_computing_a_layout_or_scrolling"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试Computing a layout or scrolling 的问题"
+                android:textAllCaps="false" />
+
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="testLayout"
+                android:text="测试LayoutManager"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btn_scroll_to_position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -158,13 +173,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="launchHeadFootActivity"
                 android:text="@string/add_headview_footview"
-                android:textAllCaps="false" />
-
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="testLayout"
-                android:text="testLayout"
                 android:textAllCaps="false" />
 
         <Button

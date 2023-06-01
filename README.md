@@ -1,3 +1,6 @@
+### 遇到的一些bug
+
+1. 当ViewHolder中，控件找不到，或者有空指针的时候， 也会出现[RecyclerView状态异常Cannot call this method while RecyclerView is computing a layout or scrolling](https://blog.csdn.net/qq_34681580/article/details/127205950) 这个问题，但是logcat里有时候并不会有空指针的日志。注意一下。
 ##RecyclerView
 所有关于RecyclerView 的例子都以这个工程为准
 1. 下拉刷新，上拉加载
