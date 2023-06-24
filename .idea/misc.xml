@@ -3,12 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/activity_concat_adapter.xml" value="0.25885416666666666" />
+        <entry key="app/src/main/res/layout/activity_contact_adapter.xml" value="0.2359375" />
         <entry key="app/src/main/res/layout/activity_dividing_line.xml" value="0.17204301075268819" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1568627450980392" />
         <entry key="app/src/main/res/layout/activity_rv_count_down.xml" value="0.25885416666666666" />
         <entry key="app/src/main/res/layout/activity_rv_is_computing_alayout_or_scrolling.xml" value="0.17204301075268819" />
         <entry key="app/src/main/res/layout/footer_view_load_more.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/head_layout.xml" value="0.25885416666666666" />
+        <entry key="app/src/main/res/layout/head_layout_1.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_concat_first.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_concat_two.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_diff.xml" value="0.25885416666666666" />
+        <entry key="app/src/main/res/layout/item_diff_copy.xml" value="0.25885416666666666" />
+        <entry key="app/src/main/res/layout/item_diff_staggered_layout.xml" value="0.25885416666666666" />
       </map>
     </option>
   </component>

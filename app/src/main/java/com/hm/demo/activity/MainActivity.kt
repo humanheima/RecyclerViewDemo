@@ -30,6 +30,9 @@ class MainActivity : AppCompatActivity() {
     fun click(view: View) {
         when (view.id) {
 
+            R.id.btn_test_concat_adapter -> ConcatAdapterActivity.launch(this)
+
+
             R.id.btn_test_computing_a_layout_or_scrolling ->
                 RvIsComputingALayoutOrScrollingActivity.launch(
                     this

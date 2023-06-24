@@ -10,6 +10,14 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/btn_test_concat_adapter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试ConcatAdapter"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btn_test_computing_a_layout_or_scrolling"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

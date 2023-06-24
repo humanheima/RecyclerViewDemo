@@ -3,7 +3,9 @@ package com.hm.demo.Util;
 public class Images {
 
     public final static String[] imageThumbUrls = new String[]{
-            "https://img-my.csdn.net/uploads/201407/26/1406383299_1976.jpg",
+            "https://img0.baidu.com/it/u=242767209,2541342896&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500",
+            "https://img0.baidu.com/it/u=202361835,3806649081&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+            "https://img0.baidu.com/it/u=937072262,2445742246&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800",
             "https://img-my.csdn.net/uploads/201407/26/1406383291_6518.jpg",
             "https://img-my.csdn.net/uploads/201407/26/1406383291_8239.jpg",
             "https://img-my.csdn.net/uploads/201407/26/1406383290_9329.jpg",
