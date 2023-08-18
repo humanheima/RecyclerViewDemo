@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     fun click(view: View) {
         when (view.id) {
 
+            R.id.btn_test_item_view_space -> ItemViewSpaceActivity.launch(this)
             R.id.btn_test_concat_adapter -> ConcatAdapterActivity.launch(this)
 
 

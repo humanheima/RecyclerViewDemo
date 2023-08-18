@@ -9,6 +9,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+        <!--测试ItemView占据空白区域的问题-->
+        <Button
+                android:id="@+id/btn_test_item_view_space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试RecyclerView itemView 设置为gone，依然空间的问题"
+                android:textAllCaps="false" />
+
         <Button
                 android:id="@+id/btn_test_concat_adapter"
                 android:layout_width="match_parent"

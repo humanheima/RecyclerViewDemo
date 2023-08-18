@@ -11,6 +11,9 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
+                android:name=".activity.ItemViewSpaceActivity"
+                android:exported="false" />
+        <activity
                 android:name=".activity.ConcatAdapterActivity"
                 android:exported="false" />
         <activity
