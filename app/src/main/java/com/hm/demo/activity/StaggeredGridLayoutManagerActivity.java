@@ -66,6 +66,12 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(new InfiniteAdapter(this, getTestData()));
 
+        recyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
+            @Override
+            public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+                Log.d(TAG, "onViewRecycled: " + holder.getAdapterPosition());
+            }
+        });
         recyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
