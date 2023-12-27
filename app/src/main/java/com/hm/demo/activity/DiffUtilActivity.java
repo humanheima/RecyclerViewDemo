@@ -4,18 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-
 import com.hm.demo.R;
 import com.hm.demo.Util.DiffCallBack;
 import com.hm.demo.adapter.DiffAdapter;
 import com.hm.demo.model.TestBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class DiffUtilActivity extends AppCompatActivity {
     private DiffAdapter adapter;
     private List<TestBean> newDatas;
 
-    private Handler handler = new Handler() {
+    private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             DiffUtil.DiffResult diffResult = (DiffUtil.DiffResult) msg.obj;
@@ -55,10 +54,14 @@ public class DiffUtilActivity extends AppCompatActivity {
     public void refresh(View view) {
         newDatas = new ArrayList<>();
         newDatas.add(new TestBean("ahahhh", "测试", R.drawable.pic_5));
+        newDatas.add(0, new TestBean("张无忌", "乾坤大挪移", R.drawable.pic_2));
+        newDatas.add(new TestBean("曾阿牛", "九阳神功", R.drawable.pic));
+        newDatas.add(new TestBean("赵敏", "倚天剑", R.drawable.pic_4));
+        newDatas.add(new TestBean("周芷若", "屠龙刀", R.drawable.pic_3));
+        newDatas.add(new TestBean("ahahhh", "测试", R.drawable.pic_5));
         newDatas.add(new TestBean("dumingwei2", "Java", R.drawable.pic_2));
         newDatas.add(new TestBean("weisiboluke", "Android", R.drawable.pic));
         newDatas.add(new TestBean("dumingwei4", "产品", R.drawable.pic_4));
-        newDatas.add(new TestBean("dumingwei3", "背锅", R.drawable.pic_3));
         /*for (TestBean bean : mDatas) {
             try {
                 newDatas.add(bean.clone());//clone一遍旧数据 ，模拟刷新操作
@@ -88,7 +91,7 @@ public class DiffUtilActivity extends AppCompatActivity {
         mDatas = new ArrayList<>();
         mDatas.add(new TestBean("dumingwei1", "Android", R.drawable.pic));
         mDatas.add(new TestBean("dumingwei2", "Java", R.drawable.pic_2));
-        mDatas.add(new TestBean("dumingwei3", "背锅", R.drawable.pic_3));
+        mDatas.add(new TestBean("dumingwei3", "奖励", R.drawable.pic_3));
         mDatas.add(new TestBean("dumingwei4", "产品", R.drawable.pic_4));
         mDatas.add(new TestBean("dumingwei5", "测试", R.drawable.pic_5));
         mDatas.add(new TestBean("dumingwei6", "测试", R.drawable.pic_5));

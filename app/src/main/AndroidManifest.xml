@@ -28,6 +28,7 @@
         <activity android:name=".activity.RecyclerViewTimeLineActivity" />
         <activity android:name=".activity.PullRefreshLoadMoreActivity" />
         <activity android:name=".activity.DiffUtilActivity" />
+        <activity android:name=".test_diff.MyDiffUtilActivity" />
         <activity android:name=".activity.BaseRecyclerViewAdapterActivity" />
         <activity android:name=".activity.SlideDeleteActivity" />
         <activity android:name=".activity.MainActivity">

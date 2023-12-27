@@ -10,6 +10,23 @@
             android:orientation="vertical">
 
         <!--测试ItemView占据空白区域的问题-->
+
+        <Button
+                android:id="@+id/btnDiffUtil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试DiffUtil功能"
+                android:textAllCaps="false" />
+
+        <Button
+                android:id="@+id/btnDiffUtilNew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="新的例子，使用ListAdapter，测试DiffUtil功能"
+                android:textAllCaps="false" />
+
         <Button
                 android:id="@+id/btn_test_item_view_space"
                 android:layout_width="match_parent"
@@ -137,14 +154,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="click"
                 android:text="BaseRecyclerViewAdapter"
-                android:textAllCaps="false" />
-
-        <Button
-                android:id="@+id/btnDiffUtil"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="click"
-                android:text="测试DiffUtil功能"
                 android:textAllCaps="false" />
 
         <Button
