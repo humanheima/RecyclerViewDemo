@@ -56,9 +56,9 @@ class RecyclerScrollRangeRelateActivity : AppCompatActivity() {
 //            rv.adapter?.notifyItemInserted(0)
 //            rv.scrollToPosition(0)
 
-            arrayList.add(CheckBoxModel("新增Hello$count", false))
-            rv.adapter?.notifyItemInserted(arrayList.size)
-            rv.scrollToPosition(arrayList.size)
+            arrayList.add(0, CheckBoxModel("新增Hello$count", false))
+            rv.adapter?.notifyItemInserted(0)
+            rv.scrollToPosition(0)
             count++
 
         }
@@ -80,7 +80,7 @@ class RecyclerScrollRangeRelateActivity : AppCompatActivity() {
         }
         rv = findViewById(R.id.rv_theory)
 
-        rv.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        rv.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, true)
         for (i in 0 until count) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
@@ -99,7 +99,15 @@ class RecyclerScrollRangeRelateActivity : AppCompatActivity() {
         //View的高度
         val scrollExtent = recyclerView.computeVerticalScrollExtent()
 
-        //竖直方向上滚动的距离
+        //
+        /**竖直方向上滚动的距离
+         * 1. 如果从上到下正向layout的时候
+         * 如果开始item数量很少，item的高度没有超过RecyclerView的高度，那么这个值等于0，等于RecyclerView.top - item.top。当item数量开始变多，有item从RecyclerView的顶部滚动出去，这个值就会变大。
+         *
+         * 2. 如果从下到上反向layout的时候
+         * 如果开始item数量很少，item的高度没有超过RecyclerView的高度，那么这个值小于0，等于RecyclerView.top - item.top。当item数量开始变多，有item从RecyclerView的顶部滚动出去，这个值就会变大。
+         *
+         */
         val scrollOffset = recyclerView.computeVerticalScrollOffset()
 
         //整个View控件的高度。
@@ -113,7 +121,7 @@ class RecyclerScrollRangeRelateActivity : AppCompatActivity() {
         //距离可以滚动到的底部的距离
         val distanceToBottom = (scrollRange - (scrollExtent + scrollOffset))
         Log.i(TAG, "displayShowBack: distanceToBottom = $distanceToBottom")
-        return distanceToBottom >= height
+        return distanceToBottom >= height && scrollOffset >= 0
 
     }
 
