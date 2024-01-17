@@ -6,12 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.hm.demo.R;
 import com.hm.demo.model.CheckBoxModel;
-
 import java.util.List;
 
 /**
@@ -23,6 +20,7 @@ public class SimpleAdapterAdapter extends RecyclerView.Adapter<SimpleAdapterAdap
     private List<CheckBoxModel> data;
 
     private int selectedPosition = -1;
+    private static final int TYPE_FOOTER = -1;
 
     private static final String TAG = "SimpleAdapterAdapter";
 
@@ -40,22 +38,40 @@ public class SimpleAdapterAdapter extends RecyclerView.Adapter<SimpleAdapterAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_FOOTER) {
+            Log.e(TAG, "onCreateViewHolder: header");
+            return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_diff_util, parent, false));
+        }
         View view = LayoutInflater.from(context).inflate(R.layout.item_recycler_theory, parent, false);
         final ViewHolder holder = new ViewHolder(view);
-        Log.e(TAG, "onCreateViewHolder: holder position = " + holder.getAdapterPosition() + " child count =" + parent.getChildCount());
+        Log.e(TAG, "onCreateViewHolder: holder position = " + holder.getAdapterPosition() + " child count ="
+                + parent.getChildCount());
         return holder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        CheckBoxModel model = data.get(position);
-        holder.textDescription.setText(model.getDescription());
-        Log.i(TAG, "onBindViewHolder: position = " + position + " holder = " + holder.toString());
+        if (position < data.size()) {
+            CheckBoxModel model = data.get(position);
+            holder.textDescription.setText(model.getDescription());
+            Log.i(TAG, "onBindViewHolder: position = " + position + " holder = " + holder);
+        } else {
+            Log.i(TAG, "尾 onBindViewHolder: ");
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return data == null ? 0 : data.size();
+        return data == null ? 0 : data.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position >= data.size()) {
+            return TYPE_FOOTER;
+        }
+        return super.getItemViewType(position);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

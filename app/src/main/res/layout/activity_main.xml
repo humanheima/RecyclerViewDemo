@@ -9,6 +9,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+        <Button
+                android:id="@+id/btn_test_recycler_scroll_relate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="测试倒序排序的问题"
+                android:textAllCaps="false" />
+
+        <Button
+                android:id="@+id/btn_test_recycler_theory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="探索RecyclerView复用原理"
+                android:textAllCaps="false" />
+
         <!--测试ItemView占据空白区域的问题-->
 
         <Button
@@ -64,14 +80,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="click"
                 android:text="将某个item滑动到RecyclerView的顶部"
-                android:textAllCaps="false" />
-
-        <Button
-                android:id="@+id/btn_test_recycler_theory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="click"
-                android:text="测试回收复用原理"
                 android:textAllCaps="false" />
 
         <Button

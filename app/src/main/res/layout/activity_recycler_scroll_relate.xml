@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.RecyclerTheoryActivity">
+
+    <TextView
+            android:id="@+id/tv_back_to_latest"
+            android:layout_width="match_parent"
+            android:text="回到最新消息"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/color_333333"
+            android:visibility="gone"
+            android:layout_height="40dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_theory"
+            android:layout_above="@+id/ll_bottom"
+            android:layout_width="match_parent"
+            android:background="@color/colorAccent"
+            android:layout_height="500dp" />
+
+    <LinearLayout
+            android:id="@+id/ll_bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:id="@+id/btn_insert_item"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:text="测试notifyItemRangeInserted"
+                android:layout_height="wrap_content" />
+
+        <Button
+                android:id="@+id/btn_get_scroll_info"
+                android:layout_alignParentBottom="true"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:text="获取ScrollRange相关信息"
+                android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>
