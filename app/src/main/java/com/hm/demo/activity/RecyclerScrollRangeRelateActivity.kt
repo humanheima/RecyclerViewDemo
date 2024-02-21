@@ -17,6 +17,7 @@ import com.hm.demo.model.CheckBoxModel
  * Desc: 测试RecyclerView的是否滚动到了底部
  * 1. 正常的从上到下布局。
  * 2. 从下到上布局。
+ * 参考链接：https://www.jianshu.com/p/c138055af5d2
  */
 class RecyclerScrollRangeRelateActivity : AppCompatActivity() {
 
