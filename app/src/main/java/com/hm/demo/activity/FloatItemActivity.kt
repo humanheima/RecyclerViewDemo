@@ -7,9 +7,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
 import com.hm.demo.adapter.FloatItemAdapter
+import com.hm.demo.databinding.ActivityFloatItemBinding
 import com.hm.demo.model.TestBean
-import kotlinx.android.synthetic.main.activity_float_item.*
-import java.util.*
 
 /**
  * Created by dumingwei on 2020/4/27
@@ -26,22 +25,30 @@ class FloatItemActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivityFloatItemBinding
+
     private val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_float_item)
-        recyclerView.layoutManager = linearLayoutManager
-        recyclerView.adapter = FloatItemAdapter(this, getTestData())
+        binding = ActivityFloatItemBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.recyclerView.layoutManager = linearLayoutManager
+        binding.recyclerView.adapter = FloatItemAdapter(this, getTestData())
 
-        recyclerView.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-            override fun onScrolled(rv: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+        binding.recyclerView.addOnScrollListener(object :
+            androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(
+                rv: androidx.recyclerview.widget.RecyclerView,
+                dx: Int,
+                dy: Int
+            ) {
                 super.onScrolled(rv, dx, dy)
                 val firstVisibleItemPos = linearLayoutManager.findFirstVisibleItemPosition()
                 if (firstVisibleItemPos >= 2) {
-                    includeViewFloatLayout.visibility = View.VISIBLE
+                    binding.includeViewFloatLayout.clRoot.visibility = View.VISIBLE
                 } else {
-                    includeViewFloatLayout.visibility = View.GONE
+                    binding.includeViewFloatLayout.clRoot.visibility = View.GONE
                 }
             }
 

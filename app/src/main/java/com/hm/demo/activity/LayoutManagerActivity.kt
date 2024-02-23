@@ -3,13 +3,12 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
 import com.hm.demo.R
 import com.hm.demo.base.BaseAdapter
 import com.hm.demo.base.BaseViewHolder
+import com.hm.demo.databinding.ActivityLayoutBinding
 import com.hm.demo.model.TestBean
-import kotlinx.android.synthetic.main.activity_layout.*
 
 /**
  * Created by dumingwei on 2020/6/9
@@ -28,9 +27,11 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         }
     }
 
+    private lateinit var binding: ActivityLayoutBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_layout)
+        binding = ActivityLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         adapter = object : BaseAdapter<TestBean>(this, getTestData()) {
 
@@ -53,14 +54,14 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
             }
         }
 
-        rvLayout.layoutManager = androidx.recyclerview.widget.GridLayoutManager(
+        binding.rvLayout.layoutManager = androidx.recyclerview.widget.GridLayoutManager(
             this,
             2,
             androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
             false
         )
 
-        rvLayout.adapter = adapter
+        binding.rvLayout.adapter = adapter
     }
 
     override fun getTestData(): MutableList<TestBean> {

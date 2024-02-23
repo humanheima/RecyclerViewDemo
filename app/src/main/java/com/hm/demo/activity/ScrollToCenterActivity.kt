@@ -3,17 +3,14 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.hm.demo.R
 import com.hm.demo.base.BaseAdapter
 import com.hm.demo.base.BaseViewHolder
+import com.hm.demo.databinding.ActivityScrollToCenterBinding
 import com.hm.demo.model.TestBean
 import com.hm.demo.widget.CenterLayoutManager
-import kotlinx.android.synthetic.main.activity_scroll_to_center.*
-import java.util.*
 
 /**
  * Created by dumingwei on 2020/10/28
@@ -32,15 +29,17 @@ class ScrollToCenterActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivityScrollToCenterBinding
+
     private val centerLayoutManager = CenterLayoutManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scroll_to_center)
+        binding = ActivityScrollToCenterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        rv.layoutManager = centerLayoutManager
-
-        rv.adapter = object : BaseAdapter<TestBean>(this, getTestData()) {
+        binding.rv.layoutManager = centerLayoutManager
+        binding.rv.adapter = object : BaseAdapter<TestBean>(this, getTestData()) {
 
             override fun getHolderType(position: Int, testBean: TestBean): Int {
                 return R.layout.item_scroll_to_center
@@ -50,8 +49,16 @@ class ScrollToCenterActivity : AppCompatActivity() {
                 holder.setTextViewText(R.id.tv1, testBean.name)
                 holder.setImageViewResource(R.id.iv, testBean.picture)
                 holder.setOnItemClickListener(R.id.iv) { view, position ->
-                    Toast.makeText(this@ScrollToCenterActivity, "onItemClick position=$position", Toast.LENGTH_SHORT).show()
-                    centerLayoutManager.smoothScrollToPosition(rv, androidx.recyclerview.widget.RecyclerView.State(), position)
+                    Toast.makeText(
+                        this@ScrollToCenterActivity,
+                        "onItemClick position=$position",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    centerLayoutManager.smoothScrollToPosition(
+                        binding.rv,
+                        androidx.recyclerview.widget.RecyclerView.State(),
+                        position
+                    )
                 }
             }
         }

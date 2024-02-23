@@ -17,15 +17,15 @@ inline fun <reified T : Activity> Context.startAct() {
 
 class MainActivity : AppCompatActivity() {
 
-    private var sparseArray: SparseArray<String>? = null
+    private lateinit var sparseArray: SparseArray<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         sparseArray = SparseArray(3)
-        sparseArray!!.put(1, "first")
-        sparseArray!!.put(2, "second")
-        sparseArray!!.put(3, "third")
+        sparseArray.put(1, "first")
+        sparseArray.put(2, "second")
+        sparseArray.put(3, "third")
     }
 
     fun click(view: View) {

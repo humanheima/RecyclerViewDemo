@@ -3,8 +3,6 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,10 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hm.demo.R
 import com.hm.demo.base.BaseAdapter
 import com.hm.demo.base.BaseViewHolder
+import com.hm.demo.databinding.ActivityScrollToTopBinding
 import com.hm.demo.model.TestBean
-import com.hm.demo.widget.ScrollToPositionRecyclerView
-import kotlinx.android.synthetic.main.activity_scroll_to_center.*
-import java.util.*
+import java.util.Random
 
 /**
  * Created by dumingwei on 2020/10/28
@@ -25,10 +22,6 @@ import java.util.*
 class ScrollToPositionActivity : AppCompatActivity() {
 
     private val TAG: String = "ScrollToCenterActivity"
-
-    private lateinit var etPosition: EditText
-    private lateinit var btnScroll: Button
-    private lateinit var rv: ScrollToPositionRecyclerView
 
     companion object {
 
@@ -41,20 +34,17 @@ class ScrollToPositionActivity : AppCompatActivity() {
 
     //private val centerLayoutManager = CenterLayoutManager(this)
 
+    private lateinit var binding: ActivityScrollToTopBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scroll_to_top)
-        etPosition = findViewById(R.id.et_position)
-        btnScroll = findViewById(R.id.btn_scroll)
-
-        rv = findViewById(R.id.rv)
-
-        btnScroll.setOnClickListener {
+        binding = ActivityScrollToTopBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.btnScroll.setOnClickListener {
 
             scrollToPosition()
         }
 
-        rv.layoutManager = LinearLayoutManager(this)
+        binding.rv.layoutManager = LinearLayoutManager(this)
 
 //        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //
@@ -77,7 +67,7 @@ class ScrollToPositionActivity : AppCompatActivity() {
 //        }
 
 
-        rv.adapter = object : BaseAdapter<TestBean>(this, getTestData()) {
+        binding.rv.adapter = object : BaseAdapter<TestBean>(this, getTestData()) {
 
             override fun getHolderType(position: Int, testBean: TestBean): Int {
                 return R.layout.item_scroll_to_center
@@ -99,11 +89,11 @@ class ScrollToPositionActivity : AppCompatActivity() {
     }
 
     private fun scrollToPosition() {
-        val string = etPosition.text?.toString()
+        val string = binding.etPosition.text?.toString()
         if (!string.isNullOrEmpty() && string.isNotBlank()) {
             val position = string.toInt()
             //smoothMoveToPosition(rv, position)
-            rv.smoothMoveToPosition(position)
+            binding.rv.smoothMoveToPosition(position)
         }
 
     }

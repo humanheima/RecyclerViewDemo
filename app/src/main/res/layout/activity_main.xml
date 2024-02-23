@@ -10,6 +10,14 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/btn_float_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="click"
+                android:text="悬浮某个item"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btn_test_recycler_scroll_relate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,14 +130,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="click"
                 android:text="横向滑动加载更多的RecyclerView"
-                android:textAllCaps="false" />
-
-        <Button
-                android:id="@+id/btn_float_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="click"
-                android:text="悬浮某个item"
                 android:textAllCaps="false" />
 
         <Button
