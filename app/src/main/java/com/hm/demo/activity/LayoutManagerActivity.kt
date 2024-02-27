@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hm.demo.R
+import com.hm.demo.Util.ScreenUtil
 import com.hm.demo.base.BaseAdapter
 import com.hm.demo.base.BaseViewHolder
 import com.hm.demo.databinding.ActivityLayoutBinding
@@ -54,21 +56,31 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
             }
         }
 
-        binding.rvLayout.layoutManager = androidx.recyclerview.widget.GridLayoutManager(
-            this,
-            2,
-            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
-            false
-        )
+//        binding.rvLayout.layoutManager = androidx.recyclerview.widget.GridLayoutManager(
+//            this,
+//            2,
+//            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+//            false
+//        )
+
+        binding.rvLayout.layoutManager = LinearLayoutManager(this)
 
         binding.rvLayout.adapter = adapter
+
+        binding.btnScrollWithOffset.setOnClickListener {
+            val position = 10
+            val offset = ScreenUtil.getScreenHeight(this) / 2
+            (binding.rvLayout.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(position, offset)
+            //binding.rvLayout.scrollToPosition(position)
+        }
+
     }
 
     override fun getTestData(): MutableList<TestBean> {
         val mDatas: MutableList<TestBean> = ArrayList()
         mDatas.add(TestBean("dumingwei1", "Android", R.drawable.pic))
         mDatas.add(TestBean("dumingwei2", "Java", R.drawable.pic_2))
-        mDatas.add(TestBean("dumingwei3", "beiguo", R.drawable.pic_3))
+        mDatas.add(TestBean("dumingwei3", "奖励", R.drawable.pic_3))
         mDatas.add(TestBean("dumingwei4", "产品", R.drawable.pic_4))
         mDatas.add(TestBean("dumingwei5", "测试", R.drawable.pic_5))
         mDatas.add(TestBean("dumingwei6", "测试", R.drawable.pic_5))
@@ -76,6 +88,10 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         mDatas.add(TestBean("dumingwei8", "测试", R.drawable.pic_5))
         mDatas.add(TestBean("dumingwei9", "测试", R.drawable.pic_5))
         mDatas.add(TestBean("dumingwei10", "测试", R.drawable.pic_5))
+        mDatas.add(TestBean("滚动到的位置", "测试", R.drawable.pic_5))
+        for (i in 0..20) {
+            mDatas.add(TestBean("dumingwei$i", "测试", R.drawable.pic_5))
+        }
         return mDatas
     }
 

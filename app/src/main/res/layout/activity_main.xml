@@ -10,6 +10,13 @@
             android:orientation="vertical">
 
         <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="testLayout"
+                android:text="测试LayoutManager"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btn_float_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,13 +80,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="click"
                 android:text="测试Computing a layout or scrolling 的问题"
-                android:textAllCaps="false" />
-
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="testLayout"
-                android:text="测试LayoutManager"
                 android:textAllCaps="false" />
 
         <Button
