@@ -70,7 +70,9 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         binding.btnScrollWithOffset.setOnClickListener {
             val position = 10
             val offset = ScreenUtil.getScreenHeight(this) / 2
+            //val offset = 0
             (binding.rvLayout.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(position, offset)
+            //(binding.rvLayout.layoutManager as LinearLayoutManager).scrollToPosition(position)
             //binding.rvLayout.scrollToPosition(position)
         }
 
