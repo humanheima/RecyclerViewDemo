@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
-
+            R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
             R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)
 
             R.id.btnDiffUtil -> DiffUtilActivity.launch(this)

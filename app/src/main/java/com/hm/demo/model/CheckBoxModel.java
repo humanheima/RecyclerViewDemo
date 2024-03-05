@@ -28,4 +28,12 @@ public class CheckBoxModel {
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
+
+    @Override
+    public String toString() {
+        return "CheckBoxModel{" +
+                "description='" + description + '\'' +
+                ", checked=" + checked +
+                '}';
+    }
 }

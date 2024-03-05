@@ -1,3 +1,6 @@
+### 如何调试Android 系统源码
+
+[一个步骤教你调试Android系统源代码](https://koudle.github.io/2017/03/13/debug-android-source/)
 ### 遇到的一些bug
 
 1. 当ViewHolder中，控件找不到，或者有空指针的时候， 也会出现[RecyclerView状态异常Cannot call this method while RecyclerView is computing a layout or scrolling](https://blog.csdn.net/qq_34681580/article/details/127205950) 这个问题，但是logcat里有时候并不会有空指针的日志。注意一下。

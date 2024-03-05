@@ -8,13 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hm.demo.adapter.TestAnimatorAdapterAdapter
-import com.hm.demo.databinding.ActivityRecyclerTheoryBinding
+import com.hm.demo.databinding.ActivityRecyclerAnimationBinding
 import com.hm.demo.model.CheckBoxModel
 
 /**
- * 探索复用的原理
+ * Created by p_dmweidu on 2024/3/5
+ * Desc: 测试RecyclerView的动画
  */
-class RecyclerTheoryActivity : AppCompatActivity() {
+class TestRecyclerAnimationActivity : AppCompatActivity() {
 
     private lateinit var rv: RecyclerView
 
@@ -23,16 +24,16 @@ class RecyclerTheoryActivity : AppCompatActivity() {
         private const val TAG = "RecyclerTheoryActivity"
 
         fun launch(context: Context) {
-            val intent = Intent(context, RecyclerTheoryActivity::class.java)
+            val intent = Intent(context, TestRecyclerAnimationActivity::class.java)
             context.startActivity(intent)
         }
     }
 
-    private lateinit var binding: ActivityRecyclerTheoryBinding
+    private lateinit var binding: ActivityRecyclerAnimationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRecyclerTheoryBinding.inflate(layoutInflater)
+        binding = ActivityRecyclerAnimationBinding.inflate(layoutInflater)
         setContentView(binding.root)
         rv = binding.rvTheory
 
@@ -66,7 +67,8 @@ class RecyclerTheoryActivity : AppCompatActivity() {
             val model = arrayList[1]
             model.isChecked = !model.isChecked
             model.description = "改变后的描述"
-            rv.adapter?.notifyItemChanged(1)
+            arrayList.removeAt(1)
+            rv.adapter?.notifyItemRemoved(1)
         }
     }
 
