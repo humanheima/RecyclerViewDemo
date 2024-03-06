@@ -6,11 +6,11 @@
         android:layout_height="100dp">
 
     <View
+            android:id="@+id/view_divider"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="20dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorAccent"
             android:layout_width="0dp"
             android:layout_height="2dp" />
 
@@ -32,9 +32,10 @@
             android:textColor="@color/colorAccent"
             android:layout_height="100dp"
             android:gravity="center"
+            android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/check_box"
             tools:text="hello wolrd" />

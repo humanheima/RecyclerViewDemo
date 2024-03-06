@@ -20,21 +20,11 @@ public class TestAnimatorAdapterAdapter extends RecyclerView.Adapter<TestAnimato
     private Context context;
     private List<CheckBoxModel> data;
 
-    private int selectedPosition = -1;
-    private static final int TYPE_FOOTER = -1;
-
-    private static final String TAG = "SimpleAdapterAdapter";
+    private static final String TAG = "TestAnimatorAdapterAdap";
 
     public TestAnimatorAdapterAdapter(Context context, List<CheckBoxModel> data) {
         this.context = context;
         this.data = data;
-        for (int i = 0; i < data.size(); i++) {
-            CheckBoxModel model = data.get(i);
-            if (model.isChecked()) {
-                selectedPosition = i;
-                break;
-            }
-        }
     }
 
     @Override
