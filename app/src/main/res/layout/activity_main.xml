@@ -10,6 +10,14 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/btnTestPopWindowInRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="launchPopWindow"
+                android:text="测试PopWindow在RecyclerView中的使用"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btn_test_recycler_animation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -215,14 +223,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="launchHeadFootActivity"
                 android:text="@string/add_headview_footview"
-                android:textAllCaps="false" />
-
-        <Button
-                android:id="@+id/btnTestPopWindowInRV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="launchPopWindow"
-                android:text="testLayout"
                 android:textAllCaps="false" />
 
     </LinearLayout>
