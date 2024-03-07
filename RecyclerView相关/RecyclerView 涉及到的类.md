@@ -5,6 +5,7 @@ RecyclerView.RecyclerViewDataObserver : 数据观察者，adapter.notifyxx()方�
 AdapterHelper : 适配器助手，处理适配器更新
 ChildHelper : 子视图助手，管理子视图的工具类，增加了一些隐藏子View的方法
 RecyclerView.LayoutManager : 布局管理器
+RecyclerView.LayoutManager.LayoutState : 布局状态，用于 LayoutManager 在填充空白空间时保持临时状态。
 RecyclerView.ItemDecoration : 装饰
 RecyclerView.ItemAnimator : 动画
 RecyclerView.Recycler : "Recycler"负责管理已废弃（scrapped）或已脱离（detached）的项目视图，以便于重用。
@@ -60,5 +61,7 @@ public abstract static class ViewCacheExtension {
     }
 ```
 
+
+### 草稿
 
 

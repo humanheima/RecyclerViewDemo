@@ -1,7 +1,7 @@
 
 注意
 
-本文是基于 androidx.RecyclerView 1.3.2 版本的源码分析。
+本文是基于 androidx.RecyclerView 1.3.2 版本的源码分析。默认使用 DefaultItemAnimator，如果使用了其他的 ItemAnimator，可能会有不同的表现。
 
 在 notifyItemChanged的时候，会把老的 itemView 移除了，然后新添加了一个itemView。这个过程就是REMOVED和ADDED类型 。
 
@@ -16,9 +16,6 @@ I  onBindViewHolder: position = 1 holder = ViewHolder{284e8ab position=1 id=-1, 
 I  onBindViewHolder: position = 1 holder = ViewHolder{212d54f position=1 id=-1, oldPos=-1, pLpos:-1 no parent} model = CheckBoxModel{description='改变后的描述', checked=true}
 
 说明改变之后，是新的ViewHolder。
-
-
-
 
 
 adapter 的 notifyItemChanged 方法会调用
@@ -36,17 +33,15 @@ public void notifyItemRangeChanged(int positionStart, int itemCount) {
     notifyItemRangeChanged(positionStart, itemCount, null);
 }
 
-public void notifyItemRangeChanged(int positionStart, int itemCount,
-                @Nullable Object payload) {
-            // since onItemRangeChanged() is implemented by the app, it could do anything, including
-            // removing itself from {@link mObservers} - and that could cause problems if
-            // an iterator is used on the ArrayList {@link mObservers}.
-            // to avoid such problems, just march thru the list in the reverse order.
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeChanged(positionStart, itemCount, payload);
-            }
-        }
-
+public void notifyItemRangeChanged(int positionStart, int itemCount, @Nullable Object payload) {
+    // since onItemRangeChanged() is implemented by the app, it could do anything, including
+    // removing itself from {@link mObservers} - and that could cause problems if
+    // an iterator is used on the ArrayList {@link mObservers}.
+    // to avoid such problems, just march thru the list in the reverse order.
+    for(int i = mObservers.size() - 1; i >= 0; i--) {
+        mObservers.get(i).onItemRangeChanged(positionStart, itemCount, payload);
+    }
+}
 ```
 
 RecyclerView.RecyclerViewDataObserver 的 onItemRangeChanged 方法
@@ -61,7 +56,6 @@ public void onItemRangeChanged(int positionStart, int itemCount, Object payload)
     }
 }
 ```
-
 
 AdapterHelper 的 onItemRangeChanged 方法
 
@@ -170,6 +164,7 @@ private void dispatchLayoutStep1() {
                         .recordPreLayoutInformation(mState, holder,
                                 ItemAnimator.buildAdapterChangeFlagsForAnimations(holder),
                                 holder.getUnmodifiedPayloads());
+                //保存到 mViewInfoStore 中
                 mViewInfoStore.addToPreLayout(holder, animationInfo);
                 if (mState.mTrackOldChangeHolders && holder.isUpdated() && !holder.isRemoved()
                         && !holder.shouldIgnore() && !holder.isInvalid()) {
@@ -276,15 +271,12 @@ private void processAdapterUpdatesAndSetAnimationFlags() {
 ```
 
 注释1处，条件满足，调用AdapterHelper的preProcess方法，内部会调用 RecyclerView 的  viewRangeUpdate 方法，
-给 holder 添加了一个标志位，表示需要更新。并将 RecyclerView 的 mItemsChanged 设置为true。然后 AdapterHelper 清除 mPendingUpdates。
+给 holder 添加了一个标志位 `ViewHolder.FLAG_UPDATE`，表示需要更新。并将 RecyclerView 的 mItemsChanged 设置为true。然后 AdapterHelper 清除 mPendingUpdates。
 
 ```java
 holder.addFlags(ViewHolder.FLAG_UPDATE);
 
 ```
-
-
-
 
 ```java
 /**
@@ -392,12 +384,13 @@ private void animateChange(@NonNull ViewHolder oldHolder, @NonNull ViewHolder ne
     if (oldHolderDisappearing) {
         addAnimatingView(oldHolder);
     }
+    //注释1处，不同的的ViewHolder，会有动画效果
     if (oldHolder != newHolder) {
         if (newHolderDisappearing) {
             addAnimatingView(newHolder);
         }
         oldHolder.mShadowedHolder = newHolder;
-        // 老的 viewholder 在动画结束之后应该消失
+        // 注释2处，动画开始前，这里会把  mChangedScrap 中存储的ViewHolder 从 mChangedScrap 中移除，对应的View 会添加到 ChildHelper.mHiddenViews 中
         addAnimatingView(oldHolder);
         mRecycler.unscrapView(oldHolder);
         newHolder.setIsRecyclable(false);
@@ -411,67 +404,69 @@ private void animateChange(@NonNull ViewHolder oldHolder, @NonNull ViewHolder ne
 }
 ```
 
+注释2处，动画开始前，这里会把  mChangedScrap 中存储的ViewHolder 从 mChangedScrap 中移除，对应的View 会添加到 ChildHelper.mHiddenViews 中
+
 SimpleItemAnimator 的 animateChange 方法
 
 ```java
 @Override
-    public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder,
-            @NonNull RecyclerView.ViewHolder newHolder, @NonNull ItemHolderInfo preLayoutInfo,
-            @NonNull ItemHolderInfo postLayoutInfo) {
-        if (DEBUG) {
-            Log.d(TAG, "CHANGED: " + oldHolder + " with view " + oldHolder.itemView);
-        }
-        //获取老的左上角坐标
-        final int fromLeft = preLayoutInfo.left;
-        final int fromTop = preLayoutInfo.top;
-        final int toLeft, toTop;
-        if (newHolder.shouldIgnore()) {
-            toLeft = preLayoutInfo.left;
-            toTop = preLayoutInfo.top;
-        } else {
-            //获取新的左上角坐标
-            toLeft = postLayoutInfo.left;
-            toTop = postLayoutInfo.top;
-        }
-        // 调用 DefaultItemAnimator 的 animateChange 方法
-        return animateChange(oldHolder, newHolder, fromLeft, fromTop, toLeft, toTop);
+public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder, @NonNull RecyclerView.ViewHolder newHolder, 
+                                @NonNull ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
+    if(DEBUG) {
+        Log.d(TAG, "CHANGED: " + oldHolder + " with view " + oldHolder.itemView);
     }
+    //获取老的左上角坐标
+    final int fromLeft = preLayoutInfo.left;
+    final int fromTop = preLayoutInfo.top;
+    final int toLeft, toTop;
+    if(newHolder.shouldIgnore()) {
+        toLeft = preLayoutInfo.left;
+        toTop = preLayoutInfo.top;
+    } else {
+        //获取新的左上角坐标
+        toLeft = postLayoutInfo.left;
+        toTop = postLayoutInfo.top;
+    }
+    // 调用 DefaultItemAnimator 的 animateChange 方法
+    return animateChange(oldHolder, newHolder, fromLeft, fromTop, toLeft, toTop);
+}
 ```
 
 ```java
 @Override
-    @SuppressLint("UnknownNullness") // b/240775049: Cannot annotate properly
-    public boolean animateChange(RecyclerView.ViewHolder oldHolder,
-            RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
-        if (oldHolder == newHolder) {
-            // Don't know how to run change animations when the same view holder is re-used.
-            // run a move animation to handle position changes.
-            return animateMove(oldHolder, fromLeft, fromTop, toLeft, toTop);
-        }
-        final float prevTranslationX = oldHolder.itemView.getTranslationX();
-        final float prevTranslationY = oldHolder.itemView.getTranslationY();
-        final float prevAlpha = oldHolder.itemView.getAlpha();
-        resetAnimation(oldHolder);
-        int deltaX = (int) (toLeft - fromLeft - prevTranslationX);
-        int deltaY = (int) (toTop - fromTop - prevTranslationY);
-        // recover prev translation state after ending animation
-        oldHolder.itemView.setTranslationX(prevTranslationX);
-        oldHolder.itemView.setTranslationY(prevTranslationY);
-        //prevAlpha 是 1
-        oldHolder.itemView.setAlpha(prevAlpha);
-        if (newHolder != null) {
-            // carry over translation values
-            resetAnimation(newHolder);
-            newHolder.itemView.setTranslationX(-deltaX);
-            newHolder.itemView.setTranslationY(-deltaY);
-            //translationX 和 translationY 都没有发生变化
-            //新ViewHolder 将 itemView 动画将透明度设置为0，所以新的ViewHolder 是从不可见到可见的，透明度从0到1
-            newHolder.itemView.setAlpha(0);
-        }
-        //添加一个变化信息
-        mPendingChanges.add(new ChangeInfo(oldHolder, newHolder, fromLeft, fromTop, toLeft, toTop));
-        return true;
+@SuppressLint("UnknownNullness") // b/240775049: Cannot annotate properly
+public boolean animateChange(RecyclerView.ViewHolder oldHolder,
+    RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
+    if(oldHolder == newHolder) {
+        //注释1处，不支持动画的时候，新老的ViewHolder是一样的，animateMove 也没有改变 translationX 或者 translationY 直接返回false
+        // Don't know how to run change animations when the same view holder is re-used.
+        // run a move animation to handle position changes.
+        return animateMove(oldHolder, fromLeft, fromTop, toLeft, toTop);
     }
+    final float prevTranslationX = oldHolder.itemView.getTranslationX();
+    final float prevTranslationY = oldHolder.itemView.getTranslationY();
+    final float prevAlpha = oldHolder.itemView.getAlpha();
+    resetAnimation(oldHolder);
+    int deltaX = (int)(toLeft - fromLeft - prevTranslationX);
+    int deltaY = (int)(toTop - fromTop - prevTranslationY);
+    // recover prev translation state after ending animation
+    oldHolder.itemView.setTranslationX(prevTranslationX);
+    oldHolder.itemView.setTranslationY(prevTranslationY);
+    //prevAlpha 是 1
+    oldHolder.itemView.setAlpha(prevAlpha);
+    if(newHolder != null) {
+        // carry over translation values
+        resetAnimation(newHolder);
+        newHolder.itemView.setTranslationX(-deltaX);
+        newHolder.itemView.setTranslationY(-deltaY);
+        //translationX 和 translationY 都没有发生变化
+        //新ViewHolder 将 itemView 动画将透明度设置为0，所以新的ViewHolder 是从不可见到可见的，透明度从0到1
+        newHolder.itemView.setAlpha(0);
+    }
+    //添加一个变化信息
+    mPendingChanges.add(new ChangeInfo(oldHolder, newHolder, fromLeft, fromTop, toLeft, toTop));
+    return true;
+}
 ```
 
 ```java
@@ -488,100 +483,47 @@ private Runnable mItemAnimatorRunner = new Runnable() {
 
 ```java
 @Override
-    public void runPendingAnimations() {
-        boolean removalsPending = !mPendingRemovals.isEmpty();
-        boolean movesPending = !mPendingMoves.isEmpty();
-        boolean changesPending = !mPendingChanges.isEmpty();
-        boolean additionsPending = !mPendingAdditions.isEmpty();
-        if (!removalsPending && !movesPending && !additionsPending && !changesPending) {
-            // nothing to animate
-            return;
-        }
-        // First, remove stuff
-        for (RecyclerView.ViewHolder holder : mPendingRemovals) {
-            animateRemoveImpl(holder);
-        }
-        mPendingRemovals.clear();
-        // Next, move stuff
-        if (movesPending) {
-            final ArrayList<MoveInfo> moves = new ArrayList<>();
-            moves.addAll(mPendingMoves);
-            mMovesList.add(moves);
-            mPendingMoves.clear();
-            Runnable mover = new Runnable() {
-                @Override
-                public void run() {
-                    for (MoveInfo moveInfo : moves) {
-                        animateMoveImpl(moveInfo.holder, moveInfo.fromX, moveInfo.fromY,
-                                moveInfo.toX, moveInfo.toY);
-                    }
-                    moves.clear();
-                    mMovesList.remove(moves);
+public void runPendingAnimations() {
+    boolean removalsPending = !mPendingRemovals.isEmpty();
+    boolean movesPending = !mPendingMoves.isEmpty();
+    boolean changesPending = !mPendingChanges.isEmpty();
+    boolean additionsPending = !mPendingAdditions.isEmpty();
+    if(!removalsPending && !movesPending && !additionsPending && !changesPending) {
+        // nothing to animate
+        return;
+    }
+    // First, remove stuff
+    // Next, move stuff
+    // Next, change stuff, to run in parallel with move animations
+    if(changesPending) {
+        final ArrayList <ChangeInfo> changes = new ArrayList <> ();
+        changes.addAll(mPendingChanges);
+        mChangesList.add(changes);
+        mPendingChanges.clear();
+        Runnable changer = new Runnable() {
+            @Override
+            public void run() {
+                for(ChangeInfo change: changes) {
+                    //注释1处，执行change动画
+                    animateChangeImpl(change);
                 }
-            };
-            if (removalsPending) {
-                View view = moves.get(0).holder.itemView;
-                ViewCompat.postOnAnimationDelayed(view, mover, getRemoveDuration());
-            } else {
-                mover.run();
+                changes.clear();
+                mChangesList.remove(changes);
             }
-        }
-        // Next, change stuff, to run in parallel with move animations
-        if (changesPending) {
-            final ArrayList<ChangeInfo> changes = new ArrayList<>();
-            changes.addAll(mPendingChanges);
-            mChangesList.add(changes);
-            mPendingChanges.clear();
-            Runnable changer = new Runnable() {
-                @Override
-                public void run() {
-                    for (ChangeInfo change : changes) {
-                        //执行change动画
-                        animateChangeImpl(change);
-                    }
-                    changes.clear();
-                    mChangesList.remove(changes);
-                }
-            };
-            if (removalsPending) {
-                RecyclerView.ViewHolder holder = changes.get(0).oldHolder;
-                ViewCompat.postOnAnimationDelayed(holder.itemView, changer, getRemoveDuration());
-            } else {
-                changer.run();
-            }
-        }
-        // Next, add stuff
-        if (additionsPending) {
-            final ArrayList<RecyclerView.ViewHolder> additions = new ArrayList<>();
-            additions.addAll(mPendingAdditions);
-            mAdditionsList.add(additions);
-            mPendingAdditions.clear();
-            Runnable adder = new Runnable() {
-                @Override
-                public void run() {
-                    for (RecyclerView.ViewHolder holder : additions) {
-                        animateAddImpl(holder);
-                    }
-                    additions.clear();
-                    mAdditionsList.remove(additions);
-                }
-            };
-            if (removalsPending || movesPending || changesPending) {
-                long removeDuration = removalsPending ? getRemoveDuration() : 0;
-                long moveDuration = movesPending ? getMoveDuration() : 0;
-                long changeDuration = changesPending ? getChangeDuration() : 0;
-                long totalDelay = removeDuration + Math.max(moveDuration, changeDuration);
-                View view = additions.get(0).itemView;
-                ViewCompat.postOnAnimationDelayed(view, adder, totalDelay);
-            } else {
-                adder.run();
-            }
+        };
+        if(removalsPending) {
+            RecyclerView.ViewHolder holder = changes.get(0).oldHolder;
+            ViewCompat.postOnAnimationDelayed(holder.itemView, changer, getRemoveDuration());
+        } else {
+            changer.run();
         }
     }
+    // Next, add stuff
+}
+
 ```
 
-
-DefaultItemAnimator 的  void animateChangeImpl(final ChangeInfo changeInfo) 方法
+注释1处，执行change动画，DefaultItemAnimator 的  void animateChangeImpl(final ChangeInfo changeInfo) 方法
 
 ```java
 void animateChangeImpl(final ChangeInfo changeInfo) {
@@ -597,7 +539,7 @@ void animateChangeImpl(final ChangeInfo changeInfo) {
         mChangeAnimations.add(changeInfo.oldHolder);
         oldViewAnim.translationX(changeInfo.toX - changeInfo.fromX);
         oldViewAnim.translationY(changeInfo.toY - changeInfo.fromY);
-        //老的 View 透明度开始是1，现在要变化到0，就是从可见到不可见
+        //注释1处，老的 View 透明度开始是1，现在要变化到0，就是从可见到不可见
         oldViewAnim.alpha(0).setListener(new AnimatorListenerAdapter() {
             
             @Override
@@ -612,7 +554,7 @@ void animateChangeImpl(final ChangeInfo changeInfo) {
                 view.setAlpha(1);
                 view.setTranslationX(0);
                 view.setTranslationY(0);
-                //老动画结束之后，会调用到 RecyclerView.ItemAnimatorRestoreListener的 onAnimationFinished 方法
+                //注释3处，老动画结束之后，会调用到 RecyclerView.ItemAnimatorRestoreListener的 onAnimationFinished 方法，内部会把 oldView 从RecyclerView中移除
                 dispatchChangeFinished(changeInfo.oldHolder, true);
                 mChangeAnimations.remove(changeInfo.oldHolder);
                 dispatchFinishedWhenDone();
@@ -622,7 +564,7 @@ void animateChangeImpl(final ChangeInfo changeInfo) {
     if(newView != null) {
         final ViewPropertyAnimator newViewAnimation = newView.animate();
         mChangeAnimations.add(changeInfo.newHolder);
-        //新的View开始设置的透明度是0，现在要变化到1，就是从不可见到可见
+        //注释2处，新的View开始设置的透明度是0，现在要变化到1，就是从不可见到可见
         newViewAnimation.translationX(0).translationY(0).setDuration(getChangeDuration())
             .alpha(1).setListener(new AnimatorListenerAdapter() {
                 
@@ -648,11 +590,17 @@ void animateChangeImpl(final ChangeInfo changeInfo) {
 
 ```
 
+注释1处，老的 View 透明度开始是1，现在要变化到0，就是从可见到不可见。
+注释2处，新的View开始设置的透明度是0，现在要变化到1，就是从不可见到可见。
+
+注释3处，老动画结束之后，会调用到 RecyclerView.ItemAnimatorRestoreListener的 onAnimationFinished 方法，内部会把 oldView 从RecyclerView中移除。
+
+
+
 ```java
 private class ItemAnimatorRestoreListener implements ItemAnimator.ItemAnimatorListener {
 
-        ItemAnimatorRestoreListener() {
-        }
+        ItemAnimatorRestoreListener() {}
 
         @Override
         public void onAnimationFinished(ViewHolder item) {
@@ -664,7 +612,7 @@ private class ItemAnimatorRestoreListener implements ItemAnimator.ItemAnimatorLi
             // recycled.
             item.mShadowingHolder = null;
             if (!item.shouldBeKeptAsChild()) {
-                //这里会把 oldView 从RecyclerView中移除，能从 mBucket 中获取到老的ViewHolder的数据
+                //注释1处，这里会把 oldView 从RecyclerView中移除，能从 mBucket 中获取到老的ViewHolder的数据
                 if (!removeAnimatingView(item.itemView) && item.isTmpDetached()) {
                     removeDetachedView(item.itemView, false);
                 }
@@ -673,14 +621,40 @@ private class ItemAnimatorRestoreListener implements ItemAnimator.ItemAnimatorLi
     }
 ```
 
-对于新的ViewHolder，无法从mBucket中获取到数据，所以在动画结束之后，不会把新的ViewHolder从RecyclerView中移除。
+注释1处，这里会把 oldView 从RecyclerView中移除，能从 mBucket 中获取到老的ViewHolder的数据。对于新的ViewHolder，无法从mBucket中获取到数据，所以在动画结束之后，不会把新的ViewHolder从RecyclerView中移除。
+
+
+```java
+boolean removeAnimatingView(View view) {
+    startInterceptRequestLayout();
+    //注释1处，会从 mHiddenViews 把 老的 View 删除。也会从RecyclerView 移除。`RecyclerView.this.removeViewAt(index);`。
+    final boolean removed = mChildHelper.removeViewIfHidden(view);
+    if(removed) {
+        final ViewHolder viewHolder = getChildViewHolderInt(view);
+        //注释2处，这里再次调用，但，mChangedScrap 中已经没有了
+        mRecycler.unscrapView(viewHolder);
+        //注释3处，
+        mRecycler.recycleViewHolderInternal(viewHolder);
+        if(sVerboseLoggingEnabled) {
+            Log.d(TAG, "after removing animated view: " + view + ", " + this);
+        }
+    }
+    // only clear request eaten flag if we removed the view.
+    stopInterceptRequestLayout(!removed);
+    return removed;
+}
+```
+
+注释1处，会从 mHiddenViews 把老的 View 删除。也会从RecyclerView 移除。`RecyclerView.this.removeViewAt(index);`。
+注释2处，这里注意一下，这里再次调用 unscrapView。但，mChangedScrap 中已经没有了老的ViewHolder了。
+注释3处，会把 老的 ViewHolder ，根据 ItemViewType，回收到 RecycledViewPool 中，一种 ItemViewType 默认缓存5个。最后也会从 mViewInfoStore 删除 老的 ViewHolder 信息。
+
+为什么不回收到 mCachedViews呢？ 因为 有标志位，`ViewHolder.FLAG_UPDATE` 会被设置，所以不会回收到 mCachedViews 中。
 
 
 
-### 疑问？
 
 
-tempDetach 方法，会把 itemView 从 RecyclerView 中移除吧，再添加的时候，childIndex 会变大吧。
 
 
 
