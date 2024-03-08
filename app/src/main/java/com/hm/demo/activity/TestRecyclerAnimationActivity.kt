@@ -63,20 +63,21 @@ class TestRecyclerAnimationActivity : AppCompatActivity() {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
         rv.adapter = TestAnimatorAdapterAdapter(this, arrayList)
+
         val animator = rv.itemAnimator
         if (animator is SimpleItemAnimator) {
             Log.i(TAG, "onCreate: animator = $animator")
             //animator.supportsChangeAnimations = false
             //animator.changeDuration = 0
         }
-
         binding.btnNotifyItemChanged.setOnClickListener {
-            val model = arrayList[1]
+//            val model = arrayList[1]
 //            model.isChecked = !model.isChecked
 //            model.description = "改变后的描述"
-            rv.adapter?.notifyItemChanged(1)
+            rv.adapter?.notifyDataSetChanged()
         }
     }
+
 
 }
 

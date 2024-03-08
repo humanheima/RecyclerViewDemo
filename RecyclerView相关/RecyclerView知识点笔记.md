@@ -1,3 +1,6 @@
+
+
+
 ### 去掉 notifyItemChanged 的时候的白一下的动画效果
 
 有动画的时候，是 removeOldView , addNewView 
@@ -274,7 +277,25 @@ boolean removeAnimatingView(View view) {
 
 ### notifyItemChanged 的时候，数据变了，是新的ViewHolder，还是旧的ViewHolder？
 
+* 支持动画的时候，无论数据变没变，都是新的ViewHolder。老的 ViewHolder 是放在 mChangedScrap 中的。但是在 dispatchLayoutStep2 方法中，不会从 mChangedScrap 找，所以会创建新的 ViewHolder。
+* 不支持动画的时候，无论数据变没变，都是同一个ViewHolder，都是从 mAttachedScrap 中取出来的，会重新绑定数据。
 
 
 
-*[Android RecyclerView内部机制](https://www.jianshu.com/p/5284d6066a38)
+### dispatchLayoutStep1 
+
+作用是什么？
+
+* layout的第一步，在这个步骤会执行以下操作；
+* - 处理适配器更新
+* - 保存动画信息，决定要运行哪种动画
+* - 保存当前views的信息
+* - 如果必要的话，运行预布局（layout）并保存相应的信息
+
+有必要调用一次 `mLayouManager.onLayoutChildren` 方法吗？作用是啥呢？
+
+
+
+
+
+

@@ -31,6 +31,7 @@ public class TestAnimatorAdapterAdapter extends RecyclerView.Adapter<TestAnimato
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_test_animation, parent, false);
         final ViewHolder holder = new ViewHolder(view);
+        //Log.i(TAG, "onCreateViewHolder: holder = " + holder + " view = " + view + " parent = " + parent + " viewType = " + viewType + " data = " + data);
         return holder;
     }
 
