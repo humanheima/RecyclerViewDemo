@@ -63,9 +63,6 @@ class RecyclerTheoryActivity : AppCompatActivity() {
         rv.adapter = TestAnimatorAdapterAdapter(this, arrayList)
 
         binding.btnNotifyItemChanged.setOnClickListener {
-            val model = arrayList[1]
-            model.isChecked = !model.isChecked
-            model.description = "改变后的描述"
             rv.adapter?.notifyItemChanged(1)
         }
     }

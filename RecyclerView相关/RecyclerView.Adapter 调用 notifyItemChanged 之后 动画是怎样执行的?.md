@@ -230,6 +230,7 @@ holder.addFlags(ViewHolder.FLAG_UPDATE);
 
 回到 dispatchLayoutStep1 方法注释1处，记录动画之前的所有ViewHolder信息 animationInfo，保存到 mViewInfoStore 中。**mViewInfoStore.addToPreLayout(holder, animationInfo);**。
 
+
 dispatchLayoutStep1 方法注释2处，注意这里只会添加变化的viewHolder 会 添加到 oldChangeHolders 中。`mViewInfoStore.addToOldChangeHolders(key, holder);`。
 
 注释3处，预布局的时候调用 mLayout.onLayoutChildren(mRecycler, mState); 布局
@@ -241,7 +242,8 @@ dispatchLayoutStep1 方法注释2处，注意这里只会添加变化的viewHold
 
 2.然后又会执行 fill 方法，会把所有的 itemView attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的，变化的 ViewHolder 是从 mChangedScrap 中取出来复用的。 然后把取出来的 ViewHolder 从  mAttachedScrap  或者 mChangedScrap 移除。
 
-疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？我理解这个过程只是把所有的View detach了，然后又 attach 了。
+疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？
+我理解这个过程只是把所有的View detach了，然后又 attach 了。难道是因为在这个过程中会有一下新出现的或者小时的ViewHolder，要记录其动画信息？
 
 布局第二阶段 dispatchLayoutStep2
 
