@@ -57,7 +57,7 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 8) {
+        for (i in 0 until 20) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
         rv.adapter = TestAnimatorAdapterAdapter(this, arrayList)

@@ -85,7 +85,7 @@ private void setAdapterInternal(@Nullable Adapter adapter, boolean compatibleWit
     final Adapter oldAdapter = mAdapter;
     mAdapter = adapter;
     if (adapter != null) {
-        //注册观察适配器，当适配器数据发生变化的时候，重新requestLayout
+        //注册观察适配器，
         adapter.registerAdapterDataObserver(mObserver);
         adapter.onAttachedToRecyclerView(this);
     }
@@ -117,10 +117,10 @@ protected void onMeasure(int widthSpec, int heightSpec) {
         //LayoutManager的onMeasure方法默认还是调用了RecyclerView的defaultOnMeasure方法
         mLayout.onMeasure(mRecycler, mState, widthSpec, heightSpec);
         //宽高的测量模式都是EXACTLY或者mAdapter为null直接return，就是使用defaultOnMeasure的测量结果
-        //Note: 注意，当我们在布局里设置 RecyclerView 的宽高为 match_parent 的时候，这里的 widthMode 和 heightMode 都是 MeasureSpec.EXACTLY，会直接return
         final boolean measureSpecModeIsExactly =
                 widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY;
         if (measureSpecModeIsExactly || mAdapter == null) {
+           //注释2.1处，Note: 注意，当我们在布局里设置 RecyclerView 的宽高为 match_parent 的时候，这里的 widthMode 和 heightMode 都是 MeasureSpec.EXACTLY，会直接return
             return;
         }
         //注释3处，当前布局阶段，默认是State.STEP_START
@@ -156,7 +156,69 @@ protected void onMeasure(int widthSpec, int heightSpec) {
 
 注释2处，是否开启自动测量，我们以LinearLayoutManager来分析，LinearLayoutManager默认是true。
 
-注释3处，当前布局阶段，默认是State.STEP_START，条件满足，会调用注释4处，dispatchLayoutStep1方法。
+注释2.1处，Note: 注意，当我们在布局里设置 RecyclerView 的宽高为 match_parent 的时候，
+这里的 widthMode 和 heightMode 都是 MeasureSpec.EXACTLY，会直接return。
+
+
+
+接下来我们看看RecyclerView的onLayout方法。
+
+```java
+@Override
+protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    TraceCompat.beginSection(TRACE_ON_LAYOUT_TAG);
+    //注释1处，调用dispatchLayout方法。
+    dispatchLayout();
+    TraceCompat.endSection();
+    //注释2处。标记第一次布局完成。
+    mFirstLayoutComplete = true;
+}
+```
+
+注释2处，标记第一次布局完成。
+
+注释1处，调用dispatchLayout方法。
+
+```java
+/**
+ * 该方法可以看做是layoutChildren()方法的一个包装，处理由于布局造成的动画改变。动画的工作机制基于有5中不同类型的动画的假设：
+ * PERSISTENT: 在布局前后，items一直可见。
+ * REMOVED: 在布局之前items可见，在布局之后，items被移除。
+ * ADDED: 在布局之前items不存在，items是被添加到RecyclerView的。
+ * DISAPPEARING: 在布局前后items存在于数据集中，但是在布局过程中可见性由可见变为不可见。（这些items是由于其他变化的副作用而被移动到屏幕之外了）
+ * APPEARING: 在布局前后items存在于数据集中，但是在布局过程中可见性由不可见变为可见。（这些items是由于其他变化的副作用而被移动到屏幕之中了）
+ *
+ * 方法的大体逻辑就是计算每个item在布局前后是否存在，并推断出它们处于上述五种状态的哪一种，然后设置不同的动画。
+ * PERSISTENT类型的Views 通过 ItemAnimator 的 animatePersistence(ViewHolder, ItemHolderInfo, ItemHolderInfo) 方法执行动画
+ * DISAPPEARING类型的Views 通过 ItemAnimator 的 animateDisappearance(ViewHolder, ItemHolderInfo, ItemHolderInfo) 方法执行动画
+ * APPEARING类型的Views 通过 ItemAnimator 的 animateAppearance(ViewHolder, ItemHolderInfo, ItemHolderInfo) 方法执行动画
+ * REMOVED和ADDED类型 （notifyItemChange 的时候，其实是把老的 itemView 移除了，然后新添加了一个itemView。这个过程就是REMOVED和ADDED类型 ）的Views 通过 ItemAnimator 的 animateChange(ViewHolder, ViewHolder, ItemHolderInfo, ItemHolderInfo) 执行动画。
+ */
+void dispatchLayout() {
+    //...
+    mState.mIsMeasuring = false;
+    if (mState.mLayoutStep == State.STEP_START) {
+        //注释1处，调用dispatchLayoutStep1方法。
+        dispatchLayoutStep1();
+        mLayout.setExactMeasureSpecsFrom(this);
+        //注释2处，调用dispatchLayoutStep2方法。
+        dispatchLayoutStep2();
+    } else if (mAdapterHelper.hasUpdates() || mLayout.getWidth() != getWidth()
+            || mLayout.getHeight() != getHeight()) {
+        // First 2 steps are done in onMeasure but looks like we have to run again due to
+        // changed size.
+        mLayout.setExactMeasureSpecsFrom(this);
+        dispatchLayoutStep2();
+    } else {
+        mLayout.setExactMeasureSpecsFrom(this);
+    }
+    //调用dispatchLayoutStep3方法。
+    dispatchLayoutStep3();
+}
+```
+
+
+注释1处，调用dispatchLayoutStep1方法。
 
 ```java
 /**
@@ -175,7 +237,7 @@ private void dispatchLayoutStep1() {
     //mViewInfoStore中存储的是要执行动画的Views的相关信息，这里清除
     mViewInfoStore.clear();
     onEnterLayoutOrScroll();
-    //注释1处，处理适配器更新和设置动画的标志位。
+    //注释1处，处理适配器更新和设置动画的标志位。RecyclerView第一次布局，是没有什么动画效果的。
     processAdapterUpdatesAndSetAnimationFlags();
     saveFocusInfo();
     mState.mTrackOldChangeHolders = mState.mRunSimpleAnimations && mItemsChanged;
@@ -244,7 +306,7 @@ private void processAdapterUpdatesAndSetAnimationFlags() {
 第一次调用dispatchLayoutStep1的时候，此时RecyclerView还没有子View所以不会有什么动画执行。方法最后将`mState.mLayoutStep`置为了`State.STEP_LAYOUT`。
 
 
-RecyclerView的onMeasure方法的注释5处，调用dispatchLayoutStep2方法进行第二步布局。
+注释2处，调用dispatchLayoutStep2方法。
 
 ```java
 /**
@@ -260,9 +322,9 @@ private void dispatchLayoutStep2() {
     mState.mItemCount = mAdapter.getItemCount();
     mState.mDeletedInvisibleItemCountSincePreviousLayout = 0;
 
-    // Step 2: Run layout
+    // 注释1处，将预布局状态置为false。mInPreLayout 为 false 的时候，不会从 mChangedScrap 中获取 ViewHolder
     mState.mInPreLayout = false;
-    //注释1处，布局子View
+    //注释2处，布局子View
     mLayout.onLayoutChildren(mRecycler, mState);
 
     mState.mStructureChanged = false;
@@ -277,7 +339,9 @@ private void dispatchLayoutStep2() {
 }
 ```
 
-注释1处，调用LayoutManager的onLayoutChildren方法。我们直接看LinearLayoutManager的onLayoutChildren方法。
+注释1处，将预布局状态置为false。mInPreLayout 为 false 的时候，不会从 mChangedScrap 中查找缓存的 ViewHolder。
+
+注释2处，调用LayoutManager的onLayoutChildren方法。我们直接看LinearLayoutManager的onLayoutChildren方法。
 
 ```java
 @Override
@@ -296,14 +360,13 @@ public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State 
     if (mPendingSavedState != null && mPendingSavedState.hasValidAnchor()) {
         mPendingScrollPosition = mPendingSavedState.mAnchorPosition;
     }
-    //如果mLayoutState为null的话，则创建。
+    //注释1处，如果mLayoutState为null的话，则创建。
     ensureLayoutState();
     mLayoutState.mRecycle = false;
     //决定布局顺序，是否要倒着布局。LinearLayoutManager默认是从上到下布局。
     resolveShouldLayoutReverse();
 
     final View focused = getFocusedChild();
-    //注释1处，找到锚点，为了简单，我们只看注释2处查找锚点的逻辑。
     if (!mAnchorInfo.mValid || mPendingScrollPosition != RecyclerView.NO_POSITION
             || mPendingSavedState != null) {
         mAnchorInfo.reset();
@@ -346,7 +409,8 @@ public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State 
     // noRecycleSpace not needed: recycling doesn't happen in below's fill
     // invocations because mScrollingOffset is set to SCROLLING_OFFSET_NaN
     mLayoutState.mNoRecycleSpace = 0;
-    if (mAnchorInfo.mLayoutFromEnd) {//正常情况为该条件不满足。我们分析else的情况。
+    if (mAnchorInfo.mLayoutFromEnd) {
+        //正常情况为该条件不满足。我们分析else的情况。
         //...
     } else {
         //注释4处，向end方向填充的时候，先计算一些信息。
@@ -398,7 +462,7 @@ public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State 
             endOffset += fixOffset;
         }
     }
-    //如果必要的话，为预执行动画布局子View。
+    //如果必要的话，为预执行动画布局子View。第一次布局的时候，不会有预执行动画。
     layoutForPredictiveAnimations(recycler, state, startOffset, endOffset);
     if (!state.isPreLayout()) {
         //注释10处，如果不是处于预布局状态，标记布局结束。
@@ -411,8 +475,7 @@ public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State 
     
 }
 ```
-
-注释1处，找到锚点，为了简单，我们只看注释2处查找锚点的逻辑。
+注释1处，如果 mLayoutState 为null 的话，则创建。布局过程中用来保存布局状态，在布局结束的时候，状态就被重置了。
 
 注释2处，计算锚点位置和坐标。我们直接看LinearLayoutManager的updateAnchorInfoForLayout方法。
 
@@ -435,37 +498,41 @@ private void updateAnchorInfoForLayout(RecyclerView.Recycler recycler, RecyclerV
     if (DEBUG) {
         Log.d(TAG, "deciding anchor info for fresh state");
     }
+    //为 anchorInfo 的 mCoordinate 赋值，默认从上到下布局的时候，就是RecyclerView的paddingTop，默认为0
     anchorInfo.assignCoordinateFromPadding();
-    //注释1处
+    //注释1处，默认从上到下布局的时候 mStackFromEnd 为 false， itemPosition是0
     anchorInfo.mPosition = mStackFromEnd ? state.getItemCount() - 1 : 0;
 }
 ```
 
-第一次布局的时候会走到注释1处，如果mStackFromEnd为false，锚点anchorInfo.mPosition就是0。
+第一次布局的时候会走到注释1处，注释1处，默认从上到下布局的时候 mStackFromEnd 为 false， itemPosition 是0。
 
-注释3处，如果当前存在attach到RecyclerView的View，则临时detach，后面再复用。
+LayoutManager的onLayoutChildren方法的注释3处，如果当前存在attach到RecyclerView的 ChildView，则临时detach，后面再复用。这个时候RecyclerView还没有 ChildView，所以不会有什么操作。
 
 注释4处，向end方向填充的时候，先计算一些信息。
 
-
 ```java
 private void updateLayoutStateToFillEnd(AnchorInfo anchorInfo) {
+    //默认情况下，anchorInfo.mPosition 是0，anchorInfo.mCoordinate 是0，
+    //在我们这个默认的例子中，anchorInfo.mCoordinate 其实就是 RecyclerView 的 paddingTop，默认是0
     updateLayoutStateToFillEnd(anchorInfo.mPosition, anchorInfo.mCoordinate);
 }
 
 private void updateLayoutStateToFillEnd(int itemPosition, int offset) {
-    //需要填充的像素数
+    //可填充的像素数，默认就是RecyclerView的高度减去paddingBottom，也就是RecyclerView的可用空间
     mLayoutState.mAvailable = mOrientationHelper.getEndAfterPadding() - offset;
+    //默认是  LayoutState.ITEM_DIRECTION_TAIL;
     mLayoutState.mItemDirection = mShouldReverseLayout ? LayoutState.ITEM_DIRECTION_HEAD :
             LayoutState.ITEM_DIRECTION_TAIL;
     //从前面的分析我们知道，默认itemPosition是0
     mLayoutState.mCurrentPosition = itemPosition;
     mLayoutState.mLayoutDirection = LayoutState.LAYOUT_END;
     mLayoutState.mOffset = offset;
-    //mLayoutState将mScrollingOffset置为LayoutState.SCROLLING_OFFSET_NaN
+    //注释1处，这里注意一下，mLayoutState将mScrollingOffset置为LayoutState.SCROLLING_OFFSET_NaN
     mLayoutState.mScrollingOffset = LayoutState.SCROLLING_OFFSET_NaN;
 }
 ```
+注释1处，这里注意一下，mLayoutState将mScrollingOffset置为LayoutState.SCROLLING_OFFSET_NaN，后面会用到。
 
 LayoutManager的onLayoutChildren方法的注释5处，调用fill方法开始从锚点开始向end方向（对于默认的LinearLayoutManager，就是从锚点向下）填充RecyclerView，传入的最后一个参数为false注意一下。
 
@@ -477,12 +544,14 @@ LinearLayoutManager的fill方法。
 
 ```java
 /**
- *
+ * 神奇的方法：Fills the given layout, defined by the layoutState. 
+ * This is fairly independent from the rest of the {@link LinearLayoutManager} 
+ * and with little change, can be made publicly available as a helper class.
  * @param recycler        当前关联到RecyclerView的recycler。
- * @param layoutState     该如何填充可用空间的配置信息。
+ * @param layoutState     关于我们应该如何填写可用空间的配置。
  * @param state           Context passed by the RecyclerView to control scroll steps.
  * @param stopOnFocusable 如果为true的话，遇到第一个可获取焦点的View则停止填充。
- * @return 返回添加的像素。
+ * @return 返回添加的像素，对滚动方法有用。
  */
 int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
         RecyclerView.State state, boolean stopOnFocusable) {
@@ -493,15 +562,16 @@ int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
     // 剩余的空间
     int remainingSpace = layoutState.mAvailable + layoutState.mExtraFillSpace;
     LayoutChunkResult layoutChunkResult = mLayoutChunkResult;
+    //循环填充子View，只要还有剩余空间并且还有数据
     while ((layoutState.mInfinite || remainingSpace > 0) && layoutState.hasMore(state)) {
         layoutChunkResult.resetInternal();
         //注释1处，获取并添加子View，然后测量、布局子View并将分割线考虑在内。
         layoutChunk(recycler, state, layoutState, layoutChunkResult);
-        //条件满足的话，跳出循环
+        //注释2处，如果没有更多View了，布局结束，跳出循环
         if (layoutChunkResult.mFinished) {
             break;
         }
-        //增加偏移量，加上已经填充的像素
+        //注释3处，增加偏移量，加上已经填充的像素
         layoutState.mOffset += layoutChunkResult.mConsumed * layoutState.mLayoutDirection;
         /**
          * Consume the available space if:
@@ -511,7 +581,7 @@ int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
          */
         if (!layoutChunkResult.mIgnoreConsumed || layoutState.mScrapList != null
                 || !state.isPreLayout()) {
-            //可用空间减去已经填充的像素        
+            //注释4处，可用空间减去已经填充的像素        
             layoutState.mAvailable -= layoutChunkResult.mConsumed;
             // we keep a separate remaining space because mAvailable is important for recycling
             //剩余空间，减去已经填充的像素
@@ -534,10 +604,10 @@ int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
 void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
         LayoutState layoutState, LayoutChunkResult result) {
     //注释1处，获取子View，可能是从缓存中或者新创建的View。后面分析缓存相关的点的时候再看。
-    //取数据的顺序 mScrapList -> mRecycler(Recycler#mAttachedScrap ->ChildHelper#mHiddenViews -> Recycler#mCachedViews Recycler#mViewCacheExtension -> Recycler#mRecyclerPool ) -> (createViewHolder -> bindViewHolderd 的 itemView)
+    //取数据的顺序 mScrapList -> mRecycler(Recycler#mAttachedScrap或者Recycler#mChangedScrap ->ChildHelper#mHiddenViews -> Recycler#mCachedViews Recycler#mViewCacheExtension -> Recycler#mRecyclerPool ) -> (createViewHolder -> bindViewHolderd 的 itemView)
     View view = layoutState.next(recycler);
     if (view == null) {
-        //注释2处，如果获取到的子View为null，将LayoutChunkResult的mFinished置为true，用于跳出循环然后直接return。
+        //注释2处，如果获取到的子View为null，将LayoutChunkResult的mFinished置为true，没有更多数据了，用于跳出循环然后直接return。
         result.mFinished = true;
         return;
     }
@@ -545,23 +615,17 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
     if (layoutState.mScrapList == null) {
         if (mShouldReverseLayout == (layoutState.mLayoutDirection
                 == LayoutState.LAYOUT_START)) {
-            //注释3处
+            //注释3处，默认是从上到下布局的时候，添加子View
             addView(view);  
         } else {
             //注释4处
             addView(view, 0);
         }
-    } else {
-        if (mShouldReverseLayout == (layoutState.mLayoutDirection
-                == LayoutState.LAYOUT_START)) {
-            addDisappearingView(view);
-        } else {
-            addDisappearingView(view, 0);
-        }
-    }
-    //注释5处，测量子View的大小
+    } 
+    //...
+    //注释5处，测量子View的大小，包括margin和分割线。
     measureChildWithMargins(view, 0, 0);
-    //该View占用的高度
+    //注释6处，记录该View占用的高度
     result.mConsumed = mOrientationHelper.getDecoratedMeasurement(view);
     int left, top, right, bottom;
     if (mOrientation == VERTICAL) {
@@ -569,6 +633,7 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
             right = getWidth() - getPaddingRight();
             left = right - mOrientationHelper.getDecoratedMeasurementInOther(view);
         } else {
+            //注释6.1处，获取子View的左右坐标
             left = getPaddingLeft();
             right = left + mOrientationHelper.getDecoratedMeasurementInOther(view);
         }
@@ -576,22 +641,13 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
             bottom = layoutState.mOffset;
             top = layoutState.mOffset - result.mConsumed;
         } else {
+            //注释6.2处，获取子View的上下坐标
             top = layoutState.mOffset;
             bottom = layoutState.mOffset + result.mConsumed;
         }
-    } else {
-        top = getPaddingTop();
-        bottom = top + mOrientationHelper.getDecoratedMeasurementInOther(view);
-
-        if (layoutState.mLayoutDirection == LayoutState.LAYOUT_START) {
-            right = layoutState.mOffset;
-            left = layoutState.mOffset - result.mConsumed;
-        } else {
-            left = layoutState.mOffset;
-            right = layoutState.mOffset + result.mConsumed;
-        }
-    }
-    //注释6处，布局子View，并将margin和分割线也考虑在内。
+    } 
+    //...
+    //注释7处，布局子View，并将margin和分割线也考虑在内。
     layoutDecoratedWithMargins(view, left, top, right, bottom);
     // Consume the available space if the view is not removed OR changed
     if (params.isItemRemoved() || params.isItemChanged()) {
@@ -605,17 +661,23 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
 
 注释2处，如果获取到的子View为null，将LayoutChunkResult的mFinished置为true，用于跳出循环然后直接return。
 
-注释3处和注释4处根据填充方向添加子View。
+注释3处，默认是从上到下布局的时候，添加子View。
 
-注释5处，测量子View的大小。
+注释5处，测量子View的大小，包括margin和分割线。
 
-注释6处，布局子View，并将margin和分割线也考虑在内。
+注释6处，记录该View占用的高度。
 
-我们回到LayoutManager的onLayoutChildren方法的注释6处，向start方向填充的时候，计算一些信息，逻辑和updateLayoutStateToFillEnd类似，不再赘述。
+注释7处，布局子View，并将margin和分割线也考虑在内。
 
-LayoutManager的onLayoutChildren方法的注释7处，调用fill方法继续填充。注意：在我们这个例子中，这个时候可用的空间是0，所以不会再填充了。
+我们回到 fill 方法的注释2处，如果没有更多View了，布局结束，跳出循环。
 
-注释8处，做一些滚动调整。注意传入的canOffsetChildren参数为true。
+
+我们回到LayoutManager的onLayoutChildren方法的注释6处， 向start方向填充的时候，计算一些信息，逻辑和updateLayoutStateToFillEnd类似，不再赘述。
+
+LayoutManager的onLayoutChildren方法的注释7处，调用fill方法继续填充。注意：第一次布局的时候，正常来说我们是从0开始向下填充的，所以就不会有向上填充的情况。我们先忽略。
+
+
+注释8处，做一些滚动调整，处理头部可能出现的gap。注意传入的canOffsetChildren参数为true。
 
 ```java
 private int fixLayoutStartGap(int startOffset, RecyclerView.Recycler recycler,
@@ -653,6 +715,7 @@ int scrollBy(int delta, RecyclerView.Recycler recycler, RecyclerView.State state
     mLayoutState.mRecycle = true;
     final int layoutDirection = delta > 0 ? LayoutState.LAYOUT_END : LayoutState.LAYOUT_START;
     final int absDelta = Math.abs(delta);
+    //更新mLayoutState的一些信息
     updateLayoutState(layoutDirection, absDelta, true, state);
     //注释1处，注意，这里继续调用fill方法填充子View。
     final int consumed = mLayoutState.mScrollingOffset
@@ -681,73 +744,7 @@ LayoutManager的onLayoutChildren方法的注释9处，调用fixLayoutEndGap方�
 
 LayoutManager的onLayoutChildren方法的注释10处，如果不是处于预布局阶段，标记布局结束，不用运行动画。
 
-LayoutManager的onLayoutChildren方法的注释11处，重置mAnchorInfo，后面需要运行动画。
-
-到这里，dispatchLayoutStep2算是分析完了，onMeasure方法的分析也到此为止。（这也算是分析，不就是把源码贴出来，加了点注释吗？这。。。）
-
-接下来我们看看RecyclerView的onLayout方法。
-
-```java
-@Override
-protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    TraceCompat.beginSection(TRACE_ON_LAYOUT_TAG);
-    //注释1处，调用dispatchLayout方法。
-    dispatchLayout();
-    TraceCompat.endSection();
-    //注释2处。标记第一次布局完成。
-    mFirstLayoutComplete = true;
-}
-```
-
-注释2处，标记第一次布局完成。
-
-注释1处，调用dispatchLayout方法。
-
-```java
-/**
- * 该方法可以看做是layoutChildren()方法的一个包装，处理由于布局造成的动画改变。动画的工作机制基于有5中不同类型的动画的假设：
- * PERSISTENT: 在布局前后，items一直可见。
- * REMOVED: 在布局之前items可见，在布局之后，items被应用移除。
- * ADDED: 在布局之前items不存在，items是应用添加到RecyclerView的。
- * DISAPPEARING: 在布局前后items存在于数据集中，但是在布局过程中可见性由可见变为不可见。（这些items是由于其他变化的副作用而被移动到屏幕之外了）
- * APPEARING: 在布局前后items存在于数据集中，但是在布局过程中可见性由不可见变为可见。（这些items是由于其他变化的副作用而被移动到屏幕之中了）
- *
- * 方法的大体逻辑就是计算每个item在布局前后是否存在，并推断出它们处于上述五种状态的哪一种，然后设置不同的动画。
- * PERSISTENT类型的Views会运行animatePersistence动画
- * DISAPPEARING类型的Views运行animateDisappearance动画。
- * APPEARING类型的Views运行animateAppearance动画 
- * REMOVED和ADDED类型的Views执行animateChange动画。 
- */
-void dispatchLayout() {
-    if (mAdapter == null) {
-        Log.e(TAG, "No adapter attached; skipping layout");
-        // leave the state in START
-        return;
-    }
-    if (mLayout == null) {
-        Log.e(TAG, "No layout manager attached; skipping layout");
-        // leave the state in START
-        return;
-    }
-    mState.mIsMeasuring = false;
-    if (mState.mLayoutStep == State.STEP_START) {
-        dispatchLayoutStep1();
-        mLayout.setExactMeasureSpecsFrom(this);
-        dispatchLayoutStep2();
-    } else if (mAdapterHelper.hasUpdates() || mLayout.getWidth() != getWidth()
-            || mLayout.getHeight() != getHeight()) {
-        // First 2 steps are done in onMeasure but looks like we have to run again due to
-        // changed size.
-        mLayout.setExactMeasureSpecsFrom(this);
-        dispatchLayoutStep2();
-    } else {
-        //正常情况下，会走到这里，将RecyclerView的测量信息同步到LayoutManager
-        mLayout.setExactMeasureSpecsFrom(this);
-    }
-    //调用dispatchLayoutStep3方法。
-    dispatchLayoutStep3();
-}
-```
+到这里，dispatchLayoutStep2算是分析完了。接下来是 dispatchLayoutStep3方法。 
 
 RecyclerView的dispatchLayoutStep3方法。
 
@@ -763,78 +760,10 @@ private void dispatchLayoutStep3() {
     mState.mLayoutStep = State.STEP_START;
     //是否执行动画
     if (mState.mRunSimpleAnimations) {
-        // Step 3: Find out where things are now, and process change animations.
-        // traverse list in reverse because we may call animateChange in the loop which may
-        // remove the target view holder.
-        for (int i = mChildHelper.getChildCount() - 1; i >= 0; i--) {
-            ViewHolder holder = getChildViewHolderInt(mChildHelper.getChildAt(i));
-            if (holder.shouldIgnore()) {
-                continue;
-            }
-            long key = getChangedHolderKey(holder);
-            final ItemHolderInfo animationInfo = mItemAnimator
-                    .recordPostLayoutInformation(mState, holder);
-            ViewHolder oldChangeViewHolder = mViewInfoStore.getFromOldChangeHolders(key);
-            if (oldChangeViewHolder != null && !oldChangeViewHolder.shouldIgnore()) {
-                // 运行一个change动画
-
-                // If an Item is CHANGED but the updated version is disappearing, it creates
-                // a conflicting case.
-                // Since a view that is marked as disappearing is likely to be going out of
-                // bounds, we run a change animation. Both views will be cleaned automatically
-                // once their animations finish.
-                // On the other hand, if it is the same view holder instance, we run a
-                // disappearing animation instead because we are not going to rebind the updated
-                // VH unless it is enforced by the layout manager.
-                final boolean oldDisappearing = mViewInfoStore.isDisappearing(
-                        oldChangeViewHolder);
-                final boolean newDisappearing = mViewInfoStore.isDisappearing(holder);
-                if (oldDisappearing && oldChangeViewHolder == holder) {
-                    // run disappear animation instead of change
-                    mViewInfoStore.addToPostLayout(holder, animationInfo);
-                } else {
-                    final ItemHolderInfo preInfo = mViewInfoStore.popFromPreLayout(
-                            oldChangeViewHolder);
-                    // we add and remove so that any post info is merged.
-                    mViewInfoStore.addToPostLayout(holder, animationInfo);
-                    ItemHolderInfo postInfo = mViewInfoStore.popFromPostLayout(holder);
-                    if (preInfo == null) {
-                        handleMissingPreInfoForChangeError(key, holder, oldChangeViewHolder);
-                    } else {
-                        //运行change动画
-                        animateChange(oldChangeViewHolder, holder, preInfo, postInfo,
-                                oldDisappearing, newDisappearing);
-                    }
-                }
-            } else {
-                //保存动画信息
-                mViewInfoStore.addToPostLayout(holder, animationInfo);
-            }
-        }
-
-        //处理view info lists 并触发动画
-        mViewInfoStore.process(mViewInfoProcessCallback);
+        //第一次布局，这个条件不满足
+        //...
     }
-
-    //动画之后，一些View可能需要被移除和回收
-    mLayout.removeAndRecycleScrapInt(mRecycler);
-    mState.mPreviousLayoutItemCount = mState.mItemCount;
-    mDataSetHasChangedAfterLayout = false;
-    mDispatchItemsChangedEvent = false;
-    mState.mRunSimpleAnimations = false;
-
-    mState.mRunPredictiveAnimations = false;
-    mLayout.mRequestedSimpleAnimations = false;
-    if (mRecycler.mChangedScrap != null) {
-        mRecycler.mChangedScrap.clear();
-    }
-    if (mLayout.mPrefetchMaxObservedInInitialPrefetch) {
-        // Initial prefetch has expanded cache, so reset until next prefetch.
-        // This prevents initial prefetches from expanding the cache permanently.
-        mLayout.mPrefetchMaxCountObserved = 0;
-        mLayout.mPrefetchMaxObservedInInitialPrefetch = false;
-        mRecycler.updateViewCacheSize();
-    }
+    //...
     //标记布局完成。
     mLayout.onLayoutCompleted(mState);
     onExitLayoutOrScroll();
@@ -849,22 +778,37 @@ private void dispatchLayoutStep3() {
 }
 ```
 
-动画相关信息我们先不看，到这里layout过程结束，下面继续看绘制过程。
+对于第一次布局来说，可以认为 dispatchLayoutStep3 只是标记布局完成，清除 mViewInfoStore(里面保存了动画信息)，动画相关信息我们先不看，到这里layout过程结束，下面继续看绘制过程。
+
+```java
+@Override
+public void draw(Canvas c) {
+    super.draw(c);
+    //注释1处，在绘制结束后，调用 onDrawOver 绘制分割线
+    final int count = mItemDecorations.size();
+    for (int i = 0; i < count; i++) {
+        mItemDecorations.get(i).onDrawOver(c, this, mState);
+    }
+}
+```
 
 ```java
 @Override
 public void onDraw(Canvas c) {
     super.onDraw(c);
-
+    //先绘制分割线
     final int count = mItemDecorations.size();
     for (int i = 0; i < count; i++) {
         mItemDecorations.get(i).onDraw(c, this, mState);
     }
 }
 ```
-onDraw方法里先绘制了分割线。然后在drawChild方法中绘制子View。没啥可说的。
+onDraw方法里先绘制了分割线。然后在drawChild方法中绘制子View，然后在draw方法中又调用 mItemDecoration.onDrawOver 绘制分割线
+，所所以关于分割线，我们要么实现ItemDecoration的onDraw方法，要么实现ItemDecoration的onDrawOver方法。
 
-接下来我们看一看在滑动和fling的时候，RecyclerView的一些逻辑。
+第一次 measure，layout，draw 过程结束。平平无奇。
+
+## 接下来我们看一看在滑动和fling的时候，RecyclerView的一些逻辑。
 
 RecyclerView的onTouchEvent方法。
 
@@ -872,20 +816,13 @@ RecyclerView的onTouchEvent方法。
 @Override
 public boolean onTouchEvent(MotionEvent e) {
     //...
-
     switch (action) {
         case MotionEvent.ACTION_DOWN: {
            //...
         } break;
-
        //...
         case MotionEvent.ACTION_MOVE: {
             final int index = e.findPointerIndex(mScrollPointerId);
-            if (index < 0) {
-                Log.e(TAG, "Error processing scroll; pointer index for id "
-                        + mScrollPointerId + " not found. Did any MotionEvents get skipped?");
-                return false;
-            }
 
             final int x = (int) (e.getX(index) + 0.5f);
             final int y = (int) (e.getY(index) + 0.5f);
@@ -907,7 +844,8 @@ public boolean onTouchEvent(MotionEvent e) {
                         startScroll = true;
                     }
                 }
-                if (startScroll) {//到达了滑动的条件，将滑动状态置为SCROLL_STATE_DRAGGING
+                if (startScroll) {
+                    //到达了滑动的条件，将滑动状态置为SCROLL_STATE_DRAGGING
                     setScrollState(SCROLL_STATE_DRAGGING);
                 }
             }
@@ -920,10 +858,6 @@ public boolean onTouchEvent(MotionEvent e) {
                         canScrollVertically ? dy : 0,
                         e)) {
                     getParent().requestDisallowInterceptTouchEvent(true);
-                }
-                //注释2处，这个先忽略，应该是处理多个RecyclerView的时候，预先获取ViewHolder的操作。
-                if (mGapWorker != null && (dx != 0 || dy != 0)) {
-                    mGapWorker.postFromTraversal(this, dx, dy);
                 }
             }
         } break;
@@ -987,15 +921,96 @@ public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler,
 }
 ```
 
-LinearLayoutManager的scrollBy方法我们上面已经分析过了，内部会调用fill方法填充子View，并将所有的子View偏移。
+```java
+int scrollBy(int delta, RecyclerView.Recycler recycler, RecyclerView.State state) {
+    if (getChildCount() == 0 || delta == 0) {
+        return 0;
+    }
+    ensureLayoutState();
+    mLayoutState.mRecycle = true;
+    //delta > 0，向下填充，layoutDirection为LayoutState.LAYOUT_END
+    final int layoutDirection = delta > 0 ? LayoutState.LAYOUT_END : LayoutState.LAYOUT_START;
+    final int absDelta = Math.abs(delta);
+    //注释0处，更新布局信息。
+    updateLayoutState(layoutDirection, absDelta, true, state);
+    //注释1处，注意，这里继续调用fill方法填充子View。
+    final int consumed = mLayoutState.mScrollingOffset
+            + fill(recycler, mLayoutState, state, false);
+    if (consumed < 0) {
+        if (DEBUG) {
+            Log.d(TAG, "Don't have any more elements to scroll");
+        }
+        return 0;
+    }
+    final int scrolled = absDelta > consumed ? layoutDirection * consumed : delta;
+    //注释2处，偏移所有的子View
+    mOrientationHelper.offsetChildren(-scrolled);
+    if (DEBUG) {
+        Log.d(TAG, "scroll req: " + delta + " scrolled: " + scrolled);
+    }
+    mLayoutState.mLastScrollDelta = scrolled;
+    return scrolled;
+}
+```
+
+注意：注释0处，调用了 updateLayoutState 方法。
+
+```java
+private void updateLayoutState(int layoutDirection, int requiredSpace, boolean canUseExistingSpace, RecyclerView.State state) {
+    // If parent provides a hint, don't measure unlimited.
+    mLayoutState.mInfinite = resolveIsInfinite();
+    mLayoutState.mLayoutDirection = layoutDirection;
+    mReusableIntPair[0] = 0;
+    mReusableIntPair[1] = 0;
+    calculateExtraLayoutSpace(state, mReusableIntPair);
+    int extraForStart = Math.max(0, mReusableIntPair[0]);
+    int extraForEnd = Math.max(0, mReusableIntPair[1]);
+    boolean layoutToEnd = layoutDirection == LayoutState.LAYOUT_END;
+    mLayoutState.mExtraFillSpace = layoutToEnd ? extraForEnd : extraForStart;
+    mLayoutState.mNoRecycleSpace = layoutToEnd ? extraForStart : extraForEnd;
+    int scrollingOffset;
+    if(layoutToEnd) {
+        mLayoutState.mExtraFillSpace += mOrientationHelper.getEndPadding();
+        // get the first child in the direction we are going
+        final View child = getChildClosestToEnd();
+        // the direction in which we are traversing children
+        mLayoutState.mItemDirection = mShouldReverseLayout ? LayoutState.ITEM_DIRECTION_HEAD : LayoutState.ITEM_DIRECTION_TAIL;
+        //注释1处，找到下一个要填充的位置。
+        mLayoutState.mCurrentPosition = getPosition(child) + mLayoutState.mItemDirection;
+        mLayoutState.mOffset = mOrientationHelper.getDecoratedEnd(child);
+        // calculate how much we can scroll without adding new children (independent of layout)
+        //注释2处，计算一下，在不填充新的子View的情况下，我们可以滚动多少距离。
+        scrollingOffset = mOrientationHelper.getDecoratedEnd(child) - mOrientationHelper.getEndAfterPadding();
+    }
+    mLayoutState.mAvailable = requiredSpace;
+    if(canUseExistingSpace) {
+        //注释3处，可用空间 mLayoutState.mAvailable = 滚动距离 requiredSpace - scrollingOffset
+        mLayoutState.mAvailable -= scrollingOffset;
+    }
+    //在不填充新的子View的情况下，我们可以滚动多少距离。
+    //注释4处，内部将mLayoutState.mScrollingOffset设置为一个不等于LayoutState.SCROLLING_OFFSET_NaN的值。在后面的fill方法里面，会判断mLayoutState.mScrollingOffset不等于LayoutState.SCROLLING_OFFSET_NaN的话，会进行View的回收操作。
+    mLayoutState.mScrollingOffset = scrollingOffset;
+}
+```
+注释1处，找到下一个要填充的位置。
+注释2处，计算一下，在不填充新的子View的情况下，我们可以滚动多少距离。
+注释3处，可用空间 mLayoutState.mAvailable = 滚动距离 requiredSpace - scrollingOffset。
+
+这个理解一下，比如我们 滚动了 1223 像素，在不填充新的子View的情况下，我们可以滚动 93 像素，
+那么我们需要填充的空间 `mLayoutState.mAvailable = 1223 - 93 = 1130` 。
+
+注释4处，内部将mLayoutState.mScrollingOffset设置为一个不等于LayoutState.SCROLLING_OFFSET_NaN的值。在后面的fill方法里面，会判断mLayoutState.mScrollingOffset不等于LayoutState.SCROLLING_OFFSET_NaN的话，会进行View的回收操作。
+
+回到 scrollBy 方法的注释1处，注意，这里继续调用fill方法填充子View。
+
+注释2处，偏移所有的子View，保证RecyclerView的第一个子View的top坐标就是RecyclerView的top坐标。
+
 
 注释3处，看fling操作。
 
 ```java
 public boolean fling(int velocityX, int velocityY) {
-    
      //精简大量代码
-     
      mViewFlinger.fling(velocityX, velocityY);
      return true;
 }
@@ -1025,15 +1040,16 @@ class ViewFlinger implements Runnable {
 
 ```
 
-ViewFlinger实现了Runnable接口。fling方法的注释1处，计算坐标，然后在注释2处调用postOnAnimation方法。postOnAnimation方法内部会将ViewFlinger作为一个Runnable对象post到一个消息队列中，然后在下一帧到来的时候，执行
+ViewFlinger实现了Runnable接口。
+fling方法的注释1处，计算坐标，然后在注释2处调用postOnAnimation方法。postOnAnimation方法内部会将ViewFlinger作为一个Runnable对象post到一个消息队列中，然后在下一帧到来的时候，执行
+
 ViewFlinger的run方法。
-
-
 
 ```java
 @Override
 public void run() {
            
+    //注释0处，注意这两个变量初始值
     mReSchedulePostAnimationCallback = false;
     mEatRunOnAnimationRequest = true;
 
@@ -1080,7 +1096,7 @@ public void run() {
                  smoothScroller != null && smoothScroller.isPendingInitialRun();
 
         if (!smoothScrollerPending && doneScrolling) {
-                    //注释4处，滚动结束了...
+            //注释4处，滚动结束了...
                     
         } else {
             //注释5处，滚动没有结束，继续post。
@@ -1106,7 +1122,7 @@ public void run() {
 
 注释2处，重点，调用scrollStep方法，内部会最终调用fill方法填充子View，并将所有的子View偏移。
 
-注释3处，判断是否已经结束了（这里有点不明白，不是滚动没结束才进入这里吗，为什么还要重复判断，这里猜测是因为嵌套滑动的问题，我们忽略）。
+注释3处，判断是否已经结束了（这里有点不明白，不是滚动没结束才进入这里吗，为什么还要重复判断，这里猜测是因为嵌套滑动的问题，或其他条件，我们忽略）。
 
 注释5处，滚动没有结束，继续post，在下一帧到来的时候继续执行ViewFlinger的run方法。
 
@@ -1124,4 +1140,17 @@ void postOnAnimation() {
 
 注释6处，mReSchedulePostAnimationCallback为true，调用internalPostOnAnimation方法真正post。
 
+
+总结：
+
+RecyclerView的布局操作分为三步。dispatchLayoutStep1，dispatchLayoutStep2，dispatchLayoutStep3。dispatchLayoutStep1和dispatchLayoutStep3是用来处理动画相关的逻辑。dispatchLayoutStep2中会真正调用LayoutManager的onLayoutChildren方法来布局子View。
+
+LayoutManager的onLayoutChildren方法算法
+
+通过检查children和其他变量，找到一个锚点坐标和锚点的位置（锚点View对应在adapter中数据对应的位置）。 默认情况下锚点就是代表适配器中第一个数据对应的ViewHolder。
+从锚点向上填充RecyclerView。
+从锚点向下填充RecyclerView。
+滚动RecyclerView，做一些显示上的调整。
+
+RecyclerView通过偏移所有的子View来实现滚动效果。在滚动操作过程中，会发生View的回收和复用。这个过程发生在LayoutManager的fill方法中。
 
