@@ -1,4 +1,10 @@
 
+### 草稿
+
+当 ItemView 不在屏幕内的时候，如果LayoutManager想获得更好的动画体验，那么可以根据 ItemView 的位置，
+
+预布局阶段 onLayoutChildren 应该是对动画之后要被移出屏幕之外或者移动到屏幕之内的ItemView进行记录处理。
+
 
 
 ### 去掉 notifyItemChanged 的时候的白一下的动画效果

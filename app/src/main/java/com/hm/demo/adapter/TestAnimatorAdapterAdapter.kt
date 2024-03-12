@@ -1,63 +1,60 @@
-package com.hm.demo.adapter;
+package com.hm.demo.adapter
 
-import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import androidx.recyclerview.widget.RecyclerView;
-import com.hm.demo.R;
-import com.hm.demo.model.CheckBoxModel;
-import java.util.List;
+import android.content.Context
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.hm.demo.R
+import com.hm.demo.model.CheckBoxModel
 
 /**
  * Created by dumingwei on 2017/10/10.
  */
-public class TestAnimatorAdapterAdapter extends RecyclerView.Adapter<TestAnimatorAdapterAdapter.ViewHolder> {
-
-    private Context context;
-    private List<CheckBoxModel> data;
-
-    private static final String TAG = "TestAnimatorAdapterAdap";
-
-    public TestAnimatorAdapterAdapter(Context context, List<CheckBoxModel> data) {
-        this.context = context;
-        this.data = data;
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_test_animation, parent, false);
-        final ViewHolder holder = new ViewHolder(view);
+class TestAnimatorAdapterAdapter(
+    private val context: Context,
+    private val data: MutableList<CheckBoxModel>?
+) : RecyclerView.Adapter<TestAnimatorAdapterAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.item_test_animation, parent, false)
         //Log.i(TAG, "onCreateViewHolder: holder = " + holder + " view = " + view + " parent = " + parent + " viewType = " + viewType + " data = " + data);
-        return holder;
+        return ViewHolder(view)
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        CheckBoxModel model = data.get(position);
-        holder.checkBox.setSelected(model.isChecked());
-        holder.textDescription.setText(model.getDescription());
-        Log.i(TAG, "onBindViewHolder: position = " + position + " holder = " + holder + " model = " + model);
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val model = data!![position]
+        holder.checkBox.isSelected = model.isChecked
+        holder.textDescription.text = model.description
+        Log.i(TAG, "onBindViewHolder: position = $position holder = $holder model = $model")
     }
 
-    @Override
-    public int getItemCount() {
-        return data == null ? 0 : data.size();
+    override fun getItemCount(): Int {
+        return data?.size ?: 0
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    fun getDataList(): MutableList<CheckBoxModel>? {
+        return data
+    }
 
-        CheckBox checkBox;
-        TextView textDescription;
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            checkBox = itemView.findViewById(R.id.check_box);
-            textDescription = itemView.findViewById(R.id.text_description);
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var checkBox: CheckBox
+        var textDescription: TextView
+
+        init {
+            checkBox = itemView.findViewById(R.id.check_box)
+            textDescription = itemView.findViewById(R.id.text_description)
         }
     }
 
+    companion object {
+        private const val TAG = "TestAnimatorAdapterAdap"
+    }
 }

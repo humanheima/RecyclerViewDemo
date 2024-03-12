@@ -8,6 +8,11 @@
 
 源码版本：`androidx1.3.2`
 
+
+为什么预布局的时候也要 dispatchLayoutStep1 也要 mLayout.onLayoutChildren(mRecycler, mState) ？ 感觉这篇文章说的应该是对的。
+
+* [详解RecyclerView的预布局](https://www.cnblogs.com/ZhaoxiCheung/p/17745376.html)
+
 本文要旨：RecyclerView的回收和复用机制。
 
 ###草稿开始
@@ -648,6 +653,171 @@ void recycleViewHolderInternal(ViewHolder holder) {
 
 
 #### 调用 notifyItemInserted
+
+RecyclerView.RecyclerViewDataObserver 的 onItemRangeInserted 方法。
+
+```java
+@Override
+public void onItemRangeInserted(int positionStart, int itemCount) {
+    assertNotInLayoutOrScroll(null);
+    if(mAdapterHelper.onItemRangeInserted(positionStart, itemCount)) {
+        triggerUpdateProcessor();
+    }
+}
+```
+
+AdapterHelper 的 onItemRangeInserted 方法。
+
+```
+/**
+ * @return True if updates should be processed.
+ */
+boolean onItemRangeInserted(int positionStart, int itemCount) {
+    if(itemCount < 1) {
+        return false;
+    }
+    //添加了一个 UpdateOp.ADD 操作
+    mPendingUpdates.add(obtainUpdateOp(UpdateOp.ADD, positionStart, itemCount, null));
+    mExistingUpdateTypes |= UpdateOp.ADD;
+    //返回true，触发 requestLayout 
+    return mPendingUpdates.size() == 1;
+}
+```
+
+
+```java
+void dispatchLayout() {
+    //...
+    mState.mIsMeasuring = false;
+    if (mState.mLayoutStep == State.STEP_START) {
+        //注释1处，调用dispatchLayoutStep1方法。
+        dispatchLayoutStep1();
+        mLayout.setExactMeasureSpecsFrom(this);
+        //注释2处，调用dispatchLayoutStep2方法。
+        dispatchLayoutStep2();
+    } else if (mAdapterHelper.hasUpdates() || mLayout.getWidth() != getWidth()
+            || mLayout.getHeight() != getHeight()) {
+        // First 2 steps are done in onMeasure but looks like we have to run again due to
+        // changed size.
+        mLayout.setExactMeasureSpecsFrom(this);
+        dispatchLayoutStep2();
+    } else {
+        mLayout.setExactMeasureSpecsFrom(this);
+    }
+    //调用dispatchLayoutStep3方法。
+    dispatchLayoutStep3();
+}
+```
+
+dispatchLayoutStep1 方法
+处理动画标记位
+
+```
+@Override
+public void offsetPositionsForAdd(int positionStart, int itemCount) {
+    //偏移所有的ViewHolder的位置为插入留出位置
+    offsetPositionRecordsForInsert(positionStart, itemCount);
+    mItemsAddedOrRemoved = true;
+}
+```
+
+```
+void offsetPositionRecordsForInsert(int positionStart, int itemCount) {
+    final int childCount = mChildHelper.getUnfilteredChildCount();
+    for(int i = 0; i < childCount; i++) {
+        //比如我们在position=1 的位置插入1条数据，那么从position=2开始的所有的ViewHolder的位置都要加1。
+        final ViewHolder holder = getChildViewHolderInt(mChildHelper.getUnfilteredChildAt(i));
+        if(holder != null && !holder.shouldIgnore() && holder.mPosition >= positionStart) {
+            if(sVerboseLoggingEnabled) {
+                Log.d(TAG, "offsetPositionRecordsForInsert attached child " + i + " holder " + holder + " now at position " + (holder.mPosition + itemCount));
+            }
+            holder.offsetPosition(itemCount, false);
+            mState.mStructureChanged = true;
+        }
+    }
+    mRecycler.offsetPositionRecordsForInsert(positionStart, itemCount);
+    requestLayout();
+}
+```
+detachAndScrapAttachedViews 的时候，都放在 mAttachedScrap 中。
+
+fill 方法的时候，会从 mAttachedScrap 中取出来复用的。重新 attachToParent 之后会从  mAttachedScrap 中移除。
+
+dispatchLayoutStep2 方法
+
+detachAndScrapAttachedViews 的时候，都放在 mAttachedScrap 中。
+
+fill 方法的时候，老的位置，会从 mAttachedScrap 中取出来复用的。重新 attachToParent 之后会从  mAttachedScrap 中移除。
+
+新插入的数据位置，会创建新ViewHolder  mAdapter.createViewHolder(RecyclerView.this, type)。然后会 addView，不是 attachToParent。
+
+注意，在我们的例子中，fill 结束的时候，mAttachedScrap 中，会有一个 ViewHolder 存在(因为我们插入了一个数据，可以理解为 这个ViewHolder 被挤出屏幕了，没有被布局)。
+
+存在这种情况，当我们插入一个数据的时候，本在屏幕可见的ViewHolder被挤出屏幕了，没有被布局。
+mAttachedScrap 中还存在这个ViewHolder  这个 View 已经 detachToParent 了，那么我们还需要再布局这个ViewHolder attachViewToParent ，实现从屏幕中移动到屏幕外的(translationY)动画。
+
+在动画之前还会把这个 ItemView 通过调用 addAnimatingView  加入到 ChildHelper.hiddenViews 中。
+然后动画结束后，会把这个屏幕外的View ChildHelper.hiddenViews 移除，也会从RecyclerView中移除。 RecyclerView.this.removeViewAt(index); 并把这个  ViewHolder 缓存到  mCachedViews
+
+然后会调用 layoutForPredictiveAnimations 方法
+
+这个时候，recycler.getScrapList() 不为空。
+
+```java
+@NonNull
+public List<ViewHolder> getScrapList() {
+    return mUnmodifiableAttachedScrap;
+}
+
+ private final List<ViewHolder>
+mUnmodifiableAttachedScrap = Collections.unmodifiableList(mAttachedScrap);
+
+```
+
+内会还会再调用一次 fill 方法。 在 layoutChunk 方法中，会调用 addDisappearingView(view); 方法。 
+把从 recycler.getScrapList() 取出来的对应的ViewHolder 的ItemView，添加到RecyclerView 中。 addDisappearingView(view);
+
+然后会从 mAttachedScrap 中移除。
+最后将 mLayoutState.mScrapList = null;
+
+这个被挤出去的ViewHolder 会执行 animateDisappearance 方法。真正执行的是移动动画。
+
+```java
+@Override
+public boolean animateDisappearance(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @Nullable ItemHolderInfo postLayoutInfo) {
+        
+    int oldLeft = preLayoutInfo.left;
+    //比如开始坐标是2100
+    int oldTop = preLayoutInfo.top;
+    View disappearingItemView = viewHolder.itemView;
+    int newLeft = postLayoutInfo == null ? disappearingItemView.getLeft() : postLayoutInfo.left;
+    //插入一条数据之后，插入View的高度是300，那么这个被挤出去的 View新的位置是2400
+    int newTop = postLayoutInfo == null ? disappearingItemView.getTop() : postLayoutInfo.top;
+    if(!viewHolder.isRemoved() && (oldLeft != newLeft || oldTop != newTop)) {
+        //
+        disappearingItemView.layout(newLeft, newTop,
+            newLeft + disappearingItemView.getWidth(),
+            newTop + disappearingItemView.getHeight());
+        if(DEBUG) {
+            Log.d(TAG, "DISAPPEARING: " + viewHolder + " with view " + disappearingItemView);
+        }
+        //注释1处，移动动画
+        return animateMove(viewHolder, oldLeft, oldTop, newLeft, newTop);
+    } else {
+        if(DEBUG) {
+            Log.d(TAG, "REMOVED: " + viewHolder + " with view " + disappearingItemView);
+        }
+        return animateRemove(viewHolder);
+    }
+}
+```
+移动的动画，要移动的View(有多个，插入View之下的所有RecyclerView的子View)，注意： 在 dispatchLayoutStep2 的时候，已经把view 布局到 正确的位置了（也就是老的位置+300像素）。
+这里 先设置 translationY 设置为-300，然后让它移动到  translationY 为0 的位置（就是移动到布局后正确的位置上）。就会向下移动300像素。
+这300像素，就是新插入的View 的高度。
+
+
+
+
 
 
 

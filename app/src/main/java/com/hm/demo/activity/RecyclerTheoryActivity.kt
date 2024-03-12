@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,15 +58,47 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 20) {
+        for (i in 0 until 8) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
         rv.adapter = TestAnimatorAdapterAdapter(this, arrayList)
 
         binding.btnNotifyItemChanged.setOnClickListener {
-            rv.adapter?.notifyItemChanged(1)
+            testNotifyItemInserted(arrayList)
+//            binding.rvTheory.postDelayed({
+//                val childCount = rv.childCount
+//                for (i in 0 until childCount) {
+//                    val itemView = rv.getChildAt(i)
+//                    if (itemView is ViewGroup) {
+//                        Log.i(TAG,
+//                            "onCreate: itemView.getChildAt(2).toString() = " + itemView.getChildAt(2)
+//                                .toString()
+//                        )
+//                    }
+//
+//                }
+//
+//            }, 3000)
+            //testTranslationY()
         }
     }
+
+    private fun testTranslationY() {
+        val layoutManager = rv.layoutManager
+        val itemView = layoutManager?.findViewByPosition(1)
+        itemView?.let {
+            it.translationY = -300f
+            it.animate().translationY(0f)
+                .setDuration(2000)
+                .start()
+        }
+    }
+
+    private fun testNotifyItemInserted(arrayList: ArrayList<CheckBoxModel>) {
+        arrayList.add(1, CheckBoxModel("插入进来的数据", true))
+        rv.adapter?.notifyItemInserted(1)
+    }
+
 
 }
 
