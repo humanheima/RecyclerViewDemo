@@ -4,11 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.hm.demo.adapter.TestAnimatorAdapterAdapter
+import com.hm.demo.adapter.TestRvTheoryAdapter
 import com.hm.demo.databinding.ActivityRecyclerTheoryBinding
 import com.hm.demo.model.CheckBoxModel
 
@@ -58,28 +57,15 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 8) {
+        for (i in 0 until 3) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
-        rv.adapter = TestAnimatorAdapterAdapter(this, arrayList)
+        rv.adapter = TestRvTheoryAdapter(this, arrayList)
 
         binding.btnNotifyItemChanged.setOnClickListener {
-            testNotifyItemInserted(arrayList)
-//            binding.rvTheory.postDelayed({
-//                val childCount = rv.childCount
-//                for (i in 0 until childCount) {
-//                    val itemView = rv.getChildAt(i)
-//                    if (itemView is ViewGroup) {
-//                        Log.i(TAG,
-//                            "onCreate: itemView.getChildAt(2).toString() = " + itemView.getChildAt(2)
-//                                .toString()
-//                        )
-//                    }
-//
-//                }
-//
-//            }, 3000)
-            //testTranslationY()
+            //testNotifyItemInserted(arrayList)
+            testNotifyItemRemoved(arrayList)
+            //testNotifyItemMoved(arrayList)
         }
     }
 
@@ -99,6 +85,18 @@ class RecyclerTheoryActivity : AppCompatActivity() {
         rv.adapter?.notifyItemInserted(1)
     }
 
+    private fun testNotifyItemRemoved(arrayList: ArrayList<CheckBoxModel>) {
+        arrayList.removeAt(1)
+        rv.adapter?.notifyItemRemoved(1)
+    }
+
+    private fun testNotifyItemMoved(arrayList: ArrayList<CheckBoxModel>) {
+        val data1 = arrayList.get(1)
+        val data0 = arrayList.get(0)
+        arrayList.set(0, data1)
+        arrayList.set(1, data0)
+        rv.adapter?.notifyItemMoved(1, 0)
+    }
 
 }
 

@@ -1,9 +1,11 @@
 
 ### 草稿
 
-当 ItemView 不在屏幕内的时候，如果LayoutManager想获得更好的动画体验，那么可以根据 ItemView 的位置，
 
-预布局阶段 onLayoutChildren 应该是对动画之后要被移出屏幕之外或者移动到屏幕之内的ItemView进行记录处理。
+dispatchLayoutStep1 方法中，会调用 `mLayouManager.onLayoutChildren` 方法。这个方法是干嘛的呢？
+
+看下来，感觉对 onItemChanged，onItemInserted 来说应该没有用。对 onItemRemoved 有用。在预布局的时候，layout 把屏幕之外的 ViewHolder。这样在后面动画的时候
+才能执行，屏幕外的 ViewHolder 进入屏幕的动画效果。
 
 
 
@@ -286,19 +288,6 @@ boolean removeAnimatingView(View view) {
 * 支持动画的时候，无论数据变没变，都是新的ViewHolder。老的 ViewHolder 是放在 mChangedScrap 中的。但是在 dispatchLayoutStep2 方法中，不会从 mChangedScrap 找，所以会创建新的 ViewHolder。
 * 不支持动画的时候，无论数据变没变，都是同一个ViewHolder，都是从 mAttachedScrap 中取出来的，会重新绑定数据。
 
-
-
-### dispatchLayoutStep1 
-
-作用是什么？
-
-* layout的第一步，在这个步骤会执行以下操作；
-* - 处理适配器更新
-* - 保存动画信息，决定要运行哪种动画
-* - 保存当前views的信息
-* - 如果必要的话，运行预布局（layout）并保存相应的信息
-
-有必要调用一次 `mLayouManager.onLayoutChildren` 方法吗？作用是啥呢？
 
 
 

@@ -635,7 +635,8 @@ void recycleViewHolderInternal(ViewHolder holder) {
 2.然后又会执行 fill 方法，会把所有的 itemView attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的，变化的 ViewHolder 是从 mChangedScrap 中取出来复用的。 然后把取出来的 ViewHolder 从  mAttachedScrap  或者 mChangedScrap 移除。
 
 疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？
-我理解这个过程只是把所有的View detach了，然后又 attach 了。难道是因为在这个过程中会有一下新出现的或者小时的ViewHolder，要记录其动画信息？
+
+对 onItemRemoved() 的 场景有用。这个时候 remove的View不会占据空间，remainingSpace,会继续布局。把屏幕之外的View布局进来，并记录动画信息。
 
 * 在 dispatchLayoutStep2 布局的时候， 调用 mLayout.onLayoutChildren(mRecycler, mState)。在这个过程中：
 
@@ -668,7 +669,7 @@ public void onItemRangeInserted(int positionStart, int itemCount) {
 
 AdapterHelper 的 onItemRangeInserted 方法。
 
-```
+```java
 /**
  * @return True if updates should be processed.
  */
@@ -683,7 +684,6 @@ boolean onItemRangeInserted(int positionStart, int itemCount) {
     return mPendingUpdates.size() == 1;
 }
 ```
-
 
 ```java
 void dispatchLayout() {
@@ -712,7 +712,7 @@ void dispatchLayout() {
 dispatchLayoutStep1 方法
 处理动画标记位
 
-```
+```java
 @Override
 public void offsetPositionsForAdd(int positionStart, int itemCount) {
     //偏移所有的ViewHolder的位置为插入留出位置
@@ -721,7 +721,7 @@ public void offsetPositionsForAdd(int positionStart, int itemCount) {
 }
 ```
 
-```
+```java
 void offsetPositionRecordsForInsert(int positionStart, int itemCount) {
     final int childCount = mChildHelper.getUnfilteredChildCount();
     for(int i = 0; i < childCount; i++) {
@@ -816,6 +816,197 @@ public boolean animateDisappearance(@NonNull RecyclerView.ViewHolder viewHolder,
 这300像素，就是新插入的View 的高度。
 
 
+
+### notifyItemRemoved
+
+
+参考 [详解RecyclerView的预布局](https://www.cnblogs.com/ZhaoxiCheung/p/17745376.html)
+
+开始item的 ViewHodler0, ViewHodler1
+
+notifyItemRemoved(1)
+
+### 进入 dispatchLayoutStep1 方法
+
+* processAdapterUpdatesAndSetAnimationFlags 方法：
+
+ViewHolder0: ViewHolder{867dd3 position=0 id=-1, oldPos=-1, pLpos:-1}  没有变化。
+
+ViewHolder1: ViewHolder{79954e6 position=0 id=-1, oldPos=1, pLpos:1 removed}  **这里注意一下：position 变成0了**。
+
+* 调用 saveOldPositions() 之后，
+
+ViewHolder0: ViewHolder{867dd3 position=0 id=-1, oldPos=0, pLpos:-1}
+
+ViewHolder: ViewHolder{79954e6 position=0 id=-1, oldPos=1, pLpos:1 removed}
+
+fill 的时候
+
+ViewHolder0: ViewHolder{7cc0d10 position=0 id=-1, oldPos=0, pLpos:0 scrap [attachedScrap] tmpDetached no parent}
+mPreLayoutPosition 改为0了
+
+ViewHolder1: ViewHolder{40b6a27 position=0 id=-1, oldPos=1, pLpos:1 scrap [attachedScrap] removed tmpDetached no parent}
+
+ViewHolder1 标记为 removed，在 layoutChunk 中不会减去 remainingSpace。
+
+```java
+if (params.isItemRemoved() || params.isItemChanged()) {
+    result.mIgnoreConsumed = true;
+}
+```
+
+fill 方法会继续布局。把 Item3 的 ViewHolder 布局出来。这个时候，ViewHolder 的 position =2，
+ offsetPosition 是1(有一个移除的数量) 注意下面的注释1处。
+
+```
+else if (!holder.isBound() || holder.needsUpdate() || holder.isInvalid()) {
+                if (sDebugAssertionsEnabled && holder.isRemoved()) {
+                    throw new IllegalStateException("Removed holder should be bound and it should"
+                            + " come here only in pre-layout. Holder: " + holder
+                            + exceptionLabel());
+                }
+                //注释1处，尝试绑定ViewHolder，这个时候  offsetPosition =1
+                //会从 offsetPosition =1 获取数据，这是正常的，因为我们 开始已经把 数据位置1上的数据删除了。这时候获取的其实是位置2上的数据。
+                final int offsetPosition = mAdapterHelper.findPositionOffset(position);
+                bound = tryBindViewHolderByDeadline(holder, offsetPosition, position, deadlineNs);
+            }
+
+```
+
+ViewHolder2: ViewHolder{2ca2088 position=1 id=-1, oldPos=-1, pLpos:2 no parent}
+
+
+下面的逻辑 注意，在预布局的时候，屏幕中的被移除的 ViewHolder 会添加 ViewHolder.FLAG_REMOVED 标记。
+然后不消耗 remainingSpace(mLayoutState.mOffset 会累加)。
+因为还有剩余空间，就会创建新的ViewHolder(或者从缓存里取)，然后布局到屏幕中。
+
+新创建的 ViewHolder 会添加标记位  flags |= ItemAnimator.FLAG_APPEARED_IN_PRE_LAYOUT; 
+
+
+```java
+private void dispatchLayoutStep1() {
+    //...
+    
+    if(mState.mRunPredictiveAnimations) {
+        // Step 1: run prelayout: This will use the old positions of items. The layout manager
+        // is expected to layout everything, even removed items (though not to add removed
+        // items back to the container). This gives the pre-layout position of APPEARING views
+        // which come into existence as part of the real layout.
+
+        // Save old positions so that LayoutManager can run its mapping logic.
+        saveOldPositions();
+        final boolean didStructureChange = mState.mStructureChanged;
+        mState.mStructureChanged = false;
+        // temporarily disable flag because we are asking for previous layout
+        mLayout.onLayoutChildren(mRecycler, mState);
+        mState.mStructureChanged = didStructureChange;
+
+        for(int i = 0; i < mChildHelper.getChildCount(); ++i) {
+            final View child = mChildHelper.getChildAt(i);
+            final ViewHolder viewHolder = getChildViewHolderInt(child);
+            if(viewHolder.shouldIgnore()) {
+                continue;
+            }
+            if(!mViewInfoStore.isInPreLayout(viewHolder)) {
+                int flags = ItemAnimator.buildAdapterChangeFlagsForAnimations(viewHolder);
+                boolean wasHidden = viewHolder
+                    .hasAnyOfTheFlags(ViewHolder.FLAG_BOUNCED_FROM_HIDDEN_LIST);
+                if(!wasHidden) {
+                    //注释1处，新创建的ViewHolder，添加标记位 FLAG_APPEARED_IN_PRE_LAYOUT
+                    flags |= ItemAnimator.FLAG_APPEARED_IN_PRE_LAYOUT;
+                }
+                //Note: 注释2处，在预布局过程中出现的新的ViewHolder，记录其动画信息
+                final ItemHolderInfo animationInfo = mItemAnimator.recordPreLayoutInformation(
+                    mState, viewHolder, flags, viewHolder.getUnmodifiedPayloads());
+                if(wasHidden) {
+                    recordAnimationInfoIfBouncedHiddenView(viewHolder, animationInfo);
+                } else {
+                    //注释3处，将ViewHolder加入到mViewInfoStore中
+                    mViewInfoStore.addToAppearedInPreLayoutHolders(viewHolder, animationInfo);
+                }
+            }
+        }
+        // we don't process disappearing list because they may re-appear in post layout pass.
+        clearOldPositions();
+    } else {
+        clearOldPositions();
+    }
+    onExitLayoutOrScroll();
+    stopInterceptRequestLayout(false);
+    mState.mLayoutStep = State.STEP_LAYOUT;
+}
+```
+
+然后 clearOldPosition
+
+ViewHolder0: ViewHolder{7cc0d10 position=0 id=-1, oldPos=-1, pLpos:-1}
+ViewHolder1: ViewHolder{40b6a27 position=0 id=-1, oldPos=-1, pLpos:-1 removed}
+ViewHolder2: ViewHolder{45b542b position=1 id=-1, oldPos=-1, pLpos:-1}
+
+** dispatchLayoutStep1 结束。
+
+总结一下
+
+* 在预布局阶段，有一个新创建的 ViewHolder2，是新插入的。 
+* 现在有3个 Item。 有标记位为 removed 的 ViewHolder1，是被移除的。
+
+dispatchLayoutStep2 方法
+
+开始 fill 的时候，获取ViewHolder  getScrapOrHiddenOrCachedHolderForPosition
+
+
+注意 `holder.getLayoutPosition() == position`  和 `(mState.mInPreLayout || !holder.isRemoved())` 这两个条件。
+
+```java
+ViewHolder getScrapOrHiddenOrCachedHolderForPosition(int position, boolean dryRun) {
+    final int scrapCount = mAttachedScrap.size();
+
+    // Try first for an exact, non-invalid match from scrap.
+    for(int i = 0; i < scrapCount; i++) {
+        final ViewHolder holder = mAttachedScrap.get(i);
+        //注释1处，关注条件判断  (mState.mInPreLayout || !holder.isRemoved())
+        if(!holder.wasReturnedFromScrap() && holder.getLayoutPosition() == position && !holder.isInvalid() 
+        && (mState.mInPreLayout || !holder.isRemoved())) {
+            holder.addFlags(ViewHolder.FLAG_RETURNED_FROM_SCRAP);
+            return holder;
+        }
+    }
+    //...
+}
+```
+
+现在 mAttachedScrap 中有3个 ViewHolder。
+
+ViewHolder0: ViewHolder{7cc0d10 position=0 id=-1, oldPos=-1, pLpos:-1}
+ViewHolder1: ViewHolder{40b6a27 position=0 id=-1, oldPos=-1, pLpos:-1 removed}
+ViewHolder2: ViewHolder{45b542b position=1 id=-1, oldPos=-1, pLpos:-1}
+
+position = 0 的时候，会从 mAttachedScrap 中取  ViewHolder0 出来复用的。 `holder.getLayoutPosition() == position` = 0
+position = 1 的时候，会从 mAttachedScrap 中取  ViewHolder2 出来复用的。 `holder.getLayoutPosition() == position` = 1
+
+然后这个时候，fill 没有剩余空间 `remainingSpace = 0` ，就不会再继续布局了。这个时候RecyclerView中就只有2个Item。这个时候
+
+mAttachedScrap 还是有一个ViewHolder的，就是被移除的那个。
+
+接下来会执行 layoutForPredictiveAnimations 。但是 mRecycler.getScrapList() 中的item是 removed的，没做什么操作。
+
+** dispatchLayoutStep2 结束。
+
+
+* dispatchLayoutStep3 阶段。
+
+新创建的 ViewHolder2 现在已经在 position=1的位置上了。会执行 translationY 动画。 
+
+先把 translationY 设置为-1200，然后让它移动到  translationY 为0 的位置（就是移动到布局后正确的位置上）。 
+就会向上移动300像素。实现从屏幕下方进入的效果。
+
+被移除的 ViewHolder1 会执行 animateDisappearance 方法。是一个透明度渐出动画。
+
+被移除的 ViewHolder 会在第二布局阶段 detachViewFromParent以后，在 fill 方法中，不会重新 attachViewToParent。
+
+在透明度渐出动画的开始之前的时候，会调用 addAnimatingView， 会重新 attachViewToParent 上的。
+
+然后动画结束之后，会把这个ViewHolder 从 RecyclerView 中移除。并且会把这个 ViewHolder 缓存到 RecycledViewPool
 
 
 
