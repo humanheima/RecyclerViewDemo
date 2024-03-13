@@ -18,13 +18,17 @@ class TestRvTheoryAdapter(
     private val context: Context,
     private val data: MutableList<CheckBoxModel>?
 ) : RecyclerView.Adapter<TestRvTheoryAdapter.ViewHolder>() {
+
+    companion object {
+        private const val TAG = "TestAnimatorAdapterAdap"
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         val view =
             LayoutInflater.from(context).inflate(R.layout.item_test_rv_theory, parent, false)
-        //Log.i(TAG, "onCreateViewHolder: holder = " + holder + " view = " + view + " parent = " + parent + " viewType = " + viewType + " data = " + data);
         return ViewHolder(view)
     }
 
@@ -58,7 +62,4 @@ class TestRvTheoryAdapter(
         }
     }
 
-    companion object {
-        private const val TAG = "TestAnimatorAdapterAdap"
-    }
 }
