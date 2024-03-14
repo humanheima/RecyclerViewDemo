@@ -405,9 +405,7 @@ Recycler的recycleViewHolderInternal方法注释2处，先将要回收的ViewHol
 
 2.然后又会执行 fill 方法，会把所有的 itemView attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的，变化的 ViewHolder 是从 mChangedScrap 中取出来复用的。 然后把取出来的 ViewHolder 从  mAttachedScrap  或者 mChangedScrap 移除。
 
-疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？
-
-对 onItemRemoved() 的 场景有用。这个时候 remove的View不会占据空间，remainingSpace,会继续布局。把屏幕之外的View布局进来，并记录动画信息。
+疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？ 对 onItemRemoved() 的 场景有用。这个时候 remove的View不会占据空间，remainingSpace,会继续布局。把屏幕之外的View布局进来，并记录动画信息。
 
 * 在 dispatchLayoutStep2 布局的时候， 调用 mLayout.onLayoutChildren(mRecycler, mState)。在这个过程中：
 
@@ -415,9 +413,9 @@ Recycler的recycleViewHolderInternal方法注释2处，先将要回收的ViewHol
 
 然后又会执行 fill 方法，会把所有没有变化的 itemView 重新  attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的。
 
-注意：这个时候，不是预布局阶段了，是不会从 mChangedScrap 中 查找ViewHolder 来复用的。 在我们这里例子中，是创建了一个新的 ViewHolder，然后 调用 bindViewHolder 方法。然后返回新创建的ViewHolder。
+注意：这个时候，不是预布局阶段了，是不会从 mChangedScrap 中 查找ViewHolder 来复用的。 在我们这里例子中，是创建了一个新的 ViewHolder，然后调用 bindViewHolder 方法。然后返回新创建的ViewHolder。
 
-另外，这个时候，新创建的 ViewHolder 对应的View是添加到 RecyclerView 中的 mChildHelper.addView(child, index, false);。 这个时候老的View还没有移除，只是 detachViewFromParent 了。 mChangedScrap 也还存在改变了的老的ViewHolder。
+另外，这个时候新创建的 ViewHolder 对应的View是添加到 RecyclerView 中的 mChildHelper.addView(child, index, false);。 这个时候老的View还没有移除，只是 detachViewFromParent 了。 mChangedScrap 也还存在改变了的老的ViewHolder。
 
 * 在 dispatchLayoutStep3 布局的时候， 
 动画开始前，这里会把 mChangedScrap 中存储的ViewHolder 从 mChangedScrap 中移除，然后重新把对应的View attach 到 RecyclerView, `mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);` ，并把对应的View添加到 ChildHelper.mHiddenViews 中。
