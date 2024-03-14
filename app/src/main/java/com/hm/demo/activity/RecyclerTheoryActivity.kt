@@ -57,15 +57,16 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 30) {
+        for (i in 0 until 8) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
         rv.adapter = TestRvTheoryAdapter(this, arrayList)
 
         binding.btnNotifyItemChanged.setOnClickListener {
             //testNotifyItemInserted(arrayList)
-            testNotifyItemRemoved(arrayList)
+            //testNotifyItemRemoved(arrayList)
             //testNotifyItemMoved(arrayList)
+            testNotifyDataSetChanged(arrayList)
         }
     }
 
@@ -96,6 +97,14 @@ class RecyclerTheoryActivity : AppCompatActivity() {
         arrayList.set(0, data1)
         arrayList.set(1, data0)
         rv.adapter?.notifyItemMoved(1, 0)
+    }
+
+    private fun testNotifyDataSetChanged(arrayList: ArrayList<CheckBoxModel>) {
+        arrayList.clear()
+        for (i in 0 until 8) {
+            arrayList.add(CheckBoxModel("notifyDataSetChanged 新的数据$i", false))
+        }
+        rv.adapter?.notifyDataSetChanged()
     }
 
 }
