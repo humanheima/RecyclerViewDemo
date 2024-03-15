@@ -1,15 +1,18 @@
 
-### 草稿开始
-
-dryRun 参数用于控制 getScrapOrHiddenOrCachedHolderForPosition 方法的行为。如果 dryRun 为 true，则该方法在查找 ViewHolder 时不会从 scrap 或 cache 中移除找到的 ViewHolder。这种模式通常用于预测或检查，而不是实际获取 ViewHolder 以供使用。如果 dryRun 为 false，则该方法在查找 ViewHolder 时会从 scrap 或 cache 中移除找到的 ViewHolder，以便后续使用。
-
-### 草稿结束
-
-
 写在前面，看RecyclerView源码有点"老虎吃天，无从下口"的感觉。多次提笔想写关于RecyclerView的源码相关文章，最终也是作罢。最大的原因还是感觉RecyclerView的源码太过复杂，怕自己不能胜任。
 也是走马观花的看了一些网上的博客文章，有的文章看了也不止一遍。自己也就照虎画猫，来记录一下阅读源码的过程。
 
-我们就以RecyclerView最简单的使用方式为例进行分析。
+* 2024.03.15更新，但是也不是太难下口，哈哈。
+
+分析场景：
+
+本文要旨：
+
+RecyclerView 使用 LinearLayoutManager ，从上到下布局。
+
+1. 正常设置了LayoutManager和适配器以后，RecyclerView的measure、layout、draw流程。
+2. 第一次是如何填充子View的。
+2. 在滚动过程中（move和fling）的时候，是如何回收和填充子View的。我们这里不会看回收和填充子View的细节，只会看哪里发生了回收和填充子View调用操作。
 
 ```java
 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -156,9 +159,7 @@ protected void onMeasure(int widthSpec, int heightSpec) {
 
 注释2处，是否开启自动测量，我们以LinearLayoutManager来分析，LinearLayoutManager默认是true。
 
-注释2.1处，Note: 注意，当我们在布局里设置 RecyclerView 的宽高为 match_parent 的时候，
-这里的 widthMode 和 heightMode 都是 MeasureSpec.EXACTLY，会直接return。
-
+注释2.1处，Note: 注意，当我们在布局里设置 RecyclerView 的宽高为 match_parent 的时候， 这里的 widthMode 和 heightMode 都是 MeasureSpec.EXACTLY，会直接return。
 
 
 接下来我们看看RecyclerView的onLayout方法。
@@ -306,7 +307,7 @@ private void processAdapterUpdatesAndSetAnimationFlags() {
 第一次调用dispatchLayoutStep1的时候，此时RecyclerView还没有子View所以不会有什么动画执行。方法最后将`mState.mLayoutStep`置为了`State.STEP_LAYOUT`。
 
 
-注释2处，调用dispatchLayoutStep2方法。
+dispatchLayout方法注释2处，调用dispatchLayoutStep2方法。
 
 ```java
 /**
@@ -339,7 +340,7 @@ private void dispatchLayoutStep2() {
 }
 ```
 
-注释1处，将预布局状态置为false。mInPreLayout 为 false 的时候，不会从 mChangedScrap 中查找缓存的 ViewHolder。
+注释1处，将预布局状态置为false。mInPreLayout 为 false 的时候，不会从 Recycler.mChangedScrap 中查找缓存的 ViewHolder。
 
 注释2处，调用LayoutManager的onLayoutChildren方法。我们直接看LinearLayoutManager的onLayoutChildren方法。
 
@@ -477,35 +478,7 @@ public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State 
 ```
 注释1处，如果 mLayoutState 为null 的话，则创建。布局过程中用来保存布局状态，在布局结束的时候，状态就被重置了。
 
-注释2处，计算锚点位置和坐标。我们直接看LinearLayoutManager的updateAnchorInfoForLayout方法。
-
-```java
-private void updateAnchorInfoForLayout(RecyclerView.Recycler recycler, RecyclerView.State state,
-            AnchorInfo anchorInfo) {
-    if (updateAnchorFromPendingData(state, anchorInfo)) {
-        if (DEBUG) {
-            Log.d(TAG, "updated anchor info from pending information");
-        }
-        return;
-    }
-
-    if (updateAnchorFromChildren(recycler, state, anchorInfo)) {
-        if (DEBUG) {
-            Log.d(TAG, "updated anchor info from existing children");
-        }
-        return;
-    }
-    if (DEBUG) {
-        Log.d(TAG, "deciding anchor info for fresh state");
-    }
-    //为 anchorInfo 的 mCoordinate 赋值，默认从上到下布局的时候，就是RecyclerView的paddingTop，默认为0
-    anchorInfo.assignCoordinateFromPadding();
-    //注释1处，默认从上到下布局的时候 mStackFromEnd 为 false， itemPosition是0
-    anchorInfo.mPosition = mStackFromEnd ? state.getItemCount() - 1 : 0;
-}
-```
-
-第一次布局的时候会走到注释1处，注释1处，默认从上到下布局的时候 mStackFromEnd 为 false， itemPosition 是0。
+注释2处，计算锚点位置和坐标。可以简单认为锚点就是RecyclerView的paddingTop，默认为0。
 
 LayoutManager的onLayoutChildren方法的注释3处，如果当前存在attach到RecyclerView的 ChildView，则临时detach，后面再复用。这个时候RecyclerView还没有 ChildView，所以不会有什么操作。
 
@@ -604,7 +577,7 @@ int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
 void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
         LayoutState layoutState, LayoutChunkResult result) {
     //注释1处，获取子View，可能是从缓存中或者新创建的View。后面分析缓存相关的点的时候再看。
-    //取数据的顺序 mScrapList -> mRecycler(Recycler#mAttachedScrap或者Recycler#mChangedScrap ->ChildHelper#mHiddenViews -> Recycler#mCachedViews Recycler#mViewCacheExtension -> Recycler#mRecyclerPool ) -> (createViewHolder -> bindViewHolderd 的 itemView)
+    //取数据的顺序 mScrapList -> mRecycler(Recycler#mAttachedScrap或者Recycler#mChangedScrap ->ChildHelper#mHiddenViews -> Recycler#mCachedViews Recycler#mViewCacheExtension -> Recycler#mRecyclerPool ) -> (createViewHolder)
     View view = layoutState.next(recycler);
     if (view == null) {
         //注释2处，如果获取到的子View为null，将LayoutChunkResult的mFinished置为true，没有更多数据了，用于跳出循环然后直接return。
@@ -613,6 +586,7 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
     }
     RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
     if (layoutState.mScrapList == null) {
+        //mShouldReverseLayout == (layoutState.mLayoutDirection== LayoutState.LAYOUT_START) ，都等于false，判断两个 false 是否相等，返回true
         if (mShouldReverseLayout == (layoutState.mLayoutDirection
                 == LayoutState.LAYOUT_START)) {
             //注释3处，默认是从上到下布局的时候，添加子View
@@ -625,7 +599,7 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
     //...
     //注释5处，测量子View的大小，包括margin和分割线。
     measureChildWithMargins(view, 0, 0);
-    //注释6处，记录该View占用的高度
+    //注释6处，记录该View消耗的高度
     result.mConsumed = mOrientationHelper.getDecoratedMeasurement(view);
     int left, top, right, bottom;
     if (mOrientation == VERTICAL) {
@@ -665,7 +639,7 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
 
 注释5处，测量子View的大小，包括margin和分割线。
 
-注释6处，记录该View占用的高度。
+注释6处，记录该View消耗的高度。
 
 注释7处，布局子View，并将margin和分割线也考虑在内。
 
@@ -787,12 +761,11 @@ public void draw(Canvas c) {
     //注释1处，在绘制结束后，调用 onDrawOver 绘制分割线
     final int count = mItemDecorations.size();
     for (int i = 0; i < count; i++) {
+        //注释2处
         mItemDecorations.get(i).onDrawOver(c, this, mState);
     }
 }
-```
 
-```java
 @Override
 public void onDraw(Canvas c) {
     super.onDraw(c);
@@ -803,8 +776,9 @@ public void onDraw(Canvas c) {
     }
 }
 ```
-onDraw方法里先绘制了分割线。然后在drawChild方法中绘制子View，然后在draw方法中又调用 mItemDecoration.onDrawOver 绘制分割线
-，所所以关于分割线，我们要么实现ItemDecoration的onDraw方法，要么实现ItemDecoration的onDrawOver方法。
+
+注释1处，调用了父类的draw方法。其中会先调用onDraw方法，RecyclerView重写了onDraw方法绘制了分割线。然后就是调用dispatchDraw方法在drawChild方法中绘制子View。然后在注释2处，再次绘制分割线。这也是为什么说我们自定义分割线的时候，只要重写ItemDecoration的onDraw或者onDrawOver一个方法就够了。两个都重写的话会导致绘制两次分割线。
+
 
 第一次 measure，layout，draw 过程结束。平平无奇。
 
