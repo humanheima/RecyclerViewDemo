@@ -1,46 +1,58 @@
-写在前面：今天2021年2月12日，农历正月初一，2021年春节。一个人在上海没有回家。从家里下了几个水饺吃了，然后来公司了，学会习，下午再跑个5公里。拍张照纪念一下。
-
-![我的样子.jpg](https://upload-images.jianshu.io/upload_images/3611193-321b3b45c4563d0a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-进入正题
-
- 上篇文章：[RecyclerView源码分析之一](https://www.jianshu.com/p/9279774b3e80)
-
 源码版本：`androidx1.3.2`
-
-
-为什么预布局的时候也要 dispatchLayoutStep1 也要 mLayout.onLayoutChildren(mRecycler, mState) ？ 感觉这篇文章说的应该是对的。
-
-* [详解RecyclerView的预布局](https://www.cnblogs.com/ZhaoxiCheung/p/17745376.html)
 
 本文要旨：RecyclerView的回收和复用机制。
 
-###草稿开始
-###草稿结束
+先说下结论：
+
+1. 在正常滚动过程中，RecyclerView ViewHolder 的回收和复用只涉及 Recycler.mCachedViews、Recycler.mRecyclerPool。
+2. RecyclerView会回收滑出屏幕的View，当回收一个ViewHolder **A** 的时候，如果如果mCachedView缓存已达上限(默认是2)，会调用 addViewHolderToRecycledViewPool 从mCachedViews中移除最老的ViewHolder，添加到RecyclerViewPool中(每种ItemViewType的缓存池大小默认是5)。然后把A加入到Recycler.mCachedViews。
+3. 从 Recycler.mCachedViews 返回的 ViewHolder 是不会重新 onBindViewHolder 的。
+4. 从 RecyclerViewPool 返回的 ViewHolder 是会重新 onBindViewHolder 的。
+
+其他注意的点：在调试过程中发现，GapWorker 的 prefetchPositionWithDeadline 方法干扰到 RecyclerView 的回收和复用过程。有时候会导致 导致 Recycler.mCachedViews的 size变成了3(默认是2)。这个不是主要流程，我们先忽略，有兴趣可以仔细研究研究。
+
+分析场景：
+
+RecyclerView 使用线性布局，方向为竖直方向，布局从上到下。第一次设置 LayoutManager 和 Adapter ，正常显示数据以后，滚动 RecyclerView。
+
+RecyclerView的缓存的 ViewHolder 的地方有 Recycler.mAttachedScrap、Recycler.mChangedScrap、Recycler.mCachedViews、Recycler.mRecyclerPool。
+缓存 View  的地方有 Recycler.mViewCacheExtension、ChildHelper.mHiddenViews。 如下所示：
+
+```java
+public final class Recycler {
+
+    final ArrayList<ViewHolder> mAttachedScrap = new ArrayList<>();
+    ArrayList<ViewHolder> mChangedScrap = null;
+
+    final ArrayList<ViewHolder> mCachedViews = new ArrayList<ViewHolder>();
+
+    private final List<ViewHolder>
+            mUnmodifiableAttachedScrap = Collections.unmodifiableList(mAttachedScrap);
+
+    RecycledViewPool mRecyclerPool;
+
+    private ViewCacheExtension mViewCacheExtension;
+    //...
+}
+```
+
+```java
+class ChildHelper {
+    private final List<View> mHiddenViews = new ArrayList<View>();
+    //...
+}
+```
 
 
+本篇文章只分析在滚动的时候的回收和复用。只涉及 Recycler.mCachedViews、Recycler.mRecyclerPool 。在后续的文章中，会进行一个总结说明每一个缓存的作用。
 
-我们就以RecyclerView最简单的使用方式为例进行分析。使用线性布局，方向为竖直方向，布局从上到下。
-
-先引用这篇文章中[RecyclerView 源码分析(三) - RecyclerView的缓存机制](https://www.jianshu.com/p/efe81969f69d)对RecyclerView缓存的总结，感觉非常清晰非常好。
-
-
-|缓存级别|实际变量| 含义                                                                                                                                                              |
-|--------|-----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|一级缓存|`mAttachedScrap`和`mChangedScrap`| 优先级最高的缓存，RecyclerView在获取ViewHolder时,优先会到这两个缓存来找。其中mChangedScrap存储的是数据被更新的ViewHolder,比如说调用了Adapter的notifyItemChanged方法。 这样的ViewHolder有标记位 ViewHolder.FLAG_UPDATE |
-|二级缓存|`mCachedViews`| 默认大小为2，在滚动的时候会存储一些ViewHolder。                                                                                                                                   |
-|三级缓存|`ViewCacheExtension`| 这个是自定义缓存，一般用不到。                                                                                                                                                 |
-|四级缓存|`RecyclerViewPool`| 根据ViewType来缓存ViewHolder，每个ViewType的数组大小默认为5，可以动态的改变。                                                                                                            |
-
-
-### RecyclerView的回收
 
 #### 在滚动时候的回收
 
 1. 在滚动的时候，RecyclerView会回收滑出屏幕的View，然后加入到mCachedViews中。
 2. 如果mCachedView缓存已达上限(默认是2)，会调用 addViewHolderToRecycledViewPool 把从mCachedViews中移除最老的ViewHolder到RecyclerViewPool中(每种ItemViewType的缓存池大小默认是5)。
 
-在RecyclerView滚动的时候，会调用LinearLayoutManager的fill方法。fill方法内部会发生View的回收和复用。
+在RecyclerView滚动的时候，会调用 LinearLayoutManager 的fill方法。fill方法内部会发生View的回收和复用。
 
 ```java
 /**
@@ -89,7 +101,7 @@ int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
 }
 ```
 
-注释0处和注释2处，如果layoutState.mScrollingOffset不为 SCROLLING_OFFSET_NaN 的话，调用 recycleByLayoutState 方法，从这个方法名可以看出来，这是一个回收View的方法。接下来我们看看其中的细节。
+注释0处和注释2处，调用 recycleByLayoutState 方法，从这个方法名可以看出来，这是一个回收View的方法。接下来我们看看其中的细节。
 
 LinearLayoutManager 的 recycleByLayoutState 方法。
 
@@ -226,8 +238,8 @@ public void recycleView(@NonNull View view) {
     if (holder.isTmpDetached()) {
         removeDetachedView(view, false);
     }
-    //注释1处，将ViewHolder从mChangedScrap或者mAttachedScrap中移除。
     if (holder.isScrap()) {
+        //注释1处，将ViewHolder从mChangedScrap或者mAttachedScrap中移除。
         holder.unScrap();
     } else if (holder.wasReturnedFromScrap()) {
         holder.clearReturnedFromScrapFlag();
@@ -241,7 +253,8 @@ public void recycleView(@NonNull View view) {
 }
 ```
 
-注释1处，如果ViewHolder在mChangedScrap中或者mAttachedScrap中，则将ViewHolder从mChangedScrap或者mAttachedScrap中移除。也就是说滑出屏幕的ViewHolder不会缓存在mChangedScrap中或者mAttachedScrap中。
+注释1处，如果ViewHolder是从 mChangedScrap中或者mAttachedScrap 返回的，则将ViewHolder从mChangedScrap或者mAttachedScrap中移除。也就是说滑出屏幕的ViewHolder不会缓存在mChangedScrap中或者mAttachedScrap中。
+对于我们分析的这个场景，mChangedScrap中或者mAttachedScrap 是没有 ViewHolder 的。条件不满足。
 
 注释2处，调用 Recycler 的recycleViewHolderInternal方法。
 
@@ -278,6 +291,7 @@ void recycleViewHolderInternal(ViewHolder holder) {
         throw new IllegalArgumentException("cached view received recycle internal? "
                 + holder + exceptionLabel());
     }
+    //可以回收
     if (forceRecycle || holder.isRecyclable()) {
         if (mViewCacheMax > 0
                 && !holder.hasAnyOfTheFlags(ViewHolder.FLAG_INVALID
@@ -386,12 +400,14 @@ public void putRecycledView(ViewHolder scrap) {
 
 Recycler的 recycleViewHolderInternal 方法注释2处，先将要回收的ViewHolder加入mCachedViews中。
 
-注释3处，没有成功缓存到mCachedViews，则加入到RecycledViewPool中。测试下来这里好像不会调用。我们暂时忽略原因，可能是在其他场景触发的。
+注释3处，没有成功缓存到 mCachedViews，则加入到RecycledViewPool中。比如说，我们设置 mCachedViews 的大小为0的时候，那么就不会缓存到 mCachedViews 中，直接加入到 RecycledViewPool 中。
 
-小结：在滚动的时候，RecyclerView会回收滑出屏幕的View，然后加入到mCachedViews中。
-如果mCachedView缓存已达上限(默认是2)，会调用 addViewHolderToRecycledViewPool 把从mCachedViews中移除最老的ViewHolder到RecyclerViewPool中(每种ItemViewType的缓存池大小默认是5)。
+
+小结：在滚动的时候，RecyclerView会回收滑出屏幕的View，然后加入到 mCachedViews 中。 如果mCachedView缓存已达上限(默认是2)，会调用 addViewHolderToRecycledViewPool 把从mCachedViews中移除最老的ViewHolder到RecyclerViewPool中(每种ItemViewType的缓存池大小默认是5)。
 
 ### RecyclerView的在滚动状态下复用
+
+LinearLayoutManager 的 layoutChunk 方法。
 
 ```java
 void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
@@ -425,21 +441,22 @@ void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
 View view = layoutState.next(recycler);
 ```
 
-LayoutState的next方法。
+LayoutState 的 next 方法。
 
 ```java
 View next(RecyclerView.Recycler recycler) {
     if (mScrapList != null) {
+        //在我们的分析场景中为null
         return nextViewFromScrapList();
     }
-    //注释1处，调用Recycler的getViewForPosition方法获取View
+    //注释1处，调用Recycler的getViewForPosition方法获取View，mCurrentPosition是当前的位置。
     final View view = recycler.getViewForPosition(mCurrentPosition);
     mCurrentPosition += mItemDirection;
     return view;
 }
 ```
 
-注释1处，调用Recycler的getViewForPosition方法获取View。RecyclerView.Recycler就是处理RecyclerView的缓存复用相关逻辑的类。
+注释1处，调用Recycler的getViewForPosition方法获取View，mCurrentPosition是当前的位置。
 
 ```java
 @NonNull
@@ -465,14 +482,13 @@ ViewHolder tryGetViewHolderForPositionByDeadline(int position,
     }
     boolean fromScrapOrHiddenOrCache = false;
     ViewHolder holder = null;
-    // 0) If there is a changed scrap, try to find from there
-    // 注释0处，从mChangedScrap中获取ViewHolder。 正常滚动的时候，不是预布局状态，不会从这里找。
+    // 注释0处，预布局的时候，从mChangedScrap中获取ViewHolder。 正常滚动的时候，不是预布局状态，不会从这里找。
     if (mState.isPreLayout()) {
         holder = getChangedScrapViewForPosition(position);
         fromScrapOrHiddenOrCache = holder != null;
     }
     // 1) Find by position from scrap/hidden list/cache
-    //注释1处，从mAttachedScrap、mHiddenViews、mCachedViews中获取ViewHolder
+    //注释1处，从Recycler.mAttachedScrap、ChildHelper.mHiddenViews、Recycler.mCachedViews中获取ViewHolder
     if (holder == null) {
         holder = getScrapOrHiddenOrCachedHolderForPosition(position, dryRun);
         if (holder != null) {
@@ -624,9 +640,9 @@ ViewHolder tryGetViewHolderForPositionByDeadline(int position,
 }
 ```
 
-注释0处，从mChangedScrap中获取ViewHolder。 正常滚动的时候，不是预布局状态，不会从这里找。
+注释0处，预布局的时候，从mChangedScrap中获取ViewHolder。 正常滚动的时候，不是预布局状态，不会从这里找。
 
-注释1处，从mAttachedScrap、mHiddenViews、mCachedViews中获取ViewHolder。
+注释1处，从Recycler.mAttachedScrap、ChildHelper.mHiddenViews、Recycler.mCachedViews中获取ViewHolder。
 
 ```java
 holder = getScrapOrHiddenOrCachedHolderForPosition(position, dryRun);
@@ -699,13 +715,12 @@ ViewHolder getScrapOrHiddenOrCachedHolderForPosition(int position, boolean dryRu
 
 注释2处，从mHiddenViews中查找View，然后根据View获取ViewHolder。正常在滚动状态的时候 mHiddenViews 也是空的。
 
-注释4处，从mCachedViews中获取。正常在这里可以找到。貌似从mCachedViews中获取的ViewHolder 不需要重新绑定。
+注释4处，从mCachedViews中获取。正常在这里可以找到。从mCachedViews中获取的ViewHolder 不需要重新绑定。
 
 RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释3处，从我们自定义的缓存扩展mViewCacheExtension中获取ViewHolder，这个自定义的ViewCacheExtension就先忽略了。
 （你自定义过ViewCacheExtension吗？，没有。你自定义过？我也没有？正常人谁自定义ViewCacheExtension呀。是，自定义ViewCacheExtension的叫正常人吗？哈哈，纯属搞笑。）
 
-RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释4处，从RecycledViewPool中获取ViewHolder。
-从 RecycledViewPool 中获取的 ViewHolder，需要重新 bindViewHolder。
+RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释4处，从RecycledViewPool中获取ViewHolder。 从 RecycledViewPool 中获取的 ViewHolder，需要重新 bindViewHolder。
 
 ```java
 holder = getRecycledViewPool().getRecycledView(type);
@@ -758,9 +773,9 @@ public static class RecycledViewPool {
 
 注释1处，从RecycledViewPool中获取ViewHolder，先根据ViewType类获取ScrapData，然后从ScrapData获取ViewHolder。
 
-RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释5处，无法从缓存中获取ViewHolder，就使用适配器中创建一个新的ViewHolder。
+回到 RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释5处，无法从缓存中获取ViewHolder，就使用适配器中创建一个新的ViewHolder。
 
-RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释6处，绑定ViewHolder
+RecyclerView.Recycler的tryGetViewHolderForPositionByDeadline方法的注释6处，绑定ViewHolder。
 
 ```java
 bound = tryBindViewHolderByDeadline(holder, offsetPosition, position, deadlineNs);
@@ -791,11 +806,3 @@ private boolean tryBindViewHolderByDeadline(@NonNull ViewHolder holder, int offs
     return true;
 }
 ```
-
-
-结尾：关于RecyclerView的动画相关的内容，并没有进行分析。主要还是关注RecyclerView的回收和复用的大致逻辑。
-
-参考链接：
-
-* [RecyclerView源码分析之一](https://www.jianshu.com/p/9279774b3e80)
-* [RecyclerView 源码分析(三) - RecyclerView的缓存机制](https://www.jianshu.com/p/efe81969f69d)
