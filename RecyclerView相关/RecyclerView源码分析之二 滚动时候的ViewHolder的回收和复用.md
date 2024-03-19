@@ -320,7 +320,7 @@ void recycleViewHolderInternal(ViewHolder holder) {
             cached = true;
         }
         if (!cached) {
-            //注释3处，没有成功缓存到mCachedViews，则加入到RecycledViewPool中。测试下来这里不会调用
+            //注释3处，没有成功缓存到mCachedViews，则加入到RecycledViewPool中。
             addViewHolderToRecycledViewPool(holder, true);
             recycled = true;
         }
@@ -395,6 +395,15 @@ public void putRecycledView(ViewHolder scrap) {
 Recycler的 recycleViewHolderInternal 方法注释2处，先将要回收的ViewHolder加入mCachedViews中。
 
 注释3处，没有成功缓存到 mCachedViews，则加入到RecycledViewPool中。比如说我们设置 mCachedViews 的大小为0的时候，那么就不会缓存到 mCachedViews 中，直接加入到 RecycledViewPool 中。
+
+或者调用 notifyDataSetChanged，notifyItemChanged , notifyItemRemoved 的时候也不会不会缓存到 mCachedViews 中。因为此时，这个条件不满足。
+
+```java
+!holder.hasAnyOfTheFlags(ViewHolder.FLAG_INVALID
+                | ViewHolder.FLAG_REMOVED
+                | ViewHolder.FLAG_UPDATE
+                | ViewHolder.FLAG_ADAPTER_POSITION_UNKNOWN)
+```
 
 
 ### 在滚动时候的复用

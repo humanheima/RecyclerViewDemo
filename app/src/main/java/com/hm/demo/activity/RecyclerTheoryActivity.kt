@@ -62,7 +62,7 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 100) {
+        for (i in 0 until 8) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
         rv.adapter = TestRvTheoryAdapter(this, arrayList)
@@ -71,7 +71,7 @@ class RecyclerTheoryActivity : AppCompatActivity() {
             //testNotifyItemInserted(arrayList)
             //testNotifyItemRemoved(arrayList)
             //testNotifyItemMoved(arrayList)
-            //testNotifyDataSetChanged(arrayList)
+            testNotifyDataSetChanged(arrayList)
         }
     }
 
