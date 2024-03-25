@@ -1,10 +1,39 @@
 
 源码版本：`androidx1.3.2`
 
+分析场景：
 
-为什么预布局的时候也要 dispatchLayoutStep1 也要 mLayout.onLayoutChildren(mRecycler, mState) ？ 感觉这篇文章说的应该是对的。
+RecyclerView使用线性布局，方向为竖直方向，布局从上到下，宽高都是 MATCH_PARENT。开始有3条数据。然后移除 `position = 1` 的数据。
 
-我们就以RecyclerView最简单的使用方式为例进行分析，使用线性布局，方向为竖直方向，布局从上到下。开始有3条数据。然后移除 position = 1 的数据。示例代码如下所示：
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/7cea5e31928c43df8bdc51cfab466ce0.gif#pic_center)
+
+流程图
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/b592560274fe4168b5010c1f4a9599e0.png#pic_center)
+
+
+**先说下结论：**
+
+在 dispatchLayoutStep1 预布局阶段：
+
+* 给要被移出的 ViewHolder1 添加标记位  `ViewHolder.FLAG_REMOVED` 。
+  ViewHolder1 标记为 removed，在 fill 方法中不会减去 remainingSpace。所以，fill 方法会继续布局。这个时候 position = 2，会创建一个新的ViewHolder，onBindViewHolder 然后返回。ViewHolder对应的 ItemView 会添加到RecyclerView。                `RecyclerView.this.addView(child, index);`
+
+* 现在有3个ViewHolder，RecyclerView 有3个子 View。
+
+在 dispatchLayoutStep2 真正的布局阶段：
+
+* 在 detachAndScrapAttachedViews 回收 ViewHolder 的时候，Recycler.mAttachedScrap 回收了3个ViewHolder。
+* ViewHolder0 被布局到 position = 0 的位置。
+* ViewHolder2 被布局到 position = 1 的位置。
+* 缓存Recycler.mAttachedScrap 中还有一个 ViewHolder1，就是被移除的。
+
+在 dispatchLayoutStep3 动画阶段：
+
+* 没有变化的ViewHolder0，没有动画效果。
+* 新创建的ViewHolder2 会执行一个移动动画，从屏幕底部进入到屏幕中。
+* 被移除的ViewHolder1 会执行一个透明度渐出动画，透明度从1变化到0。在动画开始之前，会重新把ViewHolder 对应的 ItemView 重新 attachViewToParent 到 RecyclerView 上 。在动画结束后，会把 这个 ItemView 真正移除，对应的ViewHolder 缓存到 RecycledViewPool(有 ViewHolder.FLAG_REMOVED 是不会被缓存到 Recycler.mCacheViews 中的)。
+
+**示例代码如下所示：**
 
 ```kotlin
 rv.layoutManager = LinearLayoutManager(this)
@@ -23,7 +52,7 @@ private fun testNotifyItemRemoved(arrayList: ArrayList < CheckBoxModel > ) {
 }
 ```
 
-当我们调用Adapter的 notifyItemRemoved 方法的时候，会调用RecyclerView的 requestLayout 方法，然后会调用RecyclerView的 onLayout 方法，然后会调用RecyclerView的 dispatchLayout 方法。
+当我们调用Adapter的 notifyItemRemoved 方法的时候，会调用RecyclerView的 requestLayout 方法，然后会调用RecyclerView的 onLayout 方法，然后会调用 RecyclerView 的 dispatchLayout 方法。
 
 
 ```java
@@ -50,7 +79,7 @@ void dispatchLayout() {
 }
 ```
 
-dispatchLayoutStep1 方法
+RecyclerView 的  dispatchLayoutStep1 方法
 
 ```java
 private void dispatchLayoutStep1() {
@@ -124,44 +153,40 @@ private void dispatchLayoutStep1() {
     mState.mLayoutStep = State.STEP_LAYOUT;
 }
 ```
+
 注释1处，调用processAdapterUpdatesAndSetAnimationFlags方法。处理动画标记位。
 
 
 ```java
 private void processAdapterUpdatesAndSetAnimationFlags() {
-    if(mDataSetHasChangedAfterLayout) {
-        // Processing these items have no value since data set changed unexpectedly.
-        // Instead, we just reset it.
-        mAdapterHelper.reset();
-        if(mDispatchItemsChangedEvent) {
-            mLayout.onItemsChanged(this);
-        }
-    }
-    // simple animations are a subset of advanced animations (which will cause a
-    // pre-layout step)
-    // If layout supports predictive animations, pre-process to decide if we want to run them
+    //...
     if(predictiveItemAnimationsEnabled()) {
+        //注释1处
         mAdapterHelper.preProcess();
     } else {
         mAdapterHelper.consumeUpdatesInOnePass();
     }
     boolean animationTypeSupported = mItemsAddedOrRemoved || mItemsChanged;
+    
+    // mState.mRunSimpleAnimations = true
     mState.mRunSimpleAnimations = mFirstLayoutComplete && mItemAnimator != null && (mDataSetHasChangedAfterLayout || animationTypeSupported || mLayout.mRequestedSimpleAnimations) && (!mDataSetHasChangedAfterLayout || mAdapter.hasStableIds());
+    
+    // mState.mRunPredictiveAnimations = true
     mState.mRunPredictiveAnimations = mState.mRunSimpleAnimations && animationTypeSupported && !mDataSetHasChangedAfterLayout && predictiveItemAnimationsEnabled();
 }
 ```
 
-Evaluate ViewHolder1
+这里我们说一下这个方法的做的一些事情，就不一步一步跟了：
+
+首先会改变 position =1 位置上的 ViewHolder，我我们看一下改变之后的 ViewHolder1 的信息。Evaluate ViewHolder1：
 
 ```java
 ViewHolder1: ViewHolder{40b6a27 position=0 id=-1, oldPos=1, pLpos:1 removed}
 
 ```
 
-这里我们说一下这个方法的逻辑：
-
-* 给要被移出的 ViewHolder 添加标记位  `ViewHolder.FLAG_REMOVED` 。
-* 保存旧的位置。 `oldPos=1, pLpos:1` 3. 保存新的位置 `position=0`。
+* 给要被移出的 ViewHolder1 添加标记位  `ViewHolder.FLAG_REMOVED` 。
+* 保存旧的位置。 `oldPos=1, pLpos:1` ，保存新的位置 `position=0`。
 
 回到 dispatchLayoutStep1 方法注释2处，保存ViewHolder的动画信息。
 
@@ -188,7 +213,7 @@ public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State 
 }
 ```
 
-注释1处，detachAndScrapAttachedViews。所有的子View 会被 detachFromParent ，缓存在 mAttachedScrap 中。
+注释1处，detachAndScrapAttachedViews。所有的子View 会被 detachFromParent ，缓存在 Recycler.mAttachedScrap 中。
 
 注释2处，从锚点开始向end方向填充。
 
@@ -232,9 +257,9 @@ int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
 ```
 
 
-注释1处，注意这里的逻辑，如果填充的View是被移除的，就不减去remainingSpace。 
+**注释1处，注意这里的逻辑，如果填充的View是被移除的，就不减去remainingSpace。**因为在layoutChunk 方法中，将        `result.mIgnoreConsumed` 置为true了。
 
-ViewHolder1 标记为 removed，在 layoutChunk 中不会减去 remainingSpace。
+layoutChunk方法部分逻辑
 
 ```java
 //layoutChunk方法部分逻辑
@@ -243,7 +268,9 @@ if (params.isItemRemoved() || params.isItemChanged()) {
 }
 ```
 
-所以，fill 方法会继续布局。这个时候 position = 2，会创建一个新的ViewHolder，onBindViewHolder 然后返回。
+ViewHolder1 标记为 removed，在 fill 方法中不会减去 remainingSpace。所以，fill 方法会继续布局。这个时候 position = 2，会创建一个新的ViewHolder，onBindViewHolder 然后返回。ViewHolder对应的 ItemView 会添加到RecyclerView。                `RecyclerView.this.addView(child, index);`
+
+
 ```java
 //新创建的ViewHolder，
 // 我们可以看到一些信息，在预布局的时候，pLpos:2，真正的位置 position=1
@@ -255,7 +282,7 @@ ViewHolder{2390807 position=1 id=-1, oldPos=-1, pLpos:2 no parent}
 
 **dispatchLayoutStep1 结束，总结一下：**
 
-* 在预布局阶段，有一个新创建的 ViewHolder2，这个时候 RecyclerView 是有3个子 View 的。
+* 在预布局阶段，有一个新创建的 ViewHolder2，对应的 ItemView 会添加到RecyclerView。                `RecyclerView.this.addView(child, index);`。这个时候 RecyclerView 是有3个子 View 的。
 * 记录新创建的 ViewHolder2 的动画信息。
 * 现在有3个Item。有标记位为 removed 的 ViewHolder1，是被移除的。
 
@@ -297,19 +324,269 @@ position = 1 的时候，会从 mAttachedScrap 中取  ViewHolder2 出来复用�
 
 dispatchLayoutStep2 结束。
 
-* dispatchLayoutStep3 阶段。
+**dispatchLayoutStep3 阶段**
 
-被移除的 ViewHolder1 会执行 animateDisappearance 方法。是一个透明度渐出动画，透明度从1变化到0。
-最后是在 DefaultItemAnimator 的 animateRemoveImpl 方法中执行的。
+没有变化的ViewHolder，没有动画效果。
 
-被移除的 ViewHolder 会在第二布局阶段 detachViewFromParent以后，在 fill 方法中，不会重新 attachViewToParent。
-在透明度渐出动画的开始之前的时候，会调用 addAnimatingView， 会重新 attachViewToParent 上的。
+被移除的ViewHolder 的动画。是一个透明度渐出动画，透明度从1变化到0。
+
+**首先看添加移除动画的逻辑。**
+
+RecyclerView 的 animateDisappearance 方法。
+
+```java
+void animateDisappearance(@NonNull ViewHolder holder, @NonNull ItemHolderInfo preLayoutInfo, @Nullable ItemHolderInfo postLayoutInfo) {
+    //注释1处，调用addAnimatingView 方法
+    addAnimatingView(holder);
+    holder.setIsRecyclable(false);
+    //注释2处，调用 SimpleItemAnimator 的 animateDisappearance 方法。添加消失动画。
+    if(mItemAnimator.animateDisappearance(holder, preLayoutInfo, postLayoutInfo)) {
+        postAnimationRunner();
+    }
+}
+```
+
+注释1处，调用addAnimatingView 方法。被移除的 ViewHolder 在 dispatchLayoutStep2 阶段 detachViewFromParent以后，在 fill 方法中，不会重新 attachViewToParent。这里在移除动画的开始之前，会调用 addAnimatingView， 把ViewHolder 对应的 ItemView 重新 attachViewToParent 到 RecyclerView 上 **RecyclerView.this.attachViewToParent(child, index, layoutParams);** 。**注意，这里的index是1哟。**
+
 然后动画结束之后，会把这个ViewHolder 从 RecyclerView 中移除。并且会把这个 ViewHolder 缓存到 RecycledViewPool(有 ViewHolder.FLAG_REMOVED 是不会被缓存到 Recycler.mCacheViews 中的)。
 
+注释2处，调用 SimpleItemAnimator 的 animateDisappearance 方法。添加消失动画。
+
+```java
+@Override
+public boolean animateDisappearance(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @Nullable ItemHolderInfo postLayoutInfo) {
+    int oldLeft = preLayoutInfo.left;
+    int oldTop = preLayoutInfo.top;
+    View disappearingItemView = viewHolder.itemView;
+    int newLeft = postLayoutInfo == null ? disappearingItemView.getLeft() : postLayoutInfo.left;
+    int newTop = postLayoutInfo == null ? disappearingItemView.getTop() : postLayoutInfo.top;
+    if(!viewHolder.isRemoved() && (oldLeft != newLeft || oldTop != newTop)) {
+        
+        disappearingItemView.layout(newLeft, newTop,
+            newLeft + disappearingItemView.getWidth(),
+            newTop + disappearingItemView.getHeight());
+        //注释1处，不是被移出的ViewHolder才会执行 animateMove
+        return animateMove(viewHolder, oldLeft, oldTop, newLeft, newTop);
+    } else {
+        //注释2处，被移出的ViewHolder才会执行 animateRemove
+        return animateRemove(viewHolder);
+    }
+}
+```
+
+注释2处，被移出的ViewHolder才会执行 animateRemove。
 
 
-新创建的 ViewHolder2 现在已经在 position = 1 的位置上了。会执行 translationY 动画。 
-最后是在 DefaultItemAnimator 的 animateMoveImpl 方法中执行的。
+DefaultItemAnimator 的 animateRemove 方法。
 
-先把 translationY 设置为1200，然后让它移动到  translationY 为0 的位置，就会向上移动1200像素。实现从屏幕下方进入屏幕的效果。
+```java
+public boolean animateRemove(final RecyclerView.ViewHolder holder) {
+    resetAnimation(holder);
+    mPendingRemovals.add(holder);
+    return true;
+}
+```
+
+这个方法，就是向 mPendingRemovals 添加了一个等待执行的移除动画，返回true。
+
+**新创建的ViewHolder会执行一个 移动动画**，从屏幕底部进入到屏幕中。
+
+**新创建的 ViewHolder2 现在已经在 position = 1 的位置上了**。为了实现从屏幕外移动到屏幕中的 translationY 动画。 在动画开始之初，给 ViewHolder2 对应的 ItemView 设置 **translationY >0** 。在我们的例子中就是一个ItemView的高度，例如1200px。
+
+RecyclerView 的 animateAppearance 方法。
+
+```java
+void animateAppearance(@NonNull ViewHolder itemHolder, @Nullable ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
+    itemHolder.setIsRecyclable(false);
+    //注释1处，调用 SimpleItemAnimator 的 animateAppearance 方法。
+    if(mItemAnimator.animateAppearance(itemHolder, preLayoutInfo, postLayoutInfo)) {
+        postAnimationRunner();
+    }
+}
+```
+
+注释1处，调用 SimpleItemAnimator 的 animateAppearance 方法。
+
+```java
+@Override
+public boolean animateAppearance(@NonNull RecyclerView.ViewHolder viewHolder, @Nullable ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
+    if(preLayoutInfo != null && (preLayoutInfo.left != postLayoutInfo.left || preLayoutInfo.top != postLayoutInfo.top)) {
+        //注释1处，调用 DefaultItemAnimator 的 animateAppearance 方法。
+        return animateMove(viewHolder, preLayoutInfo.left, preLayoutInfo.top,
+            postLayoutInfo.left, postLayoutInfo.top);
+    } else {
+        return animateAdd(viewHolder);
+    }
+}
+```
+注释1处，调用 DefaultItemAnimator 的 animateAppearance 方法。
+
+```java
+public boolean animateMove(final RecyclerView.ViewHolder holder, int fromX, int fromY,
+    int toX, int toY) {
+    final View view = holder.itemView;
+    fromX += (int) holder.itemView.getTranslationX();
+    fromY += (int) holder.itemView.getTranslationY();
+    resetAnimation(holder);
+    int deltaX = toX - fromX;
+    int deltaY = toY - fromY;
+    if(deltaX == 0 && deltaY == 0) {
+        dispatchMoveFinished(holder);
+        return false;
+    }
+    if(deltaX != 0) {
+        view.setTranslationX(-deltaX);
+    }
+    //注释1处，给View设置 translationY >0 
+    if(deltaY != 0) {
+        view.setTranslationY(-deltaY);
+    }
+    mPendingMoves.add(new MoveInfo(holder, fromX, fromY, toX, toY));
+    return true;
+}
+```
+
+注释1处，给View设置 translationY >0 。注意，这里 deltaY小于0，所以 **-deltaY >0 **，在我们的例子中是1200。
+
+然后在动画过程中，从 translationY = 1200 移动到 translationY 为0 的位置，就会向上移动1200像素。实现从屏幕下方进入屏幕的效果。最后是在 DefaultItemAnimator 的 animateMoveImpl 方法中执行的。
+
+现在动画添加完毕，**看看动画的执行过程。**
+
+```java
+@Override
+public void runPendingAnimations() {
+    //移除动画
+    boolean removalsPending = !mPendingRemovals.isEmpty();
+    boolean movesPending = !mPendingMoves.isEmpty();
+    boolean changesPending = !mPendingChanges.isEmpty();
+    boolean additionsPending = !mPendingAdditions.isEmpty();
+    
+    // First, remove stuff
+    for(RecyclerView.ViewHolder holder: mPendingRemovals) {
+        //注释1处，执行移除动画
+        animateRemoveImpl(holder);
+    }
+    mPendingRemovals.clear();
+    // 注释2处，执行移动动画
+    if(movesPending) {
+        final ArrayList < MoveInfo > moves = new ArrayList < > ();
+        moves.addAll(mPendingMoves);
+        mMovesList.add(moves);
+        mPendingMoves.clear();
+        Runnable mover = new Runnable() {
+        
+            @Override
+            public void run() {
+                for(MoveInfo moveInfo: moves) {
+                    animateMoveImpl(moveInfo.holder, moveInfo.fromX, moveInfo.fromY,
+                        moveInfo.toX, moveInfo.toY);
+                }
+                moves.clear();
+                mMovesList.remove(moves);
+            }
+        };
+        if(removalsPending) {
+            View view = moves.get(0).holder.itemView;
+            ViewCompat.postOnAnimationDelayed(view, mover, getRemoveDuration());
+        } else {
+            mover.run();
+        }
+    }
+    // Next, change stuff, to run in parallel with move animations
+    if(changesPending) {
+        final ArrayList < ChangeInfo > changes = new ArrayList < > ();
+        changes.addAll(mPendingChanges);
+        mChangesList.add(changes);
+        mPendingChanges.clear();
+        Runnable changer = new Runnable() {@
+            Override
+            public void run() {
+                for(ChangeInfo change: changes) {
+                    animateChangeImpl(change);
+                }
+                changes.clear();
+                mChangesList.remove(changes);
+            }
+        };
+        if(removalsPending) {
+            RecyclerView.ViewHolder holder = changes.get(0).oldHolder;
+            ViewCompat.postOnAnimationDelayed(holder.itemView, changer, getRemoveDuration());
+        } else {
+            changer.run();
+        }
+    }
+    //...
+}
+```
+
+注释1处，执行移除动画
+
+```java
+private void animateRemoveImpl(final RecyclerView.ViewHolder holder) {
+        final View view = holder.itemView;
+        final ViewPropertyAnimator animation = view.animate();
+        mRemoveAnimations.add(holder);
+        //注释1处，这里透明度变化到0，变为不可见。
+        animation.setDuration(getRemoveDuration()).alpha(0).setListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+                        dispatchRemoveStarting(holder);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        animation.setListener(null);
+                        view.setAlpha(1);
+                        //注释2处，动画结束
+                        dispatchRemoveFinished(holder);
+                        mRemoveAnimations.remove(holder);
+                        dispatchFinishedWhenDone();
+                    }
+                }).start();
+    }
+```
+
+注释1处，移除动画，这里透明度变化到0，变为不可见。
+
+注释2处，动画结束。会把这个ViewHolder2 从 RecyclerView 中移除。并且会把这个 ViewHolder 缓存到 RecycledViewPool(有 ViewHolder.FLAG_REMOVED 是不会被缓存到 Recycler.mCacheViews 中的)。
+
+回到 runPendingAnimations 方法的注释2处，执行移动动画。
+
+
+```java
+void animateMoveImpl(final RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+    final View view = holder.itemView;
+    final int deltaX = toX - fromX;
+    final int deltaY = toY - fromY;
+    if(deltaX != 0) {
+        view.animate().translationX(0);
+    }
+    if(deltaY != 0) {
+        //注释1处，移动动画的结束的时候的translationY设置为0，回到原来的位置上。
+        view.animate().translationY(0);
+    }
+    // TODO: make EndActions end listeners instead, since end actions aren't called when
+    // vpas are canceled (and can't end them. why?)
+    // need listener functionality in VPACompat for this. Ick.
+    final ViewPropertyAnimator animation = view.animate();
+    mMoveAnimations.add(holder);
+    animation.setDuration(getMoveDuration()).setListener(new AnimatorListenerAdapter() {
+
+        @Override
+        public void onAnimationEnd(Animator animator) {
+            animation.setListener(null);
+            dispatchMoveFinished(holder);
+            mMoveAnimations.remove(holder);
+            dispatchFinishedWhenDone();
+        }
+    }).start();
+}
+```
+
+注释1处，移动动画的结束的时候的translationY设置为0，回到原来的位置上。然后执行动画。移动动画结束后在本例中没有做额外的操作。
+
+
+
+
 
