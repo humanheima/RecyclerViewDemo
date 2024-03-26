@@ -38,6 +38,11 @@ class TestRecyclerAnimationActivity : AppCompatActivity() {
         setContentView(binding.root)
         rv = binding.rvTheory
 
+        rv.itemAnimator?.addDuration = 1200
+        rv.itemAnimator?.changeDuration = 2500
+        rv.itemAnimator?.moveDuration = 2500
+        rv.itemAnimator?.removeDuration = 1200
+
 
         rv.javaClass.declaredFields.forEach {
             Log.i(TAG, "onCreate:  field name = ${it.name}")
@@ -59,25 +64,26 @@ class TestRecyclerAnimationActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 8) {
-            arrayList.add(CheckBoxModel("Hello$i", false))
-        }
-        rv.adapter = TestAnimatorAdapterAdapter(this, arrayList)
+        val testAnimatorAdapterAdapter = TestAnimatorAdapterAdapter(this)
+        rv.adapter = testAnimatorAdapterAdapter
 
-        val animator = rv.itemAnimator
-        if (animator is SimpleItemAnimator) {
-            Log.i(TAG, "onCreate: animator = $animator")
-            //animator.supportsChangeAnimations = false
-            //animator.changeDuration = 0
-        }
+
         binding.btnNotifyItemChanged.setOnClickListener {
 //            val model = arrayList[1]
 //            model.isChecked = !model.isChecked
 //            model.description = "改变后的描述"
-            rv.adapter?.notifyDataSetChanged()
+            //rv.adapter?.notifyDataSetChanged()
+            val newArrayList = arrayListOf<CheckBoxModel>()
+            for (i in 0 until 4) {
+                newArrayList.add(CheckBoxModel("hi Hello$i", false))
+            }
+            testAnimatorAdapterAdapter.onDataSourceChanged(newArrayList)
+            for (index in 0 until 4) {
+                testAnimatorAdapterAdapter.notifyItemInserted(index)
+            }
         }
-    }
 
+    }
 
 }
 

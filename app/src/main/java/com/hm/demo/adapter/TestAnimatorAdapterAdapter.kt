@@ -15,38 +15,60 @@ import com.hm.demo.model.CheckBoxModel
  * Created by dumingwei on 2017/10/10.
  */
 class TestAnimatorAdapterAdapter(
-    private val context: Context,
-    private val data: MutableList<CheckBoxModel>?
+    private val context: Context
 ) : RecyclerView.Adapter<TestAnimatorAdapterAdapter.ViewHolder>() {
+
+    companion object {
+        val TYPE_FOOTER = 1
+        private const val TAG = "TestAnimatorAdapterAdap"
+    }
+
+    val dataList = mutableListOf<CheckBoxModel>()
+
+    fun onDataSourceChanged(dataList: MutableList<CheckBoxModel>) {
+        this.dataList.clear()
+        this.dataList.addAll(dataList)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
+        if (viewType == TYPE_FOOTER) {
+            val view =
+                LayoutInflater.from(context).inflate(R.layout.footer_view_load_more, parent, false)
+            return FooterViewHolder(view)
+        }
         val view =
             LayoutInflater.from(context).inflate(R.layout.item_test_animation, parent, false)
-        //Log.i(TAG, "onCreateViewHolder: holder = " + holder + " view = " + view + " parent = " + parent + " viewType = " + viewType + " data = " + data);
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val model = data!![position]
-        holder.checkBox.isSelected = model.isChecked
-        holder.textDescription.text = model.description
+        if (position == itemCount - 1) {
+            return
+        }
+        val model = dataList[position]
+        holder.checkBox?.isSelected = model.isChecked
+        holder.textDescription?.text = model.description
         Log.i(TAG, "onBindViewHolder: position = $position holder = $holder model = $model")
     }
 
     override fun getItemCount(): Int {
-        return data?.size ?: 0
+        return dataList.size + 1
     }
 
-    fun getDataList(): MutableList<CheckBoxModel>? {
-        return data
+    override fun getItemViewType(position: Int): Int {
+        if (position == itemCount - 1) {
+            return TYPE_FOOTER
+        }
+        return super.getItemViewType(position)
     }
 
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var checkBox: CheckBox
-        var textDescription: TextView
+    open class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var checkBox: CheckBox? = null
+        var textDescription: TextView? = null
 
         init {
             checkBox = itemView.findViewById(R.id.check_box)
@@ -54,7 +76,13 @@ class TestAnimatorAdapterAdapter(
         }
     }
 
-    companion object {
-        private const val TAG = "TestAnimatorAdapterAdap"
+    class FooterViewHolder(itemView: View) : ViewHolder(itemView) {
+
+//        var textFooter: TextView
+//
+//        init {
+//            textFooter = itemView.findViewById(R.id.footer_view_load_now)
+//        }
     }
+
 }
