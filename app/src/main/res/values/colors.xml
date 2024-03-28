@@ -9,6 +9,8 @@
     <color name="color_FFF4F4">#FFF4F4</color>
     <color name="color_FFF9E7">#FFF9E7</color>
 
-    <color name="color_EEFCF4">#EEFCF4</color>
+    <color name="color_EEFCF4">#EEFCF3</color>
     <color name="color_EDF8FC">#EDF8FC</color>
+
+    <color name="color_a1a2ff">#a1a2ff</color>
 </resources>

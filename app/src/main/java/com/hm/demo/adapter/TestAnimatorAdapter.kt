@@ -14,9 +14,9 @@ import com.hm.demo.model.CheckBoxModel
 /**
  * Created by dumingwei on 2017/10/10.
  */
-class TestAnimatorAdapterAdapter(
+class TestAnimatorAdapter(
     private val context: Context
-) : RecyclerView.Adapter<TestAnimatorAdapterAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<TestAnimatorAdapter.ViewHolder>() {
 
     companion object {
         val TYPE_HEADER = -1
@@ -35,7 +35,11 @@ class TestAnimatorAdapterAdapter(
         this.dataList.addAll(dataList)
     }
 
-    fun mNotifyItemInserted(position: Int) {
+
+    /**
+     * 这里一定要注意了，因为有head，所以要加上head的数量
+     */
+    fun myNotifyItemInserted(position: Int) {
         notifyItemInserted(position + HEAD_COUNT)
     }
 
