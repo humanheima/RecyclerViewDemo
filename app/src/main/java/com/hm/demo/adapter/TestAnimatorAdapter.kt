@@ -19,10 +19,8 @@ class TestAnimatorAdapter(
 ) : RecyclerView.Adapter<TestAnimatorAdapter.ViewHolder>() {
 
     companion object {
-        val TYPE_HEADER = -1
         val TYPE_FOOTER = 1
 
-        val HEAD_COUNT = 1
         val FOOT_COUNT = 1
 
         private const val TAG = "TestAnimatorAdapterAdap"
@@ -35,22 +33,10 @@ class TestAnimatorAdapter(
         this.dataList.addAll(dataList)
     }
 
-
-    /**
-     * 这里一定要注意了，因为有head，所以要加上head的数量
-     */
-    fun myNotifyItemInserted(position: Int) {
-        notifyItemInserted(position + HEAD_COUNT)
-    }
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        if (viewType == TYPE_HEADER) {
-            val view = LayoutInflater.from(context).inflate(R.layout.head_view, parent, false)
-            return HeadViewHolder(view)
-        }
         if (viewType == TYPE_FOOTER) {
             val view =
                 LayoutInflater.from(context).inflate(R.layout.foot_view_load_more, parent, false)
@@ -62,31 +48,23 @@ class TestAnimatorAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position == 0) {
-            return
-        }
         if (position == itemCount - 1) {
             return
         }
-        val dataPosition = position - 1
-        val model = dataList[dataPosition]
+        val model = dataList[position]
         holder.checkBox?.isSelected = model.isChecked
         holder.textDescription?.text = model.description
         Log.i(
             TAG,
-            "onBindViewHolder: dataPosition = $dataPosition  holder = $holder model = $model"
+            "onBindViewHolder: dataPosition = $position  holder = $holder model = $model"
         )
     }
 
     override fun getItemCount(): Int {
-        return dataList.size + HEAD_COUNT + FOOT_COUNT
+        return dataList.size + FOOT_COUNT
     }
 
-
     override fun getItemViewType(position: Int): Int {
-        if (position == 0) {
-            return TYPE_HEADER
-        }
         if (position == itemCount - 1) {
             return TYPE_FOOTER
         }
@@ -103,12 +81,6 @@ class TestAnimatorAdapter(
         }
     }
 
-    class HeadViewHolder(itemView: View) : ViewHolder(itemView) {
-
-    }
-
-    class FootViewHolder(itemView: View) : ViewHolder(itemView) {
-
-    }
+    class FootViewHolder(itemView: View) : ViewHolder(itemView)
 
 }

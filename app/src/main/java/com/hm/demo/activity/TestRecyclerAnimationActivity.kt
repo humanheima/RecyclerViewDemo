@@ -68,7 +68,6 @@ class TestRecyclerAnimationActivity : AppCompatActivity() {
         Log.i(TAG, "onCreate: debugField = ${debugField.getBoolean(null)}")
 
 
-
         rv.layoutManager = LinearLayoutManager(this)
         val testAnimatorAdapter = TestAnimatorAdapter(this)
         rv.adapter = testAnimatorAdapter
@@ -79,14 +78,13 @@ class TestRecyclerAnimationActivity : AppCompatActivity() {
                 newArrayList.add(CheckBoxModel("hi Hello$i", false))
             }
             testAnimatorAdapter.onDataSourceChanged(newArrayList)
+            //testAnimatorAdapter.notifyDataSetChanged()
             for (index in 0 until 4) {
                 //这里一定要注意了，这里的index是从0开始的，所以要加上HEAD_COUNT
-                //testAnimatorAdapter.myNotifyItemInserted(index)
                 testAnimatorAdapter.notifyItemInserted(index)
             }
         }
     }
-
 
 }
 

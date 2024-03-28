@@ -1,19 +1,13 @@
+## 项目中发现一个奇怪的现象
+
+RecyclerView 加载完数据以后，调用 notifyItemInserted 方法，RecyclerView 会滑动到底部。
+
+简化后的效果图：
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/c77ffa8395164cd68676e53a50432aa0.gif#pic_center)
 
 
-**项目中发现一个奇怪的现象**：
-
-RecyclerView 加载完数据以后，调用 notifyItemInserted 方法，RecyclerView 会滑动到底部。因为这个 RecyclerView 的适配器有一个 FootViewHolder，所以怀疑是 FootViewHolder 的问题。通过源码分析，果然是FootViewHolder的问题。
-
-
-先说下结论：
-
-* 调用 notifyItemInserted 方法的时候，会把 FootViewHolder 的 position 向下偏移。在预布局dispatchLayoutStep1 结束的时候， FootViewHolder 的 position = 4。
-* 在 dispatchLayoutStep2 阶段，会以 FootViewHolder 为锚点 position = 4 进行填充。先填充 FootViewHolder。此时FootViewHolder 布局在屏幕中的坐标是  top = 0，bottom = 144。(FootView 的高度就是144)
-* 从 position =5 向锚点下方填充，此时没有更多的数据。
-* position = 3 向锚点上方填充，直到没有更多空间。
-* 此时 FootViewHolder 距离 RecyclerView底部还有很大一段距离。RecyclerView 会向下偏移所有的子View，结束后，FootViewHolder的bottom 就是 RecyclerView的 最底部的坐标。
-* dispatchLayoutStep3 阶段，FootViewHolder 执行一个 move 动画，从上向下移动一段距离。
-* 新创建的 ViewHolder 执行 alpha 动画，从透明到不透明。
+因为这个 RecyclerView 的适配器有一个 FootViewHolder，所以怀疑是 FootViewHolder 的问题。通过源码分析，果然是 FootViewHolder 的问题。接下来就一步一步分析一下原因。
 
 
 **适配器代码**
@@ -136,7 +130,7 @@ void dispatchLayout() {
 ## dispatchLayoutStep1 预布局阶段
 
 
-在预布局阶段，首先会调用 RecyclerView 的 offsetPositionRecordsForInsert 方法，将已有的 FootViewHolder 向后移动，为插入的ViewHolder 留出位置。在我们的例子中，添加了4条数据，调用4次 notifyItemInserted 。最后 FootViewHolder 的 position 从 0 变化到 4 。
+在预布局阶段，首先会调用 RecyclerView 的 **offsetPositionRecordsForInsert** 方法，将已有的 FootViewHolder 向后移动，为插入的ViewHolder 留出位置。在我们的例子中，添加了4条数据，调用4次 notifyItemInserted 。最后 FootViewHolder 的 position 从 0 变化到 4 。
 
 ```java
 void offsetPositionRecordsForInsert(int positionStart, int itemCount) {
@@ -156,16 +150,15 @@ void offsetPositionRecordsForInsert(int positionStart, int itemCount) {
 }
 ```
 
-**Evaluate FootViewHolder**
+在debug的时候，评估一下FootViewHolder 。**Evaluate FootViewHolder**
 
 ```java
  FootViewHolder{bd564b0 position=4 id=-1, oldPos=0, pLpos:0}
  ```
 
-然后就没什么特殊的，内部会调用一次 `mLayout.onLayoutChildren(mRecycler, mState);`，进行预布局。**预布局结束的时候，只有一个FootViewHolder**。 **FootViewHolder还是被布局在了 position = 0 的位置。 预布局的时候，使用的是 pLpos = 0** 。
+然后就没什么特殊的，dispatchLayoutStep1方法内部会调用一次 `mLayout.onLayoutChildren(mRecycler, mState);`，进行预布局。**预布局结束的时候，只有一个FootViewHolder**。 **FootViewHolder还是被布局在了 position = 0 的位置。 预布局的时候，使用的是 pLpos = 0** 。
 
 **这里要注意一下**：预布局结束的时候，FootViewHolder 的 position=4 。在 dispatchLayoutStep2 阶段布局的时候，使用的是  position。也就是说会把 FootViewHolder 布局在 position=4 的位置。
-
 
 ## dispatchLayoutStep2
 
@@ -185,7 +178,7 @@ onLayoutChildren 方法内部，
 1. 先 **detachAndScrapAttachedViews** 回收 FootViewHolder。没啥可说的。
 
 2. 然后调用 **updateLayoutStateToFillEnd(AnchorInfo anchorInfo)** 方法。**将 mLayoutState.mCurrentPosition** 设置为 4。
-3. 然后调用 fill 方法进行填充。这时候，锚点位置是 4，对应的 ViewHolder是 FootViewHolder ，所以会先布局 FootViewHolder。FootViewHolder ，布局位置是  top = 0，bottom = 144。(FootView 的高度就是144)
+3. 然后调用 fill 方法进行填充。这时候，锚点位置是 4，对应的 ViewHolder是 FootViewHolder ，所以会先布局 FootViewHolder。FootViewHolder ，布局位置(**layoutDecoratedWithMargins**)是  top = 0，bottom = 144。(FootView 的高度就是144)
 4. 然后 FootViewHolder 后面没有数据了。此时 mLayoutState.mCurrentPosition = 5。(Adapter 只有 4条数据加一个Foot，position最大是4)。从锚点开始向下填充结束。
 
 ### 接下来要从锚点开始向上填充
@@ -216,6 +209,8 @@ ViewHolder2 的 布局位置是 top = -1800，bottom = -900。
 ViewHolder1 的 布局位置是 top = -2700，bottom = -1800。
 
 布局完 ViewHolder1，以后，`remainingSpace < 0` ，结束向上填充。
+
+为什么会结束呢，在我们的例子中，remainingSpace = 2255 ，布局完 144 + Math.abs(-2700)，已经大于 2255 了。
 
 这个时候，FootViewHolder 的位置是 top = 0，bottom = 144。距离 RecyclerView 的底部还有很大的一段距离(在我们的例子中是 2111像素)。然后会走到 fixLayoutEndGap 方法。
 
@@ -294,8 +289,6 @@ ViewHolder2 的 top 是 311，bottom 是 1211。
 ViewHolder1 的 top 是 -589，bottom 是 311。
 
 
-
-
 **dispatchLayoutStep2 结束**
 
 ## dispatchLayoutStep3 阶段，执行动画
@@ -312,9 +305,21 @@ FootViewHolder 会执行 move 动画。此时 FootViewHolder 的 top 是 2111。
 
 **dispatchLayoutStep3 结束**
 
+### 先说下结论
 
-在搞明白了这个问题以后，有想到另一个问题。如果给适配器加一个HeadViewHolder，那么 notifyItemInserted 以后，RecyclerView 就会以会以 HeadViewHolder 为锚点，从上到下进行布局，是不是就可以解决 **因为 有FootViewHolder 而导致 RecyclerView
-自动滚动到底部的问题呢？**，我们来验证一下。
+* 调用 notifyItemInserted 方法的时候，会把 FootViewHolder 的 position 向下偏移。在预布局 dispatchLayoutStep1 结束的时候， FootViewHolder 的 position = 4。
+* 在 dispatchLayoutStep2 阶段，会以 FootViewHolder 为锚点 position = 4 进行填充。先填充 FootViewHolder。此时FootViewHolder 布局在屏幕中的坐标是  top = 0，bottom = 144。(FootView 的高度就是144)
+* 从 position =5 向锚点下方填充，此时没有更多的数据。
+* position = 3 向锚点上方填充，直到没有更多空间。
+* 此时 FootViewHolder 距离 RecyclerView底部还有很大一段距离。RecyclerView 会向下偏移所有的子View，结束后，FootViewHolder的bottom 就是 RecyclerView的 最底部的坐标。
+* dispatchLayoutStep3 阶段，FootViewHolder 执行一个 move 动画，从上向下移动一段距离。
+* 新创建的 ViewHolder 执行 alpha 动画，从透明到不透明。
+
+
+### 在搞明白了这个问题以后，又想到另一个问题。
+
+如果给适配器加一个HeadViewHolder，那么 notifyItemInserted 以后，RecyclerView 就会以会以 HeadViewHolder 为锚点，从上到下进行布局，是不是就可以解决 **因为 有FootViewHolder 而导致 RecyclerView自动滚动到底部的问题呢？**，我们来验证一下。
+
 
 改造过后的适配器代码 有一个 HeadViewHolder，并且新增了一个 myNotifyItemInserted 方法。。
 
@@ -418,7 +423,7 @@ class TestAnimatorAdapter(
 
 ```
 
-这里一定要注意了：
+**这里一定要注意了：**
 
 ```kotlin
 
@@ -429,9 +434,10 @@ fun myNotifyItemInserted(position: Int) {
     notifyItemInserted(position + HEAD_COUNT)
 }
 ```
+
 因为有 head，在 notifyItemInserted 的时候，position 要要加上 head 的数量。
 
-测试代码
+**测试代码**
 
 ```kotlin   
 binding.btnNotifyItemChanged.setOnClickListener {
@@ -450,15 +456,38 @@ binding.btnNotifyItemChanged.setOnClickListener {
 
 效果图：
 
-![调用myNotifyItemInserted.gif](调用myNotifyItemInserted.gif)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/11a862ff00ba4c8683b2d2e10e5fba73.gif#pic_center)
+
+
 
 可以看到，RecyclerView 不会自动滚动到底部。
 
 如果这里不加上 Head 的数量，RecyclerView 会以 HeadViewHolder 为锚点，向下布局，然后再以 HeadViewHolder 为锚点向上布局。在我们的例子中，导致最后的结果是，RecyclerView 还是会自动滚动到底部。
 
+
+**测试代码** 调用  `testAnimatorAdapterAdapter.notifyItemInserted(index)`
+
+```kotlin   
+binding.btnNotifyItemChanged.setOnClickListener {
+
+    val newArrayList = arrayListOf<CheckBoxModel>()
+    for (i in 0 until 4) {
+        newArrayList.add(CheckBoxModel("hi Hello$i", false))
+    }
+    testAnimatorAdapterAdapter.onDataSourceChanged(newArrayList)
+    for (index in 0 until 4) {
+        //总共添加了4条数据，调用4次 notifyItemInserted 
+        testAnimatorAdapterAdapter.notifyItemInserted(index)
+    }
+}
+```
+
+
 效果图：
 
-![调用notifyItemInserted.gif](调用notifyItemInserted.gif)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/9f10187940064d8b85f2743c0e3d19cd.gif#pic_center)
+
+
 
 为什么呢？因为 notifyItemInserted 从 0 开始布局，会将 HeadViewHolder 向下偏移。最后 HeadViewHolder 的 position = 4 。关键的方法是 RecyclerView 的 offsetPositionRecordsForInsert 方法：
 
@@ -478,16 +507,19 @@ void offsetPositionRecordsForInsert(int positionStart, int itemCount) {
 }
 ```
 
-注释1处，偏移 position >= positionStart 的 ViewHolder。在我们的例子中，HeadViewHolder 的 position = 0，从 0 开始 notifyItemInserted，会将 HeadViewHolder 向下偏移。最后 HeadViewHolder 的 position = 4 。
+注释1处，偏移 position >= positionStart 的 ViewHolder。在我们的例子中，HeadViewHolder 的 position = 0，从 0 开始 notifyItemInserted，会将 HeadViewHolder 向下偏移。最后 HeadViewHolder 的 position = 4 。然后开始布局的时候，position = 4 的位置 itemType 是正常的ViewHolder，所以 position = 4 的位置布局的是正常的ViewHolder。 position = 5 是 FootViewHolder。
 
 
 
 ## 还想到一个问题，只有 FootView 的时候，为什么调用 notifyDataChanged 以后，RecyclerView 不会自动滚动到底部呢？
 
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/02b2e2fc547743528eddf1b34527f010.gif#pic_center)
 
 
 
-notifyItemDataChanged 以后，RecyclerView 不会自动滚动到底部。因为不会偏移 FootViewHolder。还是从0开始布局。
+原因是：
 
-
-
+1. 调用notifyDataSetChanged 不会偏移 FootViewHolder。FootViewHolder 的 position = 0。
+2. dispatchLayoutStep2 阶段，会以 FootViewHolder 为锚点，从 position = 0 开始布局。
+3. position = 0 的位置  ItemType 是正常的 ViewHolder。
+4. 然后一直向下布局，直到没有更多的空间 remainingSpace ，结束布局。
