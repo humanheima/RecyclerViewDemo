@@ -1,8 +1,12 @@
-RecyclerView.Adapter 调用 notifyItemChanged 之后 动画是怎样执行的？
 
-注意：本文是基于 androidx.RecyclerView 1.3.2 版本的源码分析。默认使用 DefaultItemAnimator，如果使用了其他的 ItemAnimator，可能会有不同的表现。
 
-示例代码如下：
+### 注意：本文是基于 androidx.RecyclerView 1.3.2 版本的源码分析。默认使用 DefaultItemAnimator，如果使用了其他的 ItemAnimator，可能会有不同的表现。
+
+**效果图：**
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/7e9fabf5e0324f5a992652ea9e2d277e.gif#pic_center)
+
+##  示例代码如下：
 
 ```java
 binding.btnNotifyItemChanged.setOnClickListener {
@@ -11,7 +15,7 @@ binding.btnNotifyItemChanged.setOnClickListener {
 }
 ```
 
-在开始之前提两个个问题：
+## 在开始之前提两个问题：
 
 
 1.RecyclerView 怎么 去掉 notifyItemChanged 时候的闪一下的动画？
@@ -93,7 +97,7 @@ void triggerUpdateProcessor() {
 }
 ```
 
-注释1处，调用 RecyclerView 的 requestLayout 方法。该方法导致 onMeasure 方法 , onLayout 方法被调用。在我们的例子中， RecyclerView 的 宽高是 match_parent，onMeasure 方法没有再去做测量，我们可以忽略。
+注释1处，调用 RecyclerView 的 requestLayout 方法。该方法导致 onMeasure 方法 、onLayout 方法被调用。在我们的例子中， RecyclerView 的 宽高是 match_parent，onMeasure 方法没有再去做测量，我们可以忽略。
 
 RecyclerView 的 onLayout 方法内部主要调用了 dispatchLayout 方法。精简逻辑后的 dispatchLayout 方法如下：
 
@@ -131,7 +135,7 @@ void dispatchLayout() {
 }
 ```
 
-预布局阶段 dispatchLayoutStep1
+## 预布局阶段 dispatchLayoutStep1
 
 ```java
 /**
@@ -231,21 +235,22 @@ holder.addFlags(ViewHolder.FLAG_UPDATE);
 回到 dispatchLayoutStep1 方法注释1处，记录动画之前的所有ViewHolder信息 animationInfo，保存到 mViewInfoStore 中。**mViewInfoStore.addToPreLayout(holder, animationInfo);**。
 
 
-dispatchLayoutStep1 方法注释2处，注意这里只会添加变化的viewHolder 会 添加到 oldChangeHolders 中。`mViewInfoStore.addToOldChangeHolders(key, holder);`。
+dispatchLayoutStep1 方法注释2处，注意这里只会添加变化的viewHolder 到 oldChangeHolders 中。`mViewInfoStore.addToOldChangeHolders(key, holder);`。
 
-注释3处，预布局的时候调用 mLayout.onLayoutChildren(mRecycler, mState); 布局
+注释3处，预布局的时候调用 `mLayout.onLayoutChildren(mRecycler, mState);` 进行布局
 
 在这个过程中：
 
-1.会执行一次 detachAndScrapAttachedViews 方法，会把所有的 itemView detachViewFromParent，同时回收itemView对应的 ViewHolder。没有变化的 ViewHolder 添加到 mAttachedScrap 中，变化的（notifyItemChanged 的 item）ViewHolder 添加到 mChangedScrap 中。
+1. 先执行一次 detachAndScrapAttachedViews 方法，会把所有的 itemView detachViewFromParent，同时回收itemView对应的 ViewHolder。没有变化的 ViewHolder 添加到 **Recycler.mAttachedScrap** 中，变化的（notifyItemChanged 的 item）ViewHolder 添加到 **Recycler.mChangedScrap** 中。
 
 
-2.然后又会执行 fill 方法，会把所有的 itemView attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的，变化的 ViewHolder 是从 mChangedScrap 中取出来复用的。 然后把取出来的 ViewHolder 从  mAttachedScrap  或者 mChangedScrap 移除。
+2. 然后会执行 fill 方法，会把所有的 itemView attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的，变化的 ViewHolder 是从 mChangedScrap 中取出来复用的。 然后把取出来的 ViewHolder 从  mAttachedScrap  或者 mChangedScrap 移除。
 
-疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？
-我理解这个过程只是把所有的View detach了，然后又 attach 了。难道是因为在这个过程中会有一下新出现的或者小时的ViewHolder，要记录其动画信息？
+## 疑问：为啥要在预布局的时候，做 mLayout.onLayoutChildren(mRecycler, mState); 这个操作呢？
 
-布局第二阶段 dispatchLayoutStep2
+看下来，感觉对 onItemChanged，onItemInserted 来说应该没有用。对 onItemRemoved 有用。在预布局的时候，layout 把屏幕之外的 ViewHolder。这样在后面动画的时候才能执行，屏幕外的 ViewHolder 进入屏幕的动画效果。可以看一看这篇文章的分析。[RecyclerView notifyItemRemoved 之后的源码分析](https://blog.csdn.net/leilifengxingmw/article/details/136983490)
+
+## 布局第二阶段 dispatchLayoutStep2
 
 ```java
 /**
@@ -281,19 +286,19 @@ private void dispatchLayoutStep2() {
 }
 ```
 
-注释1处，将 mState.mInPreLayout 设置为 false 。标记不是处于预布局阶段了。
+注释1处，将 **mState.mInPreLayout** 设置为 false 。标记不是处于预布局阶段了。
 
 注释2处，再次布局，调用 `mLayout.onLayoutChildren(mRecycler, mState);` 布局， 在这个过程中：
 
-会执行一次 detachAndScrapAttachedViews 方法，会把所有的 itemView detachViewFromParent，同时回收itemView对应的 ViewHolder。没有变化的 ViewHolder 添加到 mAttachedScrap 中，变化的（notifyItemChanged 的 item）ViewHolder 添加到 mChangedScrap 中。
+1. 会执行一次 detachAndScrapAttachedViews 方法，会把所有的 itemView detachViewFromParent，同时回收itemView对应的 ViewHolder。没有变化的 ViewHolder 添加到 mAttachedScrap 中，变化的（notifyItemChanged 的 item）ViewHolder 添加到 mChangedScrap 中。
 
-然后又会执行 fill 方法，会把所有没有变化的 itemView 重新  attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的。
+2. 然后又会执行 fill 方法，会把所有没有变化的 itemView 重新  attachViewToParent（mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);）。没有变化的 ViewHolder 是从 mAttachedScrap 中取出来复用的。
 
 注意：这个时候，不是预布局阶段了，是不会从 mChangedScrap 中 查找ViewHolder 来复用的。 在我们这里例子中，是创建了一个新的 ViewHolder，然后 调用 bindViewHolder 方法。然后返回新创建的ViewHolder。
 
 另外，这个时候，新创建的 ViewHolder 对应的View是添加到 RecyclerView 中的 mChildHelper.addView(child, index, false);。 这个时候老的View还没有移除，只是 detachViewFromParent 了。 mChangedScrap 也还存在改变了的老的ViewHolder。
 
-最后的布局阶段 dispatchLayoutStep3
+## 最后的布局阶段 dispatchLayoutStep3
 
 
 ```java
@@ -352,8 +357,11 @@ private void dispatchLayoutStep3() {
 ```
 
 注释1处，记录动画之后的所有ViewHolder信息 animationInfo，保存到 mViewInfoStore 中。
+
 注释2处，之前变化的ViewHolder的动画信息。
+
 注释3处，变化的ViewHolder之后的动画信息添加到 mViewInfoStore 中。
+
 注释5处，处理新老ViewHolder的动画。
 
 ```java
@@ -386,12 +394,13 @@ private void animateChange(@NonNull ViewHolder oldHolder, @NonNull ViewHolder ne
 
 
 注释1处，新旧不同的ViewHolder，会有动画效果。
-注释2处，动画开始前，这里会把 mChangedScrap 中存储的ViewHolder 从 mChangedScrap 中移除，然后重新把对应的View attach 到 RecyclerView, `mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);` ，并添加到 ChildHelper.mHiddenViews 中。
+
+注释2处，**动画开始前**，这里会把 mChangedScrap 中存储的ViewHolder 从 mChangedScrap 中移除，然后重新把对应的View attach 到 RecyclerView, `mChildHelper.attachViewToParent(child, index, child.getLayoutParams(), false);` ，并添加到 ChildHelper.mHiddenViews 中。
 
 注释4处，调用 DefaultItemAnimator 的 animateChange 方法，在父类 SimpleItemAnimator 中实现。
 
 
-SimpleItemAnimator 的 animateChange 方法
+### SimpleItemAnimator 的 animateChange 方法
 
 ```java
 @Override
@@ -454,6 +463,7 @@ public boolean animateChange(RecyclerView.ViewHolder oldHolder,
 
 
 注释1处，将老的 ViewHolder itemView 透明度 alpha 设置为 1。
+
 注释2处，新ViewHolder 将 itemView 动画将透明度设置为0，所以新的ViewHolder 是从不可见到可见的，透明度从0到1。
 
 animateChange方法返回 true的时候，会post一个 mItemAnimatorRunner 来执行动画。
@@ -515,7 +525,6 @@ public void runPendingAnimations() {
     // Next, add stuff
 }
 ```
-
 
 
 
@@ -589,6 +598,7 @@ void animateChangeImpl(final ChangeInfo changeInfo) {
 
 
 注释1处，老的 View 透明度开始是1，现在要变化到0，就是从可见到不可见。
+
 注释2处，新的View开始设置的透明度是0，现在要变化到1，就是从不可见到可见。
 
 ！！！ 这个过程，就是交叉淡入淡出的动画效果。
@@ -648,14 +658,18 @@ boolean removeAnimatingView(View view) {
 ```
 
 注释1处，会从 mHiddenViews 把老的 View 删除。也会从RecyclerView 移除。`RecyclerView.this.removeViewAt(index);`。
-注释2处，这里注意一下，这里再次调用 unscrapView。但，mChangedScrap 中已经没有了老的ViewHolder了。
+
+注释2处，这里注意一下，这里再次调用 unscrapView。但 mChangedScrap 中已经没有了老的ViewHolder了。
+
 注释3处，会把 老的 ViewHolder ，根据 ItemViewType，回收到 RecycledViewPool 中，一种 ItemViewType 默认缓存5个。最后也会从 mViewInfoStore 删除老的 ViewHolder 信息。
 
-为什么不回收到 mCachedViews呢？ 因为 有标志位，`ViewHolder.FLAG_UPDATE` 会被设置，所以不会回收到 mCachedViews 中。
+**为什么不回收到 mCachedViews呢？**
+
+因为 有标志位，`ViewHolder.FLAG_UPDATE` 会被设置，所以不会回收到 mCachedViews 中。
 
 animateChangeImpl 方法注释4处，动画结束，是哪里把View添加上了呢？到这里执行动画的时候，View已经添加上了，是在什么时候把View添加上的呢？在 fill 的时候，就添加上了。
 
-小结：
+### 小结：
 
 在布局时候，mViewInfoStore 用来保存布局开始到结束的ViewHolder的信息。
 
@@ -693,7 +707,9 @@ if (animator is SimpleItemAnimator) {
 
 
 
-*[Android RecyclerView内部机制](https://www.jianshu.com/p/5284d6066a38)
+参考链接
+
+* [Android RecyclerView内部机制](https://www.jianshu.com/p/5284d6066a38)
 
 
 

@@ -69,9 +69,10 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         binding.btnNotifyItemChanged.setOnClickListener {
             //testNotifyItemInserted(arrayList)
-            testNotifyItemRemoved(arrayList)
+            //testNotifyItemRemoved(arrayList)
             //testNotifyItemMoved(arrayList)
             //testNotifyDataSetChanged(arrayList)
+            testNotifyItemChanged(arrayList)
         }
     }
 
@@ -84,6 +85,13 @@ class RecyclerTheoryActivity : AppCompatActivity() {
                 .setDuration(2000)
                 .start()
         }
+    }
+
+    private fun testNotifyItemChanged(arrayList: ArrayList<CheckBoxModel>) {
+        val data1 = arrayList.get(1)
+        data1.isChecked = !data1.isChecked
+        data1.description = "改变后的数据"
+        rv.adapter?.notifyItemChanged(1)
     }
 
     private fun testNotifyItemInserted(arrayList: ArrayList<CheckBoxModel>) {
