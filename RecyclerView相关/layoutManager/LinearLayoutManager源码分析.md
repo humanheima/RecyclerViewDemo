@@ -1,4 +1,4 @@
-
+# 草稿
 LayoutManager 的作用就是负责摆放 ViewHolder 对应的 ItemView。
 
 无外乎三点

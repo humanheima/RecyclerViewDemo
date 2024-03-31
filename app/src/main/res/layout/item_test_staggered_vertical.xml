@@ -28,7 +28,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view_divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/check_box"
-            tools:text="hello wolrd" />
+            tools:text="hello world" />
 
     <View
             android:id="@+id/view_divider"

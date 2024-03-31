@@ -28,7 +28,8 @@ class TestLayoutManagerAdapter(
         viewType: Int
     ): ViewHolder {
         val view =
-            LayoutInflater.from(context).inflate(R.layout.item_test_rv_theory, parent, false)
+            LayoutInflater.from(context)
+                .inflate(R.layout.item_test_staggered_vertical, parent, false)
         return ViewHolder(view)
     }
 

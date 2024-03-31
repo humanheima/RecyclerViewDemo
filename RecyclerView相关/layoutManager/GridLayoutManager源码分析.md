@@ -1,4 +1,4 @@
-
+# 草稿
 
 
 GridLayoutManager 的 `layoutChunk` 方法是一个重要的方法，它负责对子 View 进行布局。在这个方法中，主要完成了以下几个步骤：
