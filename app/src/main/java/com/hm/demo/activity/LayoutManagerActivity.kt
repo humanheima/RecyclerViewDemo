@@ -68,7 +68,7 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
 
         //binding.rvLayout.layoutManager = GridLayoutManager(this, 2)
         binding.rvLayout.layoutManager =
-            CopyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            CopyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
         binding.rvLayout.adapter = adapter
 
         binding.btnScrollWithOffset.setOnClickListener {

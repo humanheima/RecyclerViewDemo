@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
-        android:layout_height="100dp">
+        android:layout_height="match_parent">
 
     <CheckBox
             android:id="@+id/check_box"
@@ -18,7 +18,7 @@
     <TextView
             android:padding="16dp"
             android:id="@+id/text_description"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:textSize="16sp"
             android:textColor="@color/colorAccent"
             android:layout_height="match_parent"
@@ -28,7 +28,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view_divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/check_box"
-            tools:text="hello wolrd" />
+            tools:text="爽籁发而清风生，纤歌凝而白云遏。睢园绿竹，气凌彭泽之樽；邺水朱华，光照临川之笔。四美具，二难并。穷睇眄于中天，极娱游于暇日。天高地迥，觉宇宙之无穷；兴尽悲来，识盈虚之有数。望长安于日下，目吴会于云间。地势极而南溟深，天柱高而北辰远。关山难越，谁悲失路之人？萍水相逢，尽是他乡之客。怀帝阍而不见，奉宣室以何年？" />
 
     <View
             android:id="@+id/view_divider"
