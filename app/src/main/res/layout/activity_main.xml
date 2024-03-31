@@ -10,6 +10,13 @@
             android:orientation="vertical">
 
         <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="testLayout"
+                android:text="测试LayoutManager"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btnTestPopWindowInRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -23,13 +30,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="click"
                 android:text="测试Animation动画"
-                android:textAllCaps="false" />
-
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="testLayout"
-                android:text="测试LayoutManager"
                 android:textAllCaps="false" />
 
         <Button

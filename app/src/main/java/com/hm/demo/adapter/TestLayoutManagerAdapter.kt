@@ -14,10 +14,10 @@ import com.hm.demo.model.CheckBoxModel
 /**
  * Created by dumingwei on 2017/10/10.
  */
-class TestRvTheoryAdapter(
+class TestLayoutManagerAdapter(
     private val context: Context,
     private val data: MutableList<CheckBoxModel>?
-) : RecyclerView.Adapter<TestRvTheoryAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<TestLayoutManagerAdapter.ViewHolder>() {
 
     companion object {
         private const val TAG = "TestAnimatorAdapterAdap"

@@ -1,22 +1,23 @@
+### 简书无法编辑保存了？什么bug？还得回CSDN来写。
 
 写在前面，看RecyclerView源码有点"老虎吃天，无从下口"的感觉。多次提笔想写关于RecyclerView的源码相关文章，最终也是作罢。最大的原因还是感觉RecyclerView的源码太过复杂，怕自己不能胜任。也是走马观花的看了一些网上的博客文章，有的文章看了也不止一遍。自己也就照虎画猫，来记录一下阅读源码的过程。
 
 * 2024.03.15更新，但是也不是太难下口，哈哈。
 
-分析场景：
+## 分析场景：
 
 1. RecyclerView 使用 LinearLayoutManager ，从上到下布局，RecyclerView 的 宽高都是 MATCH_PARENT。
-1. 正常设置了LayoutManager和Adapter以后，RecyclerView的measure、layout、draw流程。
-2. 第一次是如何填充子View的。
-2. 在滚动过程中（move和fling）的时候，是如何回收和填充子View的。我们这里不会看回收和填充子View的细节，只会看哪里发生了回收和填充子View调用操作。
+2. 正常设置了LayoutManager和Adapter以后，RecyclerView的measure、layout、draw流程。
+4. 第一次是如何填充子View的。
+5. 在滚动过程中（move和fling）的时候，是如何回收和填充子View的。我们这里不会看回收和填充子View的细节，只会看哪里发生了回收和填充子View调用操作。
 
 先说下分析的结论：
 
 1. RecyclerView 的 宽高都是 MATCH_PARENT。那么在 onMeasure的时候，是不会调用 dispatchLayoutStep1 和 dispatchLayoutStep2 的。
-2. 第一次设置LayoutManager和Adapter是没有动画效果的，可以认为 dispatchLayoutStep1 和 dispatchLayoutStep3 的 这两个动画动没起作用。
+2. 第一次设置LayoutManager和Adapter是没有动画效果的，可以认为 dispatchLayoutStep1 和 dispatchLayoutStep3  这两个方法都没起作用。
 3. dispatchLayoutStep2 方法，真正起布局作用的方法。内部调用 fill 方法，获取ViewHolder(新创建的，或者从缓存中获取的)，测量、布局、添加到 RecyclerView。
 4. 第一次布局的时候，RecyclerView 的 childCount 还是0，是没有ViewHolder的回收和复用的。
-   5.就是在滑动和fling的时候，LayoutManager会调用 `fill` 方法，会获取ViewHolder填充的RecyclerView，并把滑出RecyclerView的ViewHolder回收。
+5. 就是在滑动和fling的时候，LayoutManager会调用 `fill` 方法，会获取ViewHolder填充的RecyclerView，并把滑出RecyclerView的ViewHolder回收。
 
 
 #### 示例代码
