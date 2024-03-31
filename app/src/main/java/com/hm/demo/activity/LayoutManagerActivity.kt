@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.hm.demo.adapter.HorizontalStaggeredAdapter
 import com.hm.demo.adapter.TestLayoutManagerAdapter
 import com.hm.demo.databinding.ActivityLayoutBinding
 import com.hm.demo.layoutmanager.CopyStaggeredGridLayoutManager
 import com.hm.demo.model.CheckBoxModel
+import com.hm.demo.model.TestBean
 import kotlin.random.Random
 
 /**
@@ -57,6 +59,11 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         binding = ActivityLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //testVerticalDemo()
+        testHorizontalDemo()
+    }
+
+    private fun testVerticalDemo() {
         val listOf = arrayListOf<CheckBoxModel>()
         for (i in 0..100) {
             val index = Random.nextInt(0, dataList.size)
@@ -65,16 +72,39 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         }
 
         adapter = TestLayoutManagerAdapter(this, listOf)
-
-        //binding.rvLayout.layoutManager = GridLayoutManager(this, 2)
         binding.rvLayout.layoutManager =
             CopyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
         binding.rvLayout.adapter = adapter
+    }
 
-        binding.btnScrollWithOffset.setOnClickListener {
+    /**
+     * 测试横向的效果
+     */
+    private fun testHorizontalDemo() {
+        val listOf = arrayListOf<TestBean>()
+        val nameList = arrayListOf<String>()
 
+        nameList.add("张无忌")
+        nameList.add("赵敏")
+        nameList.add("周芷若")
+        nameList.add("小昭")
+        nameList.add("金毛狮王谢逊")
+        nameList.add("小龙女")
+        nameList.add("天地风雷四门，五行旗，四大法王")
+        nameList.add("黄蓉")
+        nameList.add("郭靖")
+        nameList.add("金轮法王")
+
+        for (i in 0..100) {
+            val index = Random.nextInt(0, nameList.size)
+            val text = "${nameList[index]} $i"
+            listOf.add(TestBean(text, "", 0))
         }
 
+        val adapter = HorizontalStaggeredAdapter(this, listOf)
+        binding.rvLayout.layoutManager =
+            CopyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+        binding.rvLayout.adapter = adapter
     }
 
 }
