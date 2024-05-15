@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -74,6 +76,22 @@ class RecyclerTheoryActivity : AppCompatActivity() {
             //testNotifyDataSetChanged(arrayList)
             testNotifyItemChanged(arrayList)
         }
+//        rv.setOnClickListener {
+//            Toast.makeText(this, "RecyclerView 响应点击事件", Toast.LENGTH_SHORT).show()
+//        }
+//
+//        rv.setOnLongClickListener {
+//            Toast.makeText(this, "RecyclerView 响应长按事件", Toast.LENGTH_SHORT).show()
+//            true
+//        }
+
+//        rv.setOnTouchListener { v, event ->
+//            if (event.action == MotionEvent.ACTION_DOWN) {
+//                Toast.makeText(this, "RecyclerView 响应触摸事件", Toast.LENGTH_SHORT).show()
+//
+//            }
+//            false
+//        }
     }
 
     private fun testTranslationY() {
