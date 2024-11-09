@@ -8,7 +8,9 @@ import android.util.SparseArray
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
+import com.hm.demo.databinding.ActivityMainBinding
 import com.hm.demo.test_diff.MyDiffUtilActivity
+import com.hm.demo.test_payload.PayloadTestActivity
 
 inline fun <reified T : Activity> Context.startAct() {
     val intent = Intent(this, T::class.java)
@@ -19,13 +21,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var sparseArray: SparseArray<String>
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         sparseArray = SparseArray(3)
         sparseArray.put(1, "first")
         sparseArray.put(2, "second")
         sparseArray.put(3, "third")
+
+        binding.btnTestPayload.setOnClickListener {
+            PayloadTestActivity.launch(this)
+        }
     }
 
     fun click(view: View) {

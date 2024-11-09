@@ -46,10 +46,11 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
     private fun testLinearLayoutManager() {
         binding.rvLayout.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        for (i in 0 until 5) {
+        for (i in 0 until 30) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
-        binding.rvLayout.adapter = TestRvTheoryAdapter(this, arrayList)
+        //binding.rvLayout.adapter = TestRvTheoryAdapter(this, arrayList)
+        binding.rvLayout.adapter = TestLayoutManagerAdapter(this, arrayList)
     }
 
     /**

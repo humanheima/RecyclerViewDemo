@@ -44,7 +44,6 @@ dependencies {
     implementation "androidx.customview:customview-poolingcontainer:1.0.0"
     implementation 'in.srain.cube:ultra-ptr:1.0.11'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.hm.slidedeletelayout:slidedeletelayout:1.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation 'com.github.bumptech.glide:glide:4.12.0'
@@ -55,10 +54,5 @@ dependencies {
     implementation('com.github.shucc:Carousel:v1.9') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
-    implementation('com.hm.kof97:hmbanner:1.0') {
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'support-v4'
-    }
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }

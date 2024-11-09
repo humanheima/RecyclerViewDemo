@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.hm.demo">
+    package="com.hm.demo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
-                android:name=".activity.ItemViewSpaceActivity"
-                android:exported="false" />
+            android:name=".test_payload.PayloadTestActivity"
+            android:exported="false" />
         <activity
-                android:name=".activity.ConcatAdapterActivity"
-                android:exported="false" />
+            android:name=".activity.ItemViewSpaceActivity"
+            android:exported="false" />
         <activity
-                android:name=".activity.RvIsComputingALayoutOrScrollingActivity"
-                android:exported="false" />
+            android:name=".activity.ConcatAdapterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RvIsComputingALayoutOrScrollingActivity"
+            android:exported="false" />
         <activity android:name=".activity.RecyclerTheoryActivity" />
         <activity android:name=".activity.FlowLayoutActivity" />
         <activity android:name=".activity.GridCenterDividerTestActivity" />
@@ -32,8 +35,8 @@
         <activity android:name=".activity.BaseRecyclerViewAdapterActivity" />
         <activity android:name=".activity.SlideDeleteActivity" />
         <activity
-                android:name=".activity.MainActivity"
-                android:exported="true">
+            android:name=".activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,8 +44,8 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activity.TestEditTextActivity"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".activity.TestEditTextActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.RvCheckBoxActivity" />
         <activity android:name=".activity.RvCountDownActivity" />
         <activity android:name=".activity.HeadFootActivity" />

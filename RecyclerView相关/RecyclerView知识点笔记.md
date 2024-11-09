@@ -291,6 +291,17 @@ boolean removeAnimatingView(View view) {
 
 
 
+### 点击的时候，改变了ViewHolder中部分View的状态，是否要调用notifyItemChanged()？ 
+
+
+在使用 RecyclerView 时，如果你在 ViewHolder 中更改了某个 View 的状态（例如，改变颜色、显示/隐藏某些视图等），通常不需要调用 notifyItemChanged()，因为你并没有改变数据集本身，只是更新了视图的状态。
+
+但是，如果你的更新是基于数据变化的（例如，你更改了与 ViewHolder 相关联的数据），那么调用 notifyItemChanged(position) 是合适的。这样会确保 RecyclerView 能够正确地更新视图，并且在需要时重新绑定数据。
+
+总结：
+只更新视图状态：不需要调用 notifyItemChanged()。
+更新数据：应调用 notifyItemChanged(position)。
+确保你在更新时考虑到性能和用户体验，避免不必要的重绘。
 
 
 
