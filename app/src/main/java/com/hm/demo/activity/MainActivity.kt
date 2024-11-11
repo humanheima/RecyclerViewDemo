@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
 import com.hm.demo.databinding.ActivityMainBinding
+import com.hm.demo.rv_nest_rv.RvNestRvActivity
 import com.hm.demo.test_diff.MyDiffUtilActivity
 import com.hm.demo.test_payload.PayloadTestActivity
 
@@ -36,10 +37,12 @@ class MainActivity : AppCompatActivity() {
         binding.btnTestPayload.setOnClickListener {
             PayloadTestActivity.launch(this)
         }
+
     }
 
     fun click(view: View) {
         when (view.id) {
+            R.id.btn_test_rv_nest_rv -> RvNestRvActivity.launch(this)
             R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
             R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)
 

@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".rv_nest_rv.RvNestRvActivity"
+            android:exported="false" />
+        <activity
             android:name=".test_payload.PayloadTestActivity"
             android:exported="false" />
         <activity
