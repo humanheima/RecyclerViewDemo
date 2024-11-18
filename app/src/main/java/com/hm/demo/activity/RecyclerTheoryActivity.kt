@@ -64,18 +64,18 @@ class RecyclerTheoryActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
         val arrayList = arrayListOf<CheckBoxModel>()
-        //for (i in 0 until 3) {
-        for (i in 0 until 2) {
+        for (i in 0 until 3) {
+        //for (i in 0 until 2) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
         rv.adapter = TestRvTheoryAdapter(this, arrayList)
 
         binding.btnNotifyItemChanged.setOnClickListener {
             //testNotifyItemInserted(arrayList)
-            //testNotifyItemRemoved(arrayList)
+            testNotifyItemRemoved(arrayList)
             //testNotifyItemMoved(arrayList)
             //testNotifyDataSetChanged(arrayList)
-            testNotifyItemChanged(arrayList)
+            //testNotifyItemChanged(arrayList)
         }
 //        rv.setOnClickListener {
 //            Toast.makeText(this, "RecyclerView 响应点击事件", Toast.LENGTH_SHORT).show()

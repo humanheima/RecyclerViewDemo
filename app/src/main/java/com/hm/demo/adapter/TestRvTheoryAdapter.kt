@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.hm.demo.R
 import com.hm.demo.model.CheckBoxModel
@@ -37,6 +38,22 @@ class TestRvTheoryAdapter(
         holder.checkBox.isSelected = model.isChecked
         holder.textDescription.text = model.description
         Log.i(TAG, "onBindViewHolder: position = $position holder = $holder model = $model")
+
+        holder.layoutPosition
+        holder.itemView.setOnClickListener {
+            Toast.makeText(
+                holder.itemView.context,
+                "点击了${model.description} position = $position layoutPosition = ${holder.layoutPosition} " +
+                        " adapterPosition = ${holder.absoluteAdapterPosition} bindingPosition = ${holder.bindingAdapterPosition}",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            Log.d(
+                TAG,
+                "onBindViewHolder: 点击了 ${model.description} position = $position layoutPosition = ${holder.layoutPosition} " +
+                        " absoluteAdapterPosition = ${holder.absoluteAdapterPosition} bindingPosition = ${holder.bindingAdapterPosition}"
+            )
+        }
     }
 
     override fun getItemCount(): Int {
