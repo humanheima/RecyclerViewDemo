@@ -10,6 +10,22 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/testPathLayoutManager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="测试PathLayoutManager"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/testLoopGallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="testLoopGallery"
+            android:text="测试LoopGallery"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btn_test_rv_nest_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

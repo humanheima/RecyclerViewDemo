@@ -7,10 +7,25 @@ public class CheckBoxModel {
 
     private String description;
     private boolean checked;
+    private int drawableResId;
 
     public CheckBoxModel(String description, boolean checked) {
         this.description = description;
         this.checked = checked;
+    }
+
+    public void setDrawableResId(int drawableResId) {
+        this.drawableResId = drawableResId;
+    }
+
+    public int getDrawableResId() {
+        return drawableResId;
+    }
+
+    public CheckBoxModel(String description, boolean checked, int drawableResId) {
+        this.description = description;
+        this.checked = checked;
+        this.drawableResId = drawableResId;
     }
 
     public String getDescription() {

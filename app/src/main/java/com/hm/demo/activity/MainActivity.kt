@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+            R.id.testPathLayoutManager -> {
+                PathLayoutManagerActivity.launch(this)
+            }
             R.id.btn_test_rv_nest_rv -> RvNestRvActivity.launch(this)
             R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
             R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)
@@ -91,6 +94,10 @@ class MainActivity : AppCompatActivity() {
 
     fun testLayout(view: View) {
         LayoutManagerActivity.launch(this)
+    }
+
+    fun testLoopGallery(view: View) {
+        LoopGalleryActivity.launch(this)
     }
 
 }
