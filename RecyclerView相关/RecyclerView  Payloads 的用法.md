@@ -56,26 +56,26 @@ fun updateItemTextPayload(position: Int, newText: String) {
 
 ```java
 void scrapView(View view) {
-            final ViewHolder holder = getChildViewHolderInt(view);
-            //注释1处，canReuseUpdatedViewHolder(holder) 条件满足
-            if (holder.hasAnyOfTheFlags(ViewHolder.FLAG_REMOVED | ViewHolder.FLAG_INVALID)
-                    || !holder.isUpdated() || canReuseUpdatedViewHolder(holder)) {
-                if (holder.isInvalid() && !holder.isRemoved() && !mAdapter.hasStableIds()) {
-                    throw new IllegalArgumentException("Called scrap view with an invalid view."
-                            + " Invalid views cannot be reused from scrap, they should rebound from"
-                            + " recycler pool." + exceptionLabel());
-                }
-                holder.setScrapContainer(this, false);
-                //添加到 mAttachedScrap
-                mAttachedScrap.add(holder);
-            } else {
-                if (mChangedScrap == null) {
-                    mChangedScrap = new ArrayList<ViewHolder>();
-                }
-                holder.setScrapContainer(this, true);
-                mChangedScrap.add(holder);
-            }
+    final ViewHolder holder = getChildViewHolderInt(view);
+    //注释1处，canReuseUpdatedViewHolder(holder) 条件满足
+    if (holder.hasAnyOfTheFlags(ViewHolder.FLAG_REMOVED | ViewHolder.FLAG_INVALID)
+            || !holder.isUpdated() || canReuseUpdatedViewHolder(holder)) {
+        if (holder.isInvalid() && !holder.isRemoved() && !mAdapter.hasStableIds()) {
+            throw new IllegalArgumentException("Called scrap view with an invalid view."
+                    + " Invalid views cannot be reused from scrap, they should rebound from"
+                    + " recycler pool." + exceptionLabel());
         }
+        holder.setScrapContainer(this, false);
+        //添加到 mAttachedScrap
+       mAttachedScrap.add(holder);
+    } else {
+        if (mChangedScrap == null) {
+            mChangedScrap = new ArrayList<ViewHolder>();
+        }
+        holder.setScrapContainer(this, true);
+        mChangedScrap.add(holder);
+    }
+}
 ```
 
 注释1处，canReuseUpdatedViewHolder(holder) 条件满足，因为 payloads 不为null，添加到 mAttachedScrap。 真正布局的时候，就是从新 mAttachedScrap 中取出来 attach 一下而已。
@@ -91,7 +91,7 @@ DefaultItemAnimator 的动画
         // run a move animation to handle position changes.
         return animateMove(oldHolder, fromLeft, fromTop, toLeft, toTop);
     }
-    /注释2处，没有payload的情况，会执行透明度变化动画
+    //注释2处，没有payload的情况，会执行透明度变化动画
     final float prevTranslationX = oldHolder.itemView.getTranslationX();
     final float prevTranslationY = oldHolder.itemView.getTranslationY();
     final float prevAlpha = oldHolder.itemView.getAlpha();

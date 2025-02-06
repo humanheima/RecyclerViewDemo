@@ -303,5 +303,28 @@ boolean removeAnimatingView(View view) {
 更新数据：应调用 notifyItemChanged(position)。
 确保你在更新时考虑到性能和用户体验，避免不必要的重绘。
 
+### RecyclerView 中 ChildHelper#mHiddenViews 是干什么用的？
+
+这个待研究
+
+`mHiddenViews` 是 `RecyclerView` 中用于支持动画效果的重要机制之一。它的主要作用是临时存储被隐藏的 `View`，以便在动画执行期间保持布局的稳定性，并在动画结束后正确地处理这些 `View`。通过 `mHiddenViews`，`RecyclerView` 能够实现平滑的动画过渡效果，同时避免因 `View` 突然消失或出现导致的性能问题。
+
+如果你对 `RecyclerView` 的动画机制或源码实现有更深入的兴趣，可以进一步研究 `RecyclerView.ItemAnimator` 和 `RecyclerView.Recycler` 的相关源码。
+
+
+### RecyclerView 为什么会在 onMeasure 的时候，调用 dispatchLayoutStep1(); 和 dispatchLayoutStep2(); 呢?
+
+在 RecyclerView 宽高不确定的情况下，比如都是WRAP_CONTENT，那么在 onMeasure 的时候，会调用 dispatchLayoutStep1(); 和 dispatchLayoutStep2(); 获取子View的宽高。然后累加子View的宽高设置setMeasuredDimension。
+
+
+### 各级缓存的作用
+
+
+|缓存级别|实际变量| 含义                                                                                                                                                              |
+|--------|-----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|一级缓存|`mAttachedScrap`和`mChangedScrap`| 优先级最高的缓存，RecyclerView在获取ViewHolder时,优先会到这两个缓存来找。其中mChangedScrap存储的是数据被更新的ViewHolder,比如说调用了Adapter的notifyItemChanged方法。 这样的ViewHolder有标记位 ViewHolder.FLAG_UPDATE |
+|二级缓存|`mCachedViews`| 默认大小为2，在滚动的时候会存储一些ViewHolder。                                                                                                                                   |
+|三级缓存|`ViewCacheExtension`| 这个是自定义缓存，一般用不到。                                                                                                                                                 |
+|四级缓存|`RecyclerViewPool`| 根据ViewType来缓存ViewHolder，每个ViewType的数组大小默认为5，可以动态的改变。                                                                                                            |
 
 
