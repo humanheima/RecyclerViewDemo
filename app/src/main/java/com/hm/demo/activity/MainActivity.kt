@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+            R.id.test_drag_sort -> {
+                DragSortActivity.launch(this)
+            }
             R.id.testPathLayoutManager -> {
                 PathLayoutManagerActivity.launch(this)
             }
