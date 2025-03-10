@@ -7,31 +7,39 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.hm.demo.R;
-import com.hm.demo.Util.DiffCallBack;
-import com.hm.demo.adapter.DiffAdapter;
+import com.hm.demo.adapter.DiffAdapter2;
 import com.hm.demo.model.TestBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by p_dmweidu on 2025/3/10
+ * Desc: 测试使用 ListAdapter 使用 DiffUtil
+ */
 public class DiffUtilActivity extends AppCompatActivity {
 
     private List<TestBean> mDatas;
     private RecyclerView mRv;
-    private DiffAdapter adapter;
+    //private DiffAdapter adapter;
+    private DiffAdapter2 adapter2;
     private List<TestBean> newDatas;
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            DiffUtil.DiffResult diffResult = (DiffUtil.DiffResult) msg.obj;
-            diffResult.dispatchUpdatesTo(adapter);
-            mDatas = newDatas;
-            adapter.setmDatas(mDatas);
+//            DiffUtil.DiffResult diffResult = (DiffUtil.DiffResult) msg.obj;
+//            diffResult.dispatchUpdatesTo(adapter);
+//            mDatas = newDatas;
+//            adapter.setmDatas(mDatas);
         }
     };
 
@@ -47,8 +55,26 @@ public class DiffUtilActivity extends AppCompatActivity {
         initData();
         mRv = findViewById(R.id.recycler_view);
         mRv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new DiffAdapter(mDatas, this);
-        mRv.setAdapter(adapter);
+        adapter2 = new DiffAdapter2(this, new DiffUtil.ItemCallback<TestBean>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull TestBean oldItem, @NonNull TestBean newItem) {
+                return oldItem.getName().equals(newItem.getName());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull TestBean oldItem, @NonNull TestBean newItem) {
+                //return false;
+                if (!oldItem.getDesc().equals(newItem.getDesc())) {
+                    return false;//如果有内容不同，就返回false
+                }
+                if (oldItem.getPicture() != newItem.getPicture()) {
+                    return false;//如果有内容不同，就返回false
+                }
+                return true; //默认两个data内容是相同的
+            }
+        });
+        mRv.setAdapter(adapter2);
+        adapter2.submitList(mDatas);
     }
 
     public void refresh(View view) {
@@ -75,15 +101,16 @@ public class DiffUtilActivity extends AppCompatActivity {
         //TestBean testBean = newDatas.get(1);//模拟数据位移
         //newDatas.remove(testBean);
         //newDatas.add(testBean);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(mDatas, newDatas), true);
-                Message message = handler.obtainMessage();
-                message.obj = diffResult;
-                message.sendToTarget();
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(mDatas, newDatas), true);
+//                Message message = handler.obtainMessage();
+//                message.obj = diffResult;
+//                message.sendToTarget();
+//            }
+//        }).start();
+        adapter2.submitList(newDatas);
 
     }
 
