@@ -305,7 +305,19 @@ boolean removeAnimatingView(View view) {
 
 ### RecyclerView 中 ChildHelper#mHiddenViews 是干什么用的？
 
+回答话术：就这样回答。
+当用户删除某一项时，ChildHelper 会将该子 View 暂时隐藏（存入 mHiddenViews）。 执行删除动画期间，该 View 仍存在于父容器中，但不可见。 动画结束后，RecyclerView 会真正移除该 View，并触发数据更新。
 这个待研究
+
+示例场景
+假设 RecyclerView 需要执行一个删除项的动画：
+
+当用户删除某一项时，ChildHelper 会将该子 View 暂时隐藏（存入 mHiddenViews）。
+
+执行删除动画期间，该 View 仍存在于父容器中，但不可见。
+
+动画结束后，RecyclerView 会真正移除该 View，并触发数据更新。
+
 
 `mHiddenViews` 是 `RecyclerView` 中用于支持动画效果的重要机制之一。它的主要作用是临时存储被隐藏的 `View`，以便在动画执行期间保持布局的稳定性，并在动画结束后正确地处理这些 `View`。通过 `mHiddenViews`，`RecyclerView` 能够实现平滑的动画过渡效果，同时避免因 `View` 突然消失或出现导致的性能问题。
 
