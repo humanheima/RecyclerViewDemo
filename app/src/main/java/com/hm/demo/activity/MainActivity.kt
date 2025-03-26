@@ -42,12 +42,18 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+            R.id.test_snap_helper -> {
+                SnapHelperActivity.launch(this)
+            }
+
             R.id.test_drag_sort -> {
                 DragSortActivity.launch(this)
             }
+
             R.id.testPathLayoutManager -> {
                 PathLayoutManagerActivity.launch(this)
             }
+
             R.id.btn_test_rv_nest_rv -> RvNestRvActivity.launch(this)
             R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
             R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)

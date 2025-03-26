@@ -10,6 +10,14 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/test_snap_helper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="测试snap helper"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/test_drag_sort"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

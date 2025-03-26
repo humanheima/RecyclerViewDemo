@@ -59,6 +59,7 @@
         <activity android:name=".activity.ScrollToPositionActivity" />
         <activity android:name=".activity.RecyclerScrollRangeRelateActivity" />
         <activity android:name=".activity.TestRecyclerAnimationActivity" />
+        <activity android:name=".activity.SnapHelperActivity" />
         <activity android:name=".activity.LoopGalleryActivity" />
         <activity android:name=".activity.PathLayoutManagerActivity" />
         <activity android:name=".activity.DragSortActivity" />
