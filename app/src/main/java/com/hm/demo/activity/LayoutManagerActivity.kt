@@ -3,15 +3,20 @@ package com.hm.demo.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Layout
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.hm.demo.adapter.HorizontalStaggeredAdapter
 import com.hm.demo.adapter.TestLayoutManagerAdapter
-import com.hm.demo.adapter.TestRvTheoryAdapter
 import com.hm.demo.databinding.ActivityLayoutBinding
 import com.hm.demo.layoutmanager.CopyStaggeredGridLayoutManager
 import com.hm.demo.model.CheckBoxModel
 import com.hm.demo.model.TestBean
+import java.util.Timer
+import kotlin.concurrent.timerTask
 import kotlin.random.Random
 
 /**
@@ -38,9 +43,69 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         binding = ActivityLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.tvTitle.text = "豫章故郡，洪都新府。星分翼轸，" +
+                "地接衡庐。襟三江而带五湖，控蛮荆而引瓯越。" +
+                "物华天宝，龙光射牛斗之墟；人杰地灵，" +
+                "徐孺下陈蕃之榻。雄州雾列，俊采星驰。台隍枕夷夏之交，" +
+                "宾主尽东南之美。都督阎公之雅望，棨戟遥临；宇文新州之懿范" +
+                "，襜帷暂驻。十旬休暇，胜友如云；千里逢迎，高朋满座。腾蛟起凤，" +
+                "孟学士之词宗；紫电青霜，王将军之武库。家君作宰，路出名区；童子何知，躬逢胜饯。"
+
+        binding.tvTitle.post {
+            binding.tvTitle.setTypewriterEffect(binding.tvTitle.text.toString(), 100)
+        }
         testLinearLayoutManager()
         //testStaggeredVerticalDemo()
         //testStaggeredHorizontalDemo()
+    }
+
+    /**
+     * 为TextView设置打字机效果，逐字显示文本
+     * @param text 要显示的完整文本
+     * @param delay 每个字符显示的延迟时间（毫秒）
+     * @param onComplete 动画完成后的回调
+     */
+    fun TextView.setTypewriterEffect(
+        text: String,
+        delay: Long = 100L,
+        onComplete: (() -> Unit)? = null
+    ) {
+        this.text = ""
+        var currentIndex = 0
+
+        val timer = Timer()
+        val textView = this
+        timer.schedule(timerTask {
+            Handler(Looper.getMainLooper()).post {
+                if (currentIndex <= text.length) {
+                    this@setTypewriterEffect.text = text.substring(0, currentIndex)
+                    currentIndex++
+
+
+                } else {
+                    timer.cancel()
+                    onComplete?.invoke()
+                }
+
+                val layout: Layout? = textView.layout
+                if (layout != null && layout.lineCount > 4) {
+                    // 计算需要滚动的距离
+                    val lastLineTop = layout.getLineTop(layout.lineCount - 1)
+                    val fourthLineTop = layout.getLineTop(3) // 第4行的顶部位置
+                    val scrollDistance = lastLineTop - fourthLineTop
+
+                    // 执行滚动
+                    Handler(Looper.getMainLooper()).post {
+                        textView.scrollTo(0, scrollDistance)
+                    }
+                } else {
+                    // 如果行数不超过4，清空滚动
+                    textView.scrollTo(0, 0)
+                }
+
+
+            }
+        }, 0, delay)
     }
 
     private fun testLinearLayoutManager() {
@@ -49,6 +114,7 @@ class LayoutManagerActivity : BaseRecyclerViewAdapterActivity() {
         for (i in 0 until 30) {
             arrayList.add(CheckBoxModel("Hello$i", false))
         }
+        //binding.rvLayout.isNestedScrollingEnabled = true
         //binding.rvLayout.adapter = TestRvTheoryAdapter(this, arrayList)
         binding.rvLayout.adapter = TestLayoutManagerAdapter(this, arrayList)
     }
