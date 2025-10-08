@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by p_dmweidu on 2025/9/25
- * Desc:
+ * Desc:内部拦截法，还得好好看一看
  */
 public class CustomTextView extends AppCompatTextView {
 
@@ -117,6 +117,7 @@ public class CustomTextView extends AppCompatTextView {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             return true;
         }
+        // TODO: 2025/10/8 理论上，走到这里，应该都返回true吧。
         boolean b = super.onTouchEvent(event);
 
         Log.d(TAG, "onTouchEvent: b= " + b + " , getEventName(event) = " + getEventName(event));
