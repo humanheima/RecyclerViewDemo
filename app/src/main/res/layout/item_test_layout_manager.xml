@@ -40,8 +40,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <com.hm.demo.widget.CustomTextView
+    <com.hm.demo.widget.ExpandableTextView
         android:id="@+id/tv_scroll_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
