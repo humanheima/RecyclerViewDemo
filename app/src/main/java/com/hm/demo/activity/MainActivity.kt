@@ -42,6 +42,11 @@ class MainActivity : AppCompatActivity() {
 
     fun click(view: View) {
         when (view.id) {
+            R.id.test_scroll_textview -> {
+
+                TestScrollTextViewActivity.launch(this)
+            }
+
             R.id.test_snap_helper -> {
                 SnapHelperActivity.launch(this)
             }

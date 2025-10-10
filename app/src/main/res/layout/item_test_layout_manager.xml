@@ -40,13 +40,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.hm.demo.widget.ExpandableTextView
+    <com.hm.demo.widget.ExpandableTextView3
         android:id="@+id/tv_scroll_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
         android:background="@color/colorAccent2"
-        android:maxLines="4"
+        android:maxLines="10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_description"
