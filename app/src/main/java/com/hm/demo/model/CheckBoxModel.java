@@ -1,9 +1,11 @@
 package com.hm.demo.model;
 
+import java.io.Serializable;
+
 /**
  * Created by dumingwei on 2017/10/10.
  */
-public class CheckBoxModel {
+public class CheckBoxModel implements Serializable {
 
     private String description;
     private boolean checked;

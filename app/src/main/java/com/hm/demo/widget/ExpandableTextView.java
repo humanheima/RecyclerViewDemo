@@ -42,7 +42,7 @@ public class ExpandableTextView extends AppCompatTextView {
 
     private void init() {
         // 保存原始最大行数配置
-        originalMaxLines = getMaxLines();
+        //originalMaxLines = getMaxLines();
         // 默认初始化为收起状态
         setCollapsed();
         // 设置点击事件切换展开/收起状态
