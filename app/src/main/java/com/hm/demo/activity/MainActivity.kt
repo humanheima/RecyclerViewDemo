@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity() {
             R.id.btn_horizontal_load_more -> HorizontalLoadMoreActivity.launch(this)
             R.id.btn_test_checkBoxInRv -> RvCheckBoxActivity.launch(this)
             R.id.btn_recycler_view_countdown -> RvCountDownActivity.launch(this)
+            R.id.btn_open_temp_activity -> startActivity(Intent(this, TempActivity::class.java))
         }
     }
 
@@ -112,6 +113,10 @@ class MainActivity : AppCompatActivity() {
 
     fun testLoopGallery(view: View) {
         LoopGalleryActivity.launch(this)
+    }
+    
+    fun showGeneratingDialog(view: View) {
+        GeneratingDialogDemoActivity.launch(this)
     }
 
 }

@@ -58,6 +58,14 @@
             android:textAllCaps="false" />
 
         <Button
+            android:id="@+id/btn_open_temp_activity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="打开TempActivity"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btn_test_payload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,6 +85,14 @@
             android:layout_height="wrap_content"
             android:onClick="launchPopWindow"
             android:text="测试PopWindow在RecyclerView中的使用"
+            android:textAllCaps="false" />
+            
+        <Button
+            android:id="@+id/btnShowGeneratingDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showGeneratingDialog"
+            android:text="显示生成中弹窗"
             android:textAllCaps="false" />
 
         <Button
