@@ -2,4 +2,17 @@
     <string name="app_name">RecyclerView</string>
     <string name="delete">删除</string>
     <string name="add_headview_footview">测试RecyclerView添加headView和FootView</string>
+
+    <!-- HeartDialog2 strings -->
+    <string name="heart_dialog2_title">确认解锁Ta的心声?</string>
+    <string name="heart_dialog2_subtitle"> </string>
+    <string name="heart_dialog2_extra">消耗 50 贝壳 / 余额 3450 贝壳</string>
+    <string name="heart_dialog2_cancel">取消</string>
+    <string name="heart_dialog2_confirm">确认</string>
+
+    <!-- HeartDialog3 strings -->
+    <string name="heart_dialog3_title">确认解锁Ta的心声?</string>
+    <string name="heart_dialog3_subtitle">消耗 50贝壳 / 余额 3450贝壳</string>
+    <string name="heart_dialog3_cancel">取消</string>
+    <string name="heart_dialog3_confirm">确认</string>
 </resources>
