@@ -56,6 +56,13 @@
             android:onClick="click"
             android:text="测试RecyclerView嵌套RecyclerView"
             android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btn_test_rv_nest_rvb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="测试RecyclerView嵌套RecyclerView"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_open_temp_activity"

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
 import com.hm.demo.databinding.ActivityMainBinding
 import com.hm.demo.rv_nest_rv.RvNestRvActivity
+import com.hm.demo.rv_nest_rv.RvNestRvVBActivity
 import com.hm.demo.test_diff.MyDiffUtilActivity
 import com.hm.demo.test_payload.PayloadTestActivity
 
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.btn_test_rv_nest_rv -> RvNestRvActivity.launch(this)
+            R.id.btn_test_rv_nest_rvb -> RvNestRvVBActivity.launch(this)
             R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
             R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)
 
@@ -114,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     fun testLoopGallery(view: View) {
         LoopGalleryActivity.launch(this)
     }
-    
+
     fun showGeneratingDialog(view: View) {
         GeneratingDialogDemoActivity.launch(this)
     }
