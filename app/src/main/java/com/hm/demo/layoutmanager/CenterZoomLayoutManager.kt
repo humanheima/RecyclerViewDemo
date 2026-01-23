@@ -13,6 +13,7 @@ import kotlin.math.min
  */
 class CenterZoomLayoutManager(
     context: Context,
+    val recyclerView: RecyclerView,
     private val maxScale: Float = 1.3f,  // 最大缩放比例
     private val minScale: Float = 1.0f,  // 最小缩放比例
     private val enableLoop: Boolean = true  // 是否启用循环效果
@@ -23,19 +24,19 @@ class CenterZoomLayoutManager(
     private var realItemCount = 0
 
     private var isFirstLayout = true
-    
+
     override fun onLayoutCompleted(state: RecyclerView.State?) {
         super.onLayoutCompleted(state)
         scaleChildren()
-        
+
         // 第一次布局后，由Activity负责初始化位置，这里不再处理
         if (isFirstLayout) {
             isFirstLayout = false
         }
     }
-    
+
     private fun post(action: () -> Unit) {
-        getRecyclerView()?.post(action)
+        recyclerView.post(action)
     }
 
     override fun scrollHorizontallyBy(
@@ -45,12 +46,12 @@ class CenterZoomLayoutManager(
     ): Int {
         val scrolled = super.scrollHorizontallyBy(dx, recycler, state)
         scaleChildren()
-        
+
         // 处理循环滚动
         if (enableLoop) {
             handleLoopScroll()
         }
-        
+
         return scrolled
     }
 
@@ -59,12 +60,12 @@ class CenterZoomLayoutManager(
      */
     private fun handleLoopScroll() {
         if (realItemCount <= 0) return
-        
+
         val firstVisiblePosition = findFirstVisibleItemPosition()
         val lastVisiblePosition = findLastVisibleItemPosition()
         val totalItems = loopMultiplier * realItemCount
         val centerPosition = totalItems / 2
-        
+
         // 当滚动到接近边界时，跳转到循环位置
         if (firstVisiblePosition != RecyclerView.NO_POSITION && lastVisiblePosition != RecyclerView.NO_POSITION) {
             // 检查是否接近左边界（前25%区域）
@@ -74,7 +75,7 @@ class CenterZoomLayoutManager(
                 val offset = firstChild?.let { getDecoratedLeft(it) } ?: 0
                 val targetPosition = firstVisiblePosition + realItemCount * 200
                 scrollToPositionWithOffset(targetPosition, offset)
-            } 
+            }
             // 检查是否接近右边界（后25%区域）
             else if (lastVisiblePosition > centerPosition + realItemCount * 100) {
                 // 滚动到了右边界，跳转到中间偏左的对应位置
@@ -111,7 +112,7 @@ class CenterZoomLayoutManager(
             val childMidpoint = (getDecoratedRight(child) + getDecoratedLeft(child)) / 2f
             val d = min(d1, abs(midpoint - childMidpoint))
             val scale = s0 + (s1 - s0) * (d - d0) / (d1 - d0)
-            
+
             child.scaleX = scale
             child.scaleY = scale
         }
@@ -123,36 +124,60 @@ class CenterZoomLayoutManager(
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
-            scrollToCenter()
+            // 延迟一小段时间确保滚动完全停止
+            post {
+                scrollToCenterIfNeeded()
+            }
         }
     }
 
     /**
-     * 将距离中心最近的item滚动到中心位置
+     * 检查是否需要居中，如果没有item完全居中则将最近的item滚动到中心
      */
-    private fun scrollToCenter() {
-        val recyclerView = getRecyclerView() ?: return
-        val midpoint = width / 2f
+    private fun scrollToCenterIfNeeded() {
+        if (recyclerView == null) {
+            return
+        }
+        val centerX = width / 2f
+        val centerThreshold = 20 // 20px的容差范围
+
         var closestChild: View? = null
         var closestDistance = Float.MAX_VALUE
+        var isCentered = false
 
+        // 查找距离中心最近的child，并检查是否有item已经居中
         for (i in 0 until childCount) {
             val child = getChildAt(i) ?: continue
-            val childMidpoint = (getDecoratedRight(child) + getDecoratedLeft(child)) / 2f
-            val distance = abs(midpoint - childMidpoint)
-            
+            val childLeft = getDecoratedLeft(child)
+            val childRight = getDecoratedRight(child)
+            val childCenterX = (childLeft + childRight) / 2f
+            val distance = abs(centerX - childCenterX)
+
+            // 检查是否已经有item在中心位置（容差范围内）
+            if (distance <= centerThreshold) {
+                isCentered = true
+            }
+
             if (distance < closestDistance) {
                 closestDistance = distance
                 closestChild = child
             }
         }
 
-        closestChild?.let { child ->
-            val position = getPosition(child)
+        // 如果没有item居中，则将最近的item滚动到中心
+        if (!isCentered && closestChild != null) {
+            val position = getPosition(closestChild)
             val smoothScroller = CenterSmoothScroller(recyclerView.context)
             smoothScroller.targetPosition = position
             startSmoothScroll(smoothScroller)
         }
+    }
+
+    /**
+     * 将距离中心最近的item滚动到中心位置（保留原方法用于其他调用）
+     */
+    private fun scrollToCenter() {
+        scrollToCenterIfNeeded()
     }
 
     /**
@@ -183,33 +208,21 @@ class CenterZoomLayoutManager(
             val child = getChildAt(i) ?: continue
             val childCenterX = (getDecoratedRight(child) + getDecoratedLeft(child)) / 2f
             val distance = abs(centerX - childCenterX)
-            
+
             if (distance < closestDistance) {
                 closestDistance = distance
                 closestPosition = getPosition(child)
             }
         }
-        
-        return getRealPosition(closestPosition)
-    }
 
-    /**
-     * 获取RecyclerView实例
-     */
-    private fun getRecyclerView(): RecyclerView? {
-        return try {
-            val field = LinearLayoutManager::class.java.getDeclaredField("mRecyclerView")
-            field.isAccessible = true
-            field.get(this) as? RecyclerView
-        } catch (e: Exception) {
-            null
-        }
+        return getRealPosition(closestPosition)
     }
 
     /**
      * 自定义SmoothScroller，确保滚动到中心位置
      */
     private inner class CenterSmoothScroller(context: Context) : LinearSmoothScroller(context) {
+
         override fun calculateDtToFit(
             viewStart: Int,
             viewEnd: Int,
@@ -217,7 +230,23 @@ class CenterZoomLayoutManager(
             boxEnd: Int,
             snapPreference: Int
         ): Int {
-            return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2)
+            // 计算容器中心点和View中心点的差值，实现精确居中
+            val boxCenter = boxStart + (boxEnd - boxStart) / 2
+            val viewCenter = viewStart + (viewEnd - viewStart) / 2
+            return boxCenter - viewCenter
+        }
+
+        override fun calculateSpeedPerPixel(displayMetrics: android.util.DisplayMetrics): Float {
+            // 控制滚动速度，让居中动画更流畅（值越大滚动越慢）
+            return 100f / displayMetrics.densityDpi
+        }
+
+        override fun getVerticalSnapPreference(): Int {
+            return SNAP_TO_ANY
+        }
+
+        override fun getHorizontalSnapPreference(): Int {
+            return SNAP_TO_ANY
         }
     }
 }

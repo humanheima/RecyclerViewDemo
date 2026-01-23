@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -18,32 +18,34 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="水平滑动查看角色，中间的角色会自动放大\n支持无限循环滑动效果"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
         android:gravity="center"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:text="水平滑动查看角色，中间的角色会自动放大\n支持无限循环滑动效果"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_characters"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="360dp"
         android:layout_marginTop="20dp"
+        android:background="@color/color_1bbb21"
         android:clipToPadding="false"
-        tools:listitem="@layout/item_center_zoom_character" />
+        tools:listitem="@layout/item_center_zoom_character"
+        tools:orientation="horizontal" />
 
     <TextView
         android:id="@+id/tv_selected_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:gravity="center"
         android:padding="16dp"
         android:text="请滑动选择角色"
-        android:textSize="16sp"
         android:textColor="@android:color/black"
-        android:gravity="center"
-        android:background="@android:color/white"
-        android:layout_marginHorizontal="16dp"
-        android:elevation="4dp" />
+        android:textSize="16sp" />
 
 </LinearLayout>
