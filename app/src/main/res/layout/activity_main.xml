@@ -56,6 +56,7 @@
             android:onClick="click"
             android:text="测试RecyclerView嵌套RecyclerView"
             android:textAllCaps="false" />
+
         <Button
             android:id="@+id/btn_test_rv_nest_rvb"
             android:layout_width="match_parent"
@@ -92,14 +93,6 @@
             android:layout_height="wrap_content"
             android:onClick="launchPopWindow"
             android:text="测试PopWindow在RecyclerView中的使用"
-            android:textAllCaps="false" />
-            
-        <Button
-            android:id="@+id/btnShowGeneratingDialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="showGeneratingDialog"
-            android:text="显示生成中弹窗"
             android:textAllCaps="false" />
 
         <Button

@@ -53,7 +53,7 @@ public class SimpleAdapterAdapter extends RecyclerView.Adapter<SimpleAdapterAdap
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (position < data.size()) {
             CheckBoxModel model = data.get(position);
-            holder.textDescription.setText(model.getDescription());
+            holder.textDescription.setText(model.description);
             Log.i(TAG, "onBindViewHolder: position = " + position + " holder = " + holder);
         } else {
             Log.i(TAG, "尾 onBindViewHolder: ");

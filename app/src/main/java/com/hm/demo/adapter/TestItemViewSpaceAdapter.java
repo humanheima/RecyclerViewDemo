@@ -46,7 +46,7 @@ public class TestItemViewSpaceAdapter extends RecyclerView.Adapter<TestItemViewS
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         CheckBoxModel model = data.get(position);
-        holder.textDescription.setText(model.getDescription());
+        holder.textDescription.setText(model.description);
         if (selectedPosition == 1) {
             holder.itemView.setVisibility(View.GONE);
             //holder.textDescription.setVisibility(View.GONE);

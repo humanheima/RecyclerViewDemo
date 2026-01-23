@@ -117,8 +117,4 @@ class MainActivity : AppCompatActivity() {
         LoopGalleryActivity.launch(this)
     }
 
-    fun showGeneratingDialog(view: View) {
-        GeneratingDialogDemoActivity.launch(this)
-    }
-
 }

@@ -49,7 +49,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.GeneratingDialogDemoActivity" />
         <activity
             android:name=".activity.TestEditTextActivity"
             android:windowSoftInputMode="stateHidden" />

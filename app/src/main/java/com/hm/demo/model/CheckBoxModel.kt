@@ -1,56 +1,32 @@
-package com.hm.demo.model;
+package com.hm.demo.model
 
-import java.io.Serializable;
+import java.io.Serializable
 
-/**
- * Created by dumingwei on 2017/10/10.
- */
-public class CheckBoxModel implements Serializable {
+/** Created by dumingwei on 2017/10/10. */
+class CheckBoxModel : Serializable {
+    @JvmField var description: String
+    var isChecked: Boolean
+    var drawableResId = 0
+    var imageUrl: String? = null
 
-    private String description;
-    private boolean checked;
-    private int drawableResId;
-
-    public CheckBoxModel(String description, boolean checked) {
-        this.description = description;
-        this.checked = checked;
+    constructor(description: String, checked: Boolean) {
+        this.description = description
+        isChecked = checked
     }
 
-    public void setDrawableResId(int drawableResId) {
-        this.drawableResId = drawableResId;
+    constructor(description: String, checked: Boolean, drawableResId: Int) {
+        this.description = description
+        isChecked = checked
+        this.drawableResId = drawableResId
     }
 
-    public int getDrawableResId() {
-        return drawableResId;
-    }
-
-    public CheckBoxModel(String description, boolean checked, int drawableResId) {
-        this.description = description;
-        this.checked = checked;
-        this.drawableResId = drawableResId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isChecked() {
-        return checked;
-    }
-
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "CheckBoxModel{" +
-                "description='" + description + '\'' +
-                ", checked=" + checked +
-                '}';
+                "description='" +
+                description +
+                '\'' +
+                ", checked=" +
+                isChecked +
+                '}'
     }
 }
