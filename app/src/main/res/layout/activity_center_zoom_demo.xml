@@ -27,10 +27,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_characters"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="400dp"
         android:layout_marginTop="20dp"
         android:background="@color/color_1bbb21"
         android:clipToPadding="false"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_center_zoom_character"
         tools:orientation="horizontal" />
 
