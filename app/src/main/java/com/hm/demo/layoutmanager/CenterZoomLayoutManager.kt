@@ -28,12 +28,14 @@ class CenterZoomLayoutManager(
         super.onLayoutCompleted(state)
         scaleChildren()
         
-        // 如果启用循环且是第一次布局，则滚动到中间位置
-        if (enableLoop && realItemCount > 0 && isFirstLayout) {
+        // 第一次布局后，由Activity负责初始化位置，这里不再处理
+        if (isFirstLayout) {
             isFirstLayout = false
-            val centerPosition = getCenterLoopPosition()
-            scrollToPositionWithOffset(centerPosition, 0)
         }
+    }
+    
+    private fun post(action: () -> Unit) {
+        getRecyclerView()?.post(action)
     }
 
     override fun scrollHorizontallyBy(

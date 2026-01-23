@@ -55,18 +55,6 @@ class CenterZoomDemoActivity : AppCompatActivity() {
         val spaceDecoration = HorizontalSpaceItemDecoration(32) // 使用固定数值代替资源
         rvCharacters.addItemDecoration(spaceDecoration)
         
-        // 创建适配器（启用循环效果）
-        adapter = CenterZoomAdapter(
-            characters = characterList,
-            enableLoop = true
-        ) { character, realPosition ->
-            onCharacterClick(character, realPosition)
-        }
-        rvCharacters.adapter = adapter
-        
-        // 设置真实item数量给LayoutManager
-        layoutManager.setRealItemCount(characterList.size)
-        
         // 添加滚动监听器来更新选中信息
         rvCharacters.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -76,6 +64,9 @@ class CenterZoomDemoActivity : AppCompatActivity() {
                 }
             }
         })
+        
+        // 确保RecyclerView支持居中对齐
+        rvCharacters.clipToPadding = false
     }
 
     private fun loadData() {
@@ -96,12 +87,30 @@ class CenterZoomDemoActivity : AppCompatActivity() {
         // 设置真实item数量给LayoutManager
         layoutManager?.setRealItemCount(characterList.size)
         
-        // 延迟一帧后滚动到中心位置，确保布局完成
+        // 延迟一帧后滚动到中心位置，确保第一个item（凌意）居中显示
         rvCharacters.post {
             if (characterList.isNotEmpty()) {
-                val centerLoopPosition = (1000 / 2) * characterList.size
+                // 计算中心位置，让第一个item（realPosition=0）居中
+                // 使用循环中间位置 + 0的偏移量
+                val centerLoopPosition = (1000 / 2) * characterList.size + 0
                 rvCharacters.scrollToPosition(centerLoopPosition)
-                updateSelectedInfo()
+                
+                // 再次延迟确保滚动完成后更新信息
+                rvCharacters.postDelayed({
+                    // 强制让第一个item居中
+                    val currentLayoutManager = rvCharacters.layoutManager as? CenterZoomLayoutManager
+                    currentLayoutManager?.let {
+                        val smoothScroller = object : androidx.recyclerview.widget.LinearSmoothScroller(this@CenterZoomDemoActivity) {
+                            override fun calculateDtToFit(viewStart: Int, viewEnd: Int, boxStart: Int, boxEnd: Int, snapPreference: Int): Int {
+                                return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2)
+                            }
+                        }
+                        smoothScroller.targetPosition = centerLoopPosition
+                        it.startSmoothScroll(smoothScroller)
+                    }
+                    
+                    updateSelectedInfo()
+                }, 200)
             }
         }
     }

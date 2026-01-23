@@ -10,6 +10,13 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btn_center_zoom_demo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="中间item缩放+循环滑动RecyclerView"
+            android:textAllCaps="false" />
+        <Button
             android:id="@+id/test_scroll_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -209,14 +216,6 @@
             android:layout_height="wrap_content"
             android:onClick="click"
             android:text="将某个item滑动到RecyclerView的中间"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/btn_center_zoom_demo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="click"
-            android:text="中间item缩放+循环滑动RecyclerView"
             android:textAllCaps="false" />
 
         <Button
