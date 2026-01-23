@@ -32,6 +32,7 @@
         <activity android:name=".activity.FlowLayoutActivity" />
         <activity android:name=".activity.GridCenterDividerTestActivity" />
         <activity android:name=".activity.ScrollToCenterActivity" />
+        <activity android:name=".activity.CenterZoomDemoActivity" />
         <activity android:name=".activity.FloatItemActivity" />
         <activity android:name=".activity.LayoutManagerActivity" />
         <activity android:name=".activity.RecyclerViewTimeLineActivity" />

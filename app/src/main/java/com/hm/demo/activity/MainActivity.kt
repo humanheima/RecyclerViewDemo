@@ -90,6 +90,8 @@ class MainActivity : AppCompatActivity() {
 
             R.id.btn_scroll_to_center -> ScrollToCenterActivity.launch(this)
 
+            R.id.btn_center_zoom_demo -> startAct<CenterZoomDemoActivity>()
+
             R.id.btn_float_item -> FloatItemActivity.launch(this)
             R.id.btn_dividing_line -> DividingLineActivity.launch(this)
             R.id.btn_time_line -> RecyclerViewTimeLineActivity.launch(this)
