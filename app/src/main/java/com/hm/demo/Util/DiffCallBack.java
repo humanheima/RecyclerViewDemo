@@ -62,7 +62,7 @@ public class DiffCallBack extends DiffUtil.Callback {
             payload.putInt("KEY_PIC", newBean.getPicture());
         }
 
-        if (payload.size() == 0)//如果没有变化 就传空
+        if (payload.isEmpty())//如果没有变化 就传空
             return null;
         return payload;
     }

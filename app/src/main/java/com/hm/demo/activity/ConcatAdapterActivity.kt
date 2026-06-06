@@ -9,16 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.hm.banner.HmBanner
 import com.hm.demo.R
-import com.hm.demo.Util.GlideImageLoader
 import com.hm.demo.Util.Images
 import com.hm.demo.model.TestBean
+import org.cchao.carousel.CarouselView
 
 /**
  * Created by p_dmweidu on 2023/6/24
@@ -95,7 +93,7 @@ class ConcatAdapterActivity : AppCompatActivity() {
             return 1
         }
 
-        private fun bindBanner(view: View, banner: HmBanner? = null) {
+        private fun bindBanner(view: View, banner: CarouselView? = null) {
             banner?.setTag("banner has init")
             val multiTitles: MutableList<String>?
             val multiImgs: MutableList<String>?
@@ -107,17 +105,17 @@ class ConcatAdapterActivity : AppCompatActivity() {
             multiImgs.add(Images.imageThumbUrls[0])
             multiImgs.add(Images.imageThumbUrls[1])
             multiImgs.add(Images.imageThumbUrls[2])
-            banner?.setOnBannerClickListener { position ->
-                Toast.makeText(
-                    context, "position=$position", Toast.LENGTH_SHORT
-                ).show()
-            }
-            banner?.setImages(multiImgs)?.setImageLoader(GlideImageLoader())?.setTitles(multiTitles)
-                ?.setAbortAnimation(false)?.isAutoPlay(true)?.start()
+//            banner?.setOnBannerClickListener { position ->
+//                Toast.makeText(
+//                    context, "position=$position", Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//            banner?.setImages(multiImgs)?.setImageLoader(GlideImageLoader())?.setTitles(multiTitles)
+//                ?.setAbortAnimation(false)?.isAutoPlay(true)?.start()
         }
 
         class VH(view: View) : RecyclerView.ViewHolder(view) {
-            var banner: HmBanner? = null
+            var banner: CarouselView? = null
 
             init {
                 banner = view.findViewById(R.id.simple_banner)
@@ -254,6 +252,7 @@ fun ConcatAdapter.getAdapterByItemPosition(position: Int): RecyclerView.Adapter<
             pos >= adapter.itemCount -> {
                 pos -= adapter.itemCount
             }
+
             pos < 0 -> return null
             else -> return adapter
         }

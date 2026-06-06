@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".test_payload.PayloadTestActivity">
+
+    <Button
+        android:id="@+id/btnTestPayload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试Payload，使用payload更新item" />
+
+    <Button
+        android:id="@+id/btnTestNormalNotifyItemChanged"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试notifyItemChanged" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTestPayload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</LinearLayout>

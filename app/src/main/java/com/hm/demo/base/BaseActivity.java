@@ -34,7 +34,7 @@ public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatA
         List<TestBean> mDatas = new ArrayList<>();
         mDatas.add(new TestBean("dumingwei1", "Android", R.drawable.pic));
         mDatas.add(new TestBean("dumingwei2", "Java", R.drawable.pic_2));
-        mDatas.add(new TestBean("dumingwei3", "beiguo", R.drawable.pic_3));
+        mDatas.add(new TestBean("dumingwei3", "Kotlin", R.drawable.pic_3));
         mDatas.add(new TestBean("dumingwei4", "产品", R.drawable.pic_4));
         mDatas.add(new TestBean("dumingwei10", "测试", R.drawable.pic_5));
         mDatas.add(new TestBean("dumingwei5", "测试", R.drawable.pic_5));

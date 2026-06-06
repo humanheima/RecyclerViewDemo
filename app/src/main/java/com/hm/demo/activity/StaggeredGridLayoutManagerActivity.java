@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +18,6 @@ import com.hm.demo.databinding.ActivityTestStaggeredLayoutManagerBinding;
 import com.hm.demo.interfaces.OnItemClickListener;
 import com.hm.demo.model.TestBean;
 import com.hm.demo.widget.AutoScrollRecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,10 +103,10 @@ public class StaggeredGridLayoutManagerActivity extends BaseActivity<ActivityTes
 
         public InfiniteAdapter(Context context, List<TestBean> data) {
             super(context, data);
-            colorArray[0] = context.getResources().getColor(R.color.color_FFF4F4);
-            colorArray[1] = context.getResources().getColor(R.color.color_FFF9E7);
-            colorArray[2] = context.getResources().getColor(R.color.color_EEFCF4);
-            colorArray[3] = context.getResources().getColor(R.color.color_EDF8FC);
+            colorArray[0] = context.getResources().getColor(R.color.color_FFF4F4, null);
+            colorArray[1] = context.getResources().getColor(R.color.color_FFF9E7, null);
+            colorArray[2] = context.getResources().getColor(R.color.color_EEFCF4, null);
+            colorArray[3] = context.getResources().getColor(R.color.color_EDF8FC, null);
         }
 
         @Override

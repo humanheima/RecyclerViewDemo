@@ -2,13 +2,14 @@ package com.hm.demo.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.hm.demo.R;
 import com.hm.demo.model.TestBean;
@@ -71,7 +72,7 @@ public class DiffAdapter extends RecyclerView.Adapter<DiffAdapter.DiffVH> {
         return mDatas != null ? mDatas.size() : 0;
     }
 
-    class DiffVH extends RecyclerView.ViewHolder {
+    public static class DiffVH extends RecyclerView.ViewHolder {
         ImageView iv;
         TextView tvName;
         TextView tvDesc;

@@ -11,6 +11,7 @@ import com.hm.demo.adapter.TestItemViewSpaceAdapter
 import com.hm.demo.layoutmanager.TempLayoutManager
 import com.hm.demo.model.CheckBoxModel
 
+
 /**
  * Created by p_dmweidu on 2023/8/18
  * Desc: 测试 RecyclerView 的 ItemView 可见性设置为 GONE，依然会占据一定高度的问题。

@@ -8,6 +8,11 @@ import android.util.SparseArray
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.demo.R
+import com.hm.demo.databinding.ActivityMainBinding
+import com.hm.demo.rv_nest_rv.RvNestRvActivity
+import com.hm.demo.rv_nest_rv.RvNestRvVBActivity
+import com.hm.demo.test_diff.MyDiffUtilActivity
+import com.hm.demo.test_payload.PayloadTestActivity
 
 inline fun <reified T : Activity> Context.startAct() {
     val intent = Intent(this, T::class.java)
@@ -16,19 +21,52 @@ inline fun <reified T : Activity> Context.startAct() {
 
 class MainActivity : AppCompatActivity() {
 
-    private var sparseArray: SparseArray<String>? = null
+    private lateinit var sparseArray: SparseArray<String>
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         sparseArray = SparseArray(3)
-        sparseArray!!.put(1, "first")
-        sparseArray!!.put(2, "second")
-        sparseArray!!.put(3, "third")
+        sparseArray.put(1, "first")
+        sparseArray.put(2, "second")
+        sparseArray.put(3, "third")
+
+        binding.btnTestPayload.setOnClickListener {
+            PayloadTestActivity.launch(this)
+        }
+
     }
 
     fun click(view: View) {
         when (view.id) {
+            R.id.test_scroll_textview -> {
+
+                TestScrollTextViewActivity.launch(this)
+            }
+
+            R.id.test_snap_helper -> {
+                SnapHelperActivity.launch(this)
+            }
+
+            R.id.test_drag_sort -> {
+                DragSortActivity.launch(this)
+            }
+
+            R.id.testPathLayoutManager -> {
+                PathLayoutManagerActivity.launch(this)
+            }
+
+            R.id.btn_test_rv_nest_rv -> RvNestRvActivity.launch(this)
+            R.id.btn_test_rv_nest_rvb -> RvNestRvVBActivity.launch(this)
+            R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
+            R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)
+
+            R.id.btnDiffUtil -> DiffUtilActivity.launch(this)
+            R.id.btnDiffUtilNew -> MyDiffUtilActivity.launch(this)
 
             R.id.btn_test_item_view_space -> ItemViewSpaceActivity.launch(this)
             R.id.btn_test_concat_adapter -> ConcatAdapterActivity.launch(this)
@@ -52,14 +90,16 @@ class MainActivity : AppCompatActivity() {
 
             R.id.btn_scroll_to_center -> ScrollToCenterActivity.launch(this)
 
+            R.id.btn_center_zoom_demo -> startAct<CenterZoomDemoActivity>()
+
             R.id.btn_float_item -> FloatItemActivity.launch(this)
             R.id.btn_dividing_line -> DividingLineActivity.launch(this)
             R.id.btn_time_line -> RecyclerViewTimeLineActivity.launch(this)
-            R.id.btnDiffUtil -> DiffUtilActivity.launch(this)
             R.id.btn_pull_refresh -> PullRefreshLoadMoreActivity.launch(this)
             R.id.btn_horizontal_load_more -> HorizontalLoadMoreActivity.launch(this)
             R.id.btn_test_checkBoxInRv -> RvCheckBoxActivity.launch(this)
             R.id.btn_recycler_view_countdown -> RvCountDownActivity.launch(this)
+            R.id.btn_open_temp_activity -> startActivity(Intent(this, TempActivity::class.java))
         }
     }
 
@@ -73,6 +113,10 @@ class MainActivity : AppCompatActivity() {
 
     fun testLayout(view: View) {
         LayoutManagerActivity.launch(this)
+    }
+
+    fun testLoopGallery(view: View) {
+        LoopGalleryActivity.launch(this)
     }
 
 }

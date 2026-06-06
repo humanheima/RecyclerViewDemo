@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_a1a2ff"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvOutParent"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_vertical"
+        android:text="外层父布局" />
+
+    <!--内部的RecyclerView-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvInner"
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:itemCount="4"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/item_inner_rv_item"
+        tools:orientation="vertical" />
+
+
+</LinearLayout>

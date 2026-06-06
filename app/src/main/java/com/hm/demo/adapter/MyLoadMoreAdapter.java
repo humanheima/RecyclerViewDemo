@@ -137,7 +137,7 @@ public abstract class MyLoadMoreAdapter<T> extends RecyclerView.Adapter<BaseView
     @Override
     public int getItemViewType(int position) {
         if (position >= getDataSize()) {
-            return R.layout.footer_view_load_more;
+            return R.layout.foot_view_load_more;
         } else {
             return getHolderType(position, data.get(position));
         }

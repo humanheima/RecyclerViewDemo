@@ -2,14 +2,12 @@ package com.hm.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
-import com.hm.banner.HmBanner;
-import com.hm.banner.inter.OnBannerClickListener;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.hm.demo.R;
-import com.hm.demo.Util.GlideImageLoader;
 import com.hm.demo.Util.Images;
 import com.hm.demo.base.BaseActivity;
 import com.hm.demo.base.BaseAdapter;
@@ -17,6 +15,8 @@ import com.hm.demo.base.BaseViewHolder;
 import com.hm.demo.databinding.ActivityHeadFootBinding;
 import com.hm.demo.interfaces.OnItemClickListener;
 import com.hm.demo.model.TestBean;
+
+import org.cchao.carousel.CarouselView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class HeadFootActivity extends BaseActivity<ActivityHeadFootBinding> {
     private BaseAdapter<TestBean> adapter;
     private List<String> multiTitles;
     private List<String> multiImgs;
-    private HmBanner banner;
+    private CarouselView banner;
 
     public static void launch(Context context) {
         Intent intent = new Intent(context, HeadFootActivity.class);
@@ -80,19 +80,19 @@ public class HeadFootActivity extends BaseActivity<ActivityHeadFootBinding> {
         multiImgs.add(Images.imageThumbUrls[0]);
         multiImgs.add(Images.imageThumbUrls[1]);
         multiImgs.add(Images.imageThumbUrls[2]);
-        banner.setOnBannerClickListener(new OnBannerClickListener() {
-            @Override
-            public void OnBannerClick(int position) {
-                Toast.makeText(HeadFootActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        banner.setImages(multiImgs)
-                .setImageLoader(new GlideImageLoader())
-                .setTitles(multiTitles)
-                .setAbortAnimation(false)
-                .isAutoPlay(true)
-                .start();
+//        banner.setOnBannerClickListener(new OnBannerClickListener() {
+//            @Override
+//            public void OnBannerClick(int position) {
+//                Toast.makeText(HeadFootActivity.this, "position=" + position, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        banner.setImages(multiImgs)
+//                .setImageLoader(new GlideImageLoader())
+//                .setTitles(multiTitles)
+//                .setAbortAnimation(false)
+//                .isAutoPlay(true)
+//                .start();
     }
 
 }

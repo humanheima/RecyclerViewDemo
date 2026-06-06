@@ -70,8 +70,9 @@ public class RecyclerViewPopWindowActivity extends BaseActivity {
                 holder.setOnItemClickListener(R.id.tv2, new OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        testData.remove(position);
-                        notifyItemRemoved(position);
+                        //testData.remove(position);
+                        //notifyItemRemoved(position);
+                        Toast.makeText(RecyclerViewPopWindowActivity.this, "onItemClick position=" + position, Toast.LENGTH_SHORT).show();
                     }
                 });
                 holder.setOnItemClickListener(R.id.tv1, new OnItemClickListener() {
@@ -106,8 +107,8 @@ public class RecyclerViewPopWindowActivity extends BaseActivity {
             popWindow = new MyPopWindow(convertView,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT, true);
-            popWindow.setFocusable(true);
-            popWindow.setBackgroundDrawable(new ColorDrawable());
+            //popWindow.setOutsideTouchable(true);
+            //popWindow.setBackgroundDrawable(new ColorDrawable());
         }
     }
 

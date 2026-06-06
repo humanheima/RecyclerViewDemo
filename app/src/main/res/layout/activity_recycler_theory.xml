@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.RecyclerTheoryActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.RecyclerTheoryActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_theory"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            android:id="@+id/rv_theory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_notify_item_changed"
+            android:layout_width="match_parent"
+            android:text="测试 notify item changed"
+            android:layout_alignParentBottom="true"
+            android:textAllCaps="false"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content" />
 
-</FrameLayout>
+</RelativeLayout>

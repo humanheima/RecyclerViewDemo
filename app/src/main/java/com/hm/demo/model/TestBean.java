@@ -1,5 +1,7 @@
 package com.hm.demo.model;
 
+import java.util.Objects;
+
 /**
  * Created by dumingwei on 2017/4/18.
  */
@@ -48,5 +50,23 @@ public class TestBean implements Cloneable{
 
     public void setPicture(int picture) {
         this.picture = picture;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TestBean testBean = (TestBean) o;
+        return picture == testBean.picture && Objects.equals(name, testBean.name) && Objects.equals(
+                desc, testBean.desc);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, desc, picture);
     }
 }

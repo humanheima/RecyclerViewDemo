@@ -1,0 +1,190 @@
+package com.hm.demo.activity
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Layout
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.hm.demo.adapter.HorizontalStaggeredAdapter
+import com.hm.demo.adapter.TestLayoutManagerAdapter
+import com.hm.demo.databinding.ActivityTestScrollTextViewBinding
+import com.hm.demo.layoutmanager.CopyStaggeredGridLayoutManager
+import com.hm.demo.model.CheckBoxModel
+import com.hm.demo.model.TestBean
+import java.util.Timer
+import kotlin.concurrent.timerTask
+import kotlin.random.Random
+
+/**
+ * Created by dumingwei on 2020/6/9
+ *
+ * Desc: 测试RecyclerView的各种 layout manager
+ */
+class TestScrollTextViewActivity : BaseRecyclerViewAdapterActivity() {
+
+    private var adapter: TestLayoutManagerAdapter? = null
+
+    companion object {
+
+        fun launch(context: Context) {
+            val intent = Intent(context, TestScrollTextViewActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
+
+
+    private lateinit var binding: ActivityTestScrollTextViewBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityTestScrollTextViewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.tvTitle.text = "豫章故郡，洪都新府。星分翼轸，" +
+                "地接衡庐。襟三江而带五湖，控蛮荆而引瓯越。" +
+                "物华天宝，龙光射牛斗之墟；人杰地灵，" +
+                "徐孺下陈蕃之榻。雄州雾列，俊采星驰。台隍枕夷夏之交，" +
+                "宾主尽东南之美。都督阎公之雅望，棨戟遥临；宇文新州之懿范" +
+                "，襜帷暂驻。十旬休暇，胜友如云；千里逢迎，高朋满座。腾蛟起凤，" +
+                "孟学士之词宗；紫电青霜，王将军之武库。家君作宰，路出名区；童子何知，躬逢胜饯。"
+
+        binding.tvTitle.post {
+            binding.tvTitle.setTypewriterEffect(binding.tvTitle.text.toString(), 100)
+        }
+        testLinearLayoutManager()
+    }
+
+    /**
+     * 为TextView设置打字机效果，逐字显示文本
+     * @param text 要显示的完整文本
+     * @param delay 每个字符显示的延迟时间（毫秒）
+     * @param onComplete 动画完成后的回调
+     */
+    fun TextView.setTypewriterEffect(
+        text: String,
+        delay: Long = 100L,
+        onComplete: (() -> Unit)? = null
+    ) {
+        this.text = ""
+        var currentIndex = 0
+
+        val timer = Timer()
+        val textView = this
+        timer.schedule(timerTask {
+            Handler(Looper.getMainLooper()).post {
+                if (currentIndex <= text.length) {
+                    this@setTypewriterEffect.text = text.substring(0, currentIndex)
+                    currentIndex++
+
+
+                } else {
+                    timer.cancel()
+                    onComplete?.invoke()
+                }
+
+                val layout: Layout? = textView.layout
+                if (layout != null && layout.lineCount > 4) {
+                    // 计算需要滚动的距离
+                    val lastLineTop = layout.getLineTop(layout.lineCount - 1)
+                    val fourthLineTop = layout.getLineTop(3) // 第4行的顶部位置
+                    val scrollDistance = lastLineTop - fourthLineTop
+
+                    // 执行滚动
+                    Handler(Looper.getMainLooper()).post {
+                        textView.scrollTo(0, scrollDistance)
+                    }
+                } else {
+                    // 如果行数不超过4，清空滚动
+                    textView.scrollTo(0, 0)
+                }
+
+
+            }
+        }, 0, delay)
+    }
+
+    private fun testLinearLayoutManager() {
+        binding.rvLayout.layoutManager = LinearLayoutManager(this)
+        val arrayList = arrayListOf<CheckBoxModel>()
+        for (i in 0 until 30) {
+            arrayList.add(CheckBoxModel("Hello$i", false))
+        }
+        //binding.rvLayout.isNestedScrollingEnabled = true
+        //binding.rvLayout.adapter = TestRvTheoryAdapter(this, arrayList)
+        binding.rvLayout.adapter = TestLayoutManagerAdapter(this, arrayList)
+    }
+
+    /**
+     * 测试 CopyStaggeredGridLayoutManager 纵向的效果
+     */
+    private fun testStaggeredVerticalDemo() {
+        val dataList = arrayListOf<String>().apply {
+            add("Hello StaggeredGridLayoutManager")
+            add(
+                "Hello Gird雄州雾列，俊采星驰。台隍枕夷夏之交，宾主尽东南之美。\" +\n" +
+                        "                        \"都督阎公之雅望，棨戟遥临；宇文新州之懿范，襜帷暂驻。\" +\n" +
+                        "                        \"十旬休假，胜友如云；千里逢迎，高朋满座。\" +\n" +
+                        "                        \"腾蛟起凤，孟学士之词宗；紫电青霜，王将军之武库。\" +\n" +
+                        "                        \"家君作宰，路出名区；童子何知，躬逢胜饯"
+            )
+            add("　披绣闼，俯雕甍，山原旷其盈视，川泽纡其骇瞩。")
+            add("闾阎扑地，钟鸣鼎食之家；舸舰弥津，青雀黄龙之舳。云销雨霁，彩彻区明。落霞与孤鹜齐飞，秋水共长天一色。")
+            add("渔舟唱晚，响穷彭蠡之滨，雁阵惊寒，声断衡阳之浦。遥襟甫畅，逸兴遄飞。")
+            add("爽籁发而清风生，纤歌凝而白云遏。睢园绿竹，气凌彭泽之樽；邺水朱华，光照临川之笔。四美具，二难并。穷睇眄于中天，极娱游于暇日。天高地迥，觉宇宙之无穷；兴尽悲来，识盈虚之有数。望长安于日下，目吴会于云间。地势极而南溟深，天柱高而北辰远。关山难越，谁悲失路之人？萍水相逢，尽是他乡之客。怀帝阍而不见，奉宣室以何年？")
+            add("LayoutManagerActivity")
+            add(
+                "时维九月，序属三秋。潦水尽而寒潭清，烟光凝而暮山紫。俨骖騑于上路，访风景于崇阿。临帝子之长洲，" +
+                        "得天人之旧馆。层峦耸翠，上出重霄；飞阁流丹，下临无地" +
+                        "。鹤汀凫渚，穷岛屿之萦回；桂殿兰宫，即冈峦之体势。（天人 一作：仙人；层峦 一作：层台；即冈 一作：" +
+                        "列冈；飞阁流丹 一作：飞阁翔丹）"
+            )
+            add("　披绣闼，俯雕甍，山原旷其盈视，川泽纡其骇瞩。")
+            add("闾阎扑地，钟鸣鼎食之家；舸舰弥津，青雀黄龙之舳。云销雨霁，彩彻区明。落霞与孤鹜齐飞，秋水共长天一色。")
+        }
+        val listOf = arrayListOf<CheckBoxModel>()
+        for (i in 0..100) {
+            val index = Random.nextInt(0, dataList.size)
+            val text = "${dataList[index]} $i"
+            listOf.add(CheckBoxModel(text, false))
+        }
+
+        adapter = TestLayoutManagerAdapter(this, listOf)
+        binding.rvLayout.layoutManager =
+            CopyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+        binding.rvLayout.adapter = adapter
+    }
+
+    /**
+     * 测试 CopyStaggeredGridLayoutManager 横向的效果
+     */
+    private fun testStaggeredHorizontalDemo() {
+        val listOf = arrayListOf<TestBean>()
+        val nameList = arrayListOf<String>()
+
+        nameList.add("张无忌")
+        nameList.add("赵敏")
+        nameList.add("周芷若")
+        nameList.add("小昭")
+        nameList.add("金毛狮王谢逊")
+        nameList.add("小龙女")
+        nameList.add("天地风雷四门，五行旗，四大法王")
+        nameList.add("黄蓉")
+        nameList.add("郭靖")
+        nameList.add("金轮法王")
+
+        for (i in 0..100) {
+            val index = Random.nextInt(0, nameList.size)
+            val text = "${nameList[index]} $i"
+            listOf.add(TestBean(text, "", 0))
+        }
+
+        val adapter = HorizontalStaggeredAdapter(this, listOf)
+        binding.rvLayout.layoutManager =
+            CopyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL)
+        binding.rvLayout.adapter = adapter
+    }
+
+}

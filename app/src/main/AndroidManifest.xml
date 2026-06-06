@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.hm.demo">
+    package="com.hm.demo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
-                android:name=".activity.ItemViewSpaceActivity"
-                android:exported="false" />
+            android:name=".rv_nest_rv.RvNestRvActivity"
+            android:exported="false" />
         <activity
-                android:name=".activity.ConcatAdapterActivity"
-                android:exported="false" />
+            android:name=".rv_nest_rv.RvNestRvVBActivity"
+            android:exported="false" />
         <activity
-                android:name=".activity.RvIsComputingALayoutOrScrollingActivity"
-                android:exported="false" />
+            android:name=".test_payload.PayloadTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ItemViewSpaceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ConcatAdapterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RvIsComputingALayoutOrScrollingActivity"
+            android:exported="false" />
         <activity android:name=".activity.RecyclerTheoryActivity" />
         <activity android:name=".activity.FlowLayoutActivity" />
         <activity android:name=".activity.GridCenterDividerTestActivity" />
         <activity android:name=".activity.ScrollToCenterActivity" />
+        <activity android:name=".activity.CenterZoomDemoActivity" />
         <activity android:name=".activity.FloatItemActivity" />
         <activity android:name=".activity.LayoutManagerActivity" />
         <activity android:name=".activity.RecyclerViewTimeLineActivity" />
         <activity android:name=".activity.PullRefreshLoadMoreActivity" />
         <activity android:name=".activity.DiffUtilActivity" />
+        <activity android:name=".test_diff.MyDiffUtilActivity" />
         <activity android:name=".activity.BaseRecyclerViewAdapterActivity" />
         <activity android:name=".activity.SlideDeleteActivity" />
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,8 +51,8 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activity.TestEditTextActivity"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".activity.TestEditTextActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.RvCheckBoxActivity" />
         <activity android:name=".activity.RvCountDownActivity" />
         <activity android:name=".activity.HeadFootActivity" />
@@ -48,6 +61,14 @@
         <activity android:name=".activity.HorizontalLoadMoreActivity" />
         <activity android:name=".activity.StaggeredGridLayoutManagerActivity" />
         <activity android:name=".activity.ScrollToPositionActivity" />
+        <activity android:name=".activity.RecyclerScrollRangeRelateActivity" />
+        <activity android:name=".activity.TestRecyclerAnimationActivity" />
+        <activity android:name=".activity.SnapHelperActivity" />
+        <activity android:name=".activity.LoopGalleryActivity" />
+        <activity android:name=".activity.PathLayoutManagerActivity" />
+        <activity android:name=".activity.DragSortActivity" />
+        <activity android:name=".activity.TestScrollTextViewActivity" />
+        <activity android:name=".activity.TempActivity" />
     </application>
 
 </manifest>

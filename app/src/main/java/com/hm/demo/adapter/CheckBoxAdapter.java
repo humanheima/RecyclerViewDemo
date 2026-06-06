@@ -57,7 +57,7 @@ public class CheckBoxAdapter extends RecyclerView.Adapter<CheckBoxAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         CheckBoxModel model = data.get(position);
-        holder.textDescription.setText(model.getDescription());
+        holder.textDescription.setText(model.description);
         holder.imgCheckBox.setSelected(model.isChecked());
     }
 
