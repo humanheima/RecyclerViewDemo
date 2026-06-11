@@ -29,9 +29,15 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    namespace 'com.hm.demo'
 
 }
 
@@ -49,6 +55,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation project(path: ':layoutmanager')
     implementation 'androidx.activity:activity:1.9.3'
+    // App Startup：统一管理应用启动时各组件的初始化
+    implementation 'androidx.startup:startup-runtime:1.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     implementation 'com.google.android.material:material:1.2.1'

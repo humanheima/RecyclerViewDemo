@@ -4,8 +4,8 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="/usr/local/Cellar/gradle/8.0/libexec" />
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
@@ -14,7 +14,7 @@
             <option value="$PROJECT_DIR$/layoutmanager" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
+        <option name="myGradleHome" value="/usr/local/Cellar/gradle/4.10/libexec" />
       </GradleProjectSettings>
     </option>
   </component>

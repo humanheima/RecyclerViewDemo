@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hm.demo">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -69,6 +69,42 @@
         <activity android:name=".activity.DragSortActivity" />
         <activity android:name=".activity.TestScrollTextViewActivity" />
         <activity android:name=".activity.TempActivity" />
+        <activity android:name=".startup.AppStartupDemoActivity" />
+
+        <!--
+            App Startup 的核心：一个由 startup-runtime 提供的 InitializationProvider。
+            所有“自动初始化”的 Initializer 都通过 <meta-data> 声明在这个 provider 下，
+            进程启动时 App Startup 会读取这些 meta-data 并按依赖顺序执行。
+
+            注意：
+            - 整个 App 只需要一个 InitializationProvider，多模块时会被 manifest merge 合并。
+            - 只需声明“叶子” Initializer，它们的依赖会被自动拉起，无需逐个声明。
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+
+            <!-- 场景 3：自动初始化 Analytics（会自动带起它依赖的 Logger + Config） -->
+            <meta-data
+                android:name="com.hm.demo.startup.AnalyticsInitializer"
+                android:value="androidx.startup" />
+
+            <!-- 场景 4：自动初始化 CrashReporter（与 Analytics 共享 Logger 依赖，Logger 只会初始化一次） -->
+            <meta-data
+                android:name="com.hm.demo.startup.CrashReporterInitializer"
+                android:value="androidx.startup" />
+
+            <!--
+                场景 5：把“重组件”从自动初始化中移除，改为手动/懒加载。
+                tools:node="remove" 会让 manifest merge 后这条 meta-data 不存在，
+                因此启动时不会自动执行 HeavyImageCacheInitializer。
+            -->
+            <meta-data
+                android:name="com.hm.demo.startup.HeavyImageCacheInitializer"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>

@@ -46,22 +46,22 @@ public class MyDiffUtilActivity extends AppCompatActivity {
     public void refresh(View view) {
         List<TestBean> list = new ArrayList<>();
 
-        list.add(new TestBean("ahahhh", "测试", R.drawable.pic_5));
-        list.add(0, new TestBean("张无忌", "乾坤大挪移", R.drawable.pic_2));
-        list.add(new TestBean("曾阿牛", "九阳神功", R.drawable.pic));
-        list.add(new TestBean("赵敏", "倚天剑", R.drawable.pic_4));
-        list.add(new TestBean("小昭", "圣火令", R.drawable.pic_4));
-        list.add(new TestBean("阿里", "圣火令", R.drawable.pic));
-        list.add(new TestBean("张三丰", "太极剑法", R.drawable.pic_2));
-        list.add(new TestBean("张翠山", "屠龙刀", R.drawable.pic_2));
-        list.add(new TestBean("张松溪", "太极剑法", R.drawable.pic_2));
-        list.add(new TestBean("莫声谷", "太极拳", R.drawable.pic_2));
-        list.add(new TestBean("殷梨亭", "太极剑法", R.drawable.pic_2));
-        list.add(new TestBean("俞岱岩", "太极剑法", R.drawable.pic_2));
-        list.add(new TestBean("俞莲舟", "太极剑法", R.drawable.pic_2));
-        list.add(new TestBean("宋远桥", "太极剑法", R.drawable.pic_2));
+        list.add(new TestBean("refresh_1", "ahahhh", "测试", R.drawable.pic_5));
+        list.add(0, new TestBean("refresh_2", "张无忌", "乾坤大挪移", R.drawable.pic_2));
+        list.add(new TestBean("refresh_3", "曾阿牛", "九阳神功", R.drawable.pic));
+        list.add(new TestBean("refresh_4", "赵敏", "倚天剑", R.drawable.pic_4));
+        list.add(new TestBean("refresh_5", "小昭", "圣火令", R.drawable.pic_4));
+        list.add(new TestBean("refresh_6", "阿里", "圣火令", R.drawable.pic));
+        list.add(new TestBean("refresh_7", "张三丰", "太极剑法", R.drawable.pic_2));
+        list.add(new TestBean("refresh_8", "张翠山", "屠龙刀", R.drawable.pic_2));
+        list.add(new TestBean("refresh_9", "张松溪", "太极剑法", R.drawable.pic_2));
+        list.add(new TestBean("refresh_10", "莫声谷", "太极拳", R.drawable.pic_2));
+        list.add(new TestBean("refresh_11", "殷梨亭", "太极剑法", R.drawable.pic_2));
+        list.add(new TestBean("refresh_12", "俞岱岩", "太极剑法", R.drawable.pic_2));
+        list.add(new TestBean("refresh_13", "俞莲舟", "太极剑法", R.drawable.pic_2));
+        list.add(new TestBean("refresh_14", "宋远桥", "太极剑法", R.drawable.pic_2));
 
-        list.add(new TestBean("周芷若", "屠龙刀", R.drawable.pic_3));
+        list.add(new TestBean("refresh_15", "周芷若", "屠龙刀", R.drawable.pic_3));
         list.addAll(mDatas);
 
         view.postDelayed(new Runnable() {
@@ -81,12 +81,12 @@ public class MyDiffUtilActivity extends AppCompatActivity {
 
     private void initData() {
         mDatas = new ArrayList<>();
-        mDatas.add(new TestBean("dumingwei1", "Android", R.drawable.pic));
-        mDatas.add(new TestBean("dumingwei2", "Java", R.drawable.pic_2));
-        mDatas.add(new TestBean("dumingwei3", "奖励", R.drawable.pic_3));
-        mDatas.add(new TestBean("dumingwei4", "产品", R.drawable.pic_4));
-        mDatas.add(new TestBean("dumingwei5", "测试", R.drawable.pic_5));
-        mDatas.add(new TestBean("dumingwei6", "测试", R.drawable.pic_5));
-        mDatas.add(new TestBean("dumingwei7", "飞狐外传", R.drawable.pic_6));
+        mDatas.add(new TestBean("init_1", "dumingwei1", "Android", R.drawable.pic));
+        mDatas.add(new TestBean("init_2", "dumingwei2", "Java", R.drawable.pic_2));
+        mDatas.add(new TestBean("init_3", "dumingwei3", "奖励", R.drawable.pic_3));
+        mDatas.add(new TestBean("init_4", "dumingwei4", "产品", R.drawable.pic_4));
+        mDatas.add(new TestBean("init_5", "dumingwei5", "测试", R.drawable.pic_5));
+        mDatas.add(new TestBean("init_6", "dumingwei6", "测试", R.drawable.pic_5));
+        mDatas.add(new TestBean("init_7", "dumingwei7", "飞狐外传", R.drawable.pic_6));
     }
 }

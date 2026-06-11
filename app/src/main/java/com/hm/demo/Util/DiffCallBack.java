@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import com.hm.demo.model.TestBean;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by dumingwei on 2017/4/18.
@@ -33,7 +34,7 @@ public class DiffCallBack extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return mOldDatas.get(oldItemPosition).getName().equals(mNewDatas.get(newItemPosition).getName());
+        return Objects.equals(mOldDatas.get(oldItemPosition).getId(), mNewDatas.get(newItemPosition).getId());
     }
 
     @Override

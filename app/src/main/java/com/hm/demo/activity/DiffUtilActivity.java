@@ -20,6 +20,7 @@ import com.hm.demo.model.TestBean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by p_dmweidu on 2025/3/10
@@ -58,7 +59,7 @@ public class DiffUtilActivity extends AppCompatActivity {
         adapter2 = new DiffAdapter2(this, new DiffUtil.ItemCallback<TestBean>() {
             @Override
             public boolean areItemsTheSame(@NonNull TestBean oldItem, @NonNull TestBean newItem) {
-                return oldItem.getName().equals(newItem.getName());
+                return Objects.equals(oldItem.getId(), newItem.getId());
             }
 
             @Override

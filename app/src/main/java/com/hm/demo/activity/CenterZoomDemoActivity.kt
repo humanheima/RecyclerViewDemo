@@ -21,7 +21,7 @@ class CenterZoomDemoActivity : AppCompatActivity() {
     private lateinit var rvCharacters: RecyclerView
     private lateinit var tvSelectedInfo: TextView
     private lateinit var adapter: CenterZoomAdapter
-    private var characterList = listOf<RecommendCharacter>()
+    private var characterList = kotlin.collections.emptyList<RecommendCharacter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,7 +162,7 @@ class CenterZoomDemoActivity : AppCompatActivity() {
 
         // 选择距离当前位置最近的选项
         val currentLoopPosition = currentLoopBase + currentRealPosition
-        val distances = listOf(
+        val distances = kotlin.collections.listOf(
             kotlin.math.abs(option1 - currentLoopPosition),
             kotlin.math.abs(option2 - currentLoopPosition),
             kotlin.math.abs(option3 - currentLoopPosition)
