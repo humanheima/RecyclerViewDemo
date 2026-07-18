@@ -65,6 +65,14 @@
             android:textAllCaps="false" />
 
         <Button
+            android:id="@+id/btn_test_moment_flat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click"
+            android:text="方案1：单RecyclerView多Type朋友圈"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btn_test_rv_nest_rvb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

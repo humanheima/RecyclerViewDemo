@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.btn_test_rv_nest_rv -> RvNestRvActivity.launch(this)
+            R.id.btn_test_moment_flat -> MomentFlatListActivity.launch(this)
             R.id.btn_test_rv_nest_rvb -> RvNestRvVBActivity.launch(this)
             R.id.btn_test_recycler_animation -> TestRecyclerAnimationActivity.launch(this)
             R.id.btn_test_recycler_scroll_relate -> RecyclerScrollRangeRelateActivity.launch(this)

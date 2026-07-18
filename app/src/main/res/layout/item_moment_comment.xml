@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_moment_comment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#F5F6FA"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="6dp"
+    android:padding="10dp"
+    android:textColor="#444444"
+    android:textSize="13sp" />
